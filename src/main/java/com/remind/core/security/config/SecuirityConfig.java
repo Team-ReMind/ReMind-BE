@@ -4,6 +4,7 @@ package com.remind.core.security.config;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 import com.remind.core.domain.member.enums.RolesType;
+import com.remind.core.security.exception.AccessDeniedHandlerImpl;
 import com.remind.core.security.exception.AuthenticationEntryPointImpl;
 import com.remind.core.security.filter.JwtAuthenticationFilter;
 import com.remind.core.security.filter.JwtAuthenticationHandlerFilter;
@@ -33,6 +34,7 @@ public class SecuirityConfig {
 
     private final JwtProvider jwtProvider;
     private final AuthenticationEntryPointImpl authenticationEntryPoint;
+    private final AccessDeniedHandlerImpl accessDeniedHandler;
 
 
     /**
@@ -65,11 +67,15 @@ public class SecuirityConfig {
                 .securityMatchers(matcher -> matcher
                         .requestMatchers(authorizeRequestMathcers()))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(authorizeRequestMathcers()).hasAuthority(RolesType.ROLE_USER.name())
+                        .requestMatchers(authorizeRequestMathcers())
+                        .hasAuthority(RolesType.ROLE_USER.name())
                         .anyRequest().denyAll())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtAuthenticationHandlerFilter(), JwtAuthenticationFilter.class)
-                .exceptionHandling(handler -> handler.authenticationEntryPoint(authenticationEntryPoint));
+                .exceptionHandling(handler ->
+                        handler
+                                .authenticationEntryPoint(authenticationEntryPoint)
+                                .accessDeniedHandler(accessDeniedHandler));
 
         return http.build();
     }
