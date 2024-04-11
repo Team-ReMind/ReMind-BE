@@ -41,13 +41,13 @@ public class SecuirityConfig {
      * jwt 인증, 인가 적용 x filterChain
      */
     @Bean
-    @Order(1)
+    @Order(1) // 우선 순위 1
     public SecurityFilterChain permitAllFilterChain(HttpSecurity http) throws Exception {
         httpSecuirtySetting(http);
 
         http
                 .securityMatchers(matcher -> matcher
-                        .requestMatchers(permitAllRequestMatchers()))
+                        .requestMatchers(permitAllRequestMatchers()))  // 해당 endpoint에 대해 filterChain 적용
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(permitAllRequestMatchers()).permitAll()
                         .anyRequest().denyAll()
@@ -59,23 +59,23 @@ public class SecuirityConfig {
      * jwt 인증, 인가 적용 o filterChain
      */
     @Bean
-    @Order(2)
+    @Order(2) // 우선 순위 2
     public SecurityFilterChain authorizeFilterChain(HttpSecurity http) throws Exception {
         httpSecuirtySetting(http);
 
         http
                 .securityMatchers(matcher -> matcher
-                        .requestMatchers(authorizeRequestMathcers()))
+                        .requestMatchers(authorizeRequestMathcers()))  // 해당 endpoint에 대해 filterChain 적용
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(authorizeRequestMathcers())
-                        .hasAuthority(RolesType.ROLE_USER.name())
+                        .hasAuthority(RolesType.ROLE_USER.name()) // '유저 권한'만 인가 가능
                         .anyRequest().denyAll())
-                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtAuthenticationHandlerFilter(), JwtAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class) // jwt 인증/인가 필터 추가
+                .addFilterBefore(new JwtAuthenticationHandlerFilter(), JwtAuthenticationFilter.class) // jwt 인증/인가 필터에서 발생한 에러 handle 필터 추가
                 .exceptionHandling(handler ->
                         handler
-                                .authenticationEntryPoint(authenticationEntryPoint)
-                                .accessDeniedHandler(accessDeniedHandler));
+                                .authenticationEntryPoint(authenticationEntryPoint)  // filter 과정에서 발생한 AuthenticationException handler 추가
+                                .accessDeniedHandler(accessDeniedHandler));  // filter 과정에서 발생한  AccessDeniedException handler 추가
 
         return http.build();
     }

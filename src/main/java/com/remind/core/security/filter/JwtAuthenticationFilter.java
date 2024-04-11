@@ -21,7 +21,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 
     private final String AUTHENTICATION_HEADER = "Authorization";
-    private final String AUTHENTICATION_SCHEME = "Bearer ";
+    private final String AUTHENTICATION_SCHEME = "Bearer "; // token prefix
     private final JwtProvider jwtProvider;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -37,11 +37,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = extractHeader(request); // 헤더에서 token 추출 및 prefix 제거
         Authentication authentication = jwtProvider.toAuthentication(token); // token 검증 및 정보 추출 >> Authentication 객체 생성
 
+        // security context에 저장 >> 추후 @@AuthenticationPrincipal를 통해 조회 가능
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authentication);
         SecurityContextHolder.setContext(context);
 
-
+        // 다음 필터로 proceed
         filterChain.doFilter(request, response);
 
 
