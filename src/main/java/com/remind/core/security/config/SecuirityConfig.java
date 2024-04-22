@@ -1,6 +1,7 @@
 package com.remind.core.security.config;
 
 
+import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 import com.remind.core.domain.member.enums.RolesType;
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -70,14 +72,26 @@ public class SecuirityConfig {
                         .requestMatchers(authorizeRequestMathcers())
                         .hasAuthority(RolesType.ROLE_USER.name()) // '유저 권한'만 인가 가능
                         .anyRequest().denyAll())
-                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class) // jwt 인증/인가 필터 추가
-                .addFilterBefore(new JwtAuthenticationHandlerFilter(), JwtAuthenticationFilter.class) // jwt 인증/인가 필터에서 발생한 에러 handle 필터 추가
+                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider),
+                        UsernamePasswordAuthenticationFilter.class) // jwt 인증/인가 필터 추가
+                .addFilterBefore(new JwtAuthenticationHandlerFilter(),
+                        JwtAuthenticationFilter.class) // jwt 인증/인가 필터에서 발생한 에러 handle 필터 추가
                 .exceptionHandling(handler ->
                         handler
-                                .authenticationEntryPoint(authenticationEntryPoint)  // filter 과정에서 발생한 AuthenticationException handler 추가
-                                .accessDeniedHandler(accessDeniedHandler));  // filter 과정에서 발생한  AccessDeniedException handler 추가
+                                .authenticationEntryPoint(
+                                        authenticationEntryPoint)  // filter 과정에서 발생한 AuthenticationException handler 추가
+                                .accessDeniedHandler(
+                                        accessDeniedHandler));  // filter 과정에서 발생한  AccessDeniedException handler 추가
 
         return http.build();
+    }
+
+    /**
+     * security filter 적용 x
+     */
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring().requestMatchers(swaggerRequestMatchers());
     }
 
     /**
@@ -96,6 +110,17 @@ public class SecuirityConfig {
     private RequestMatcher[] permitAllRequestMatchers() {
         List<RequestMatcher> requestMatchers = List.of(
                 antMatcher(POST, "/member/login")
+        );
+        return requestMatchers.toArray(RequestMatcher[]::new);
+    }
+
+    /**
+     * swagger-ui와 관련된 endpoint >> security filter 적용 x
+     */
+    private RequestMatcher[] swaggerRequestMatchers() {
+        List<RequestMatcher> requestMatchers = List.of(
+                antMatcher(GET, "/swagger-ui/**"),
+                antMatcher(GET, "/v3/api-docs/**")
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
     }

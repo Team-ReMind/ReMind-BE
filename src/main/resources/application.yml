@@ -10,12 +10,13 @@ spring:
     import: classpath:env.properties
 
   jpa:
-    show-sql: true
     hibernate:
       ddl-auto: create
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+        show_sql: true
 
   ## redis 설정
   data:
@@ -28,3 +29,19 @@ jwt:
   secret-key: ${JWT_SECRET_KEY}
   access-expiration-seconds: 1800
   refresh-expiration-seconds: 3600
+
+# 쿼리문 파라미터 바인딩 값 확인
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql: trace
+
+#custom swagger url
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+
