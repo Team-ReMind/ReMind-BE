@@ -1,12 +1,12 @@
 package com.remind.core.security.filter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.remind.core.security.jwt.JwtProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,24 +22,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final String AUTHENTICATION_HEADER = "Authorization";
     private final String AUTHENTICATION_SCHEME = "Bearer "; // token prefix
-    private final JwtProvider jwtProvider;
+    private final AuthenticationManager authenticationManager;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
-    public JwtAuthenticationFilter(JwtProvider jwtProvider) {
-        this.jwtProvider = jwtProvider;
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+                                    FilterChain filterChain)
             throws ServletException, IOException {
 
-        String token = extractHeader(request); // 헤더에서 token 추출 및 prefix 제거
-        Authentication authentication = jwtProvider.toAuthentication(token); // token 검증 및 정보 추출 >> Authentication 객체 생성
+        // 헤더에서 token 추출 및 prefix 제거
+        String token = extractHeader(request);
+        // authenticate 위임
+        Authentication authenticated = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(token, null));
 
-        // security context에 저장 >> 추후 @@AuthenticationPrincipal를 통해 조회 가능
+        // security context에 저장 >> 추후 @AuthenticationPrincipal를 통해 조회 가능
         SecurityContext context = SecurityContextHolder.createEmptyContext();
-        context.setAuthentication(authentication);
+        context.setAuthentication(authenticated);
         SecurityContextHolder.setContext(context);
 
         // 다음 필터로 proceed

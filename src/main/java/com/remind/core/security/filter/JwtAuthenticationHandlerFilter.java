@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedCredentialsNotFoundException;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -30,18 +31,24 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtAuthenticationHandlerFilter extends OncePerRequestFilter {
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
         try {
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException ex) {
-            log.error("토큰 만료");
+            log.error("토큰 만료 \n{}", ex.getStackTrace());
             setErrorResponse(response, TOKEN_EXPIRED);
         } catch (UnsupportedJwtException | MalformedJwtException ex) {
-            log.error("유효하지 않는 토큰");
+            log.error("유효하지 않는 토큰 \n{}", ex.getStackTrace());
             setErrorResponse(response, INVALID_TOKEN);
         } catch (PreAuthenticatedCredentialsNotFoundException ex) {
-            log.error("존재하지 않는 토큰");
+            log.error("존재하지 않는 토큰 \n{}", ex.getStackTrace());
+            setErrorResponse(response, ex);
+        } catch (AuthenticationException ex) {
+            log.error("Authentication Error 발생 \n{}", ex.getStackTrace());
+            setErrorResponse(response, ex);
+        } catch (AccessDeniedException ex) {
+            log.error("AccessDenied Error 발생 \n{}", ex.getStackTrace());
             setErrorResponse(response, ex);
         }
 
@@ -65,7 +72,7 @@ public class JwtAuthenticationHandlerFilter extends OncePerRequestFilter {
         }
     }
 
-    private void setErrorResponse(HttpServletResponse response, AuthenticationException ex) {
+    private void setErrorResponse(HttpServletResponse response, RuntimeException ex) {
 
         ObjectMapper objectMapper = new ObjectMapper();
         response.setStatus(HttpStatus.UNAUTHORIZED.value());

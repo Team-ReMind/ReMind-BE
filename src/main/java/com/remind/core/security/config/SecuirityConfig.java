@@ -4,24 +4,23 @@ package com.remind.core.security.config;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
+
 import com.remind.core.domain.member.enums.RolesType;
 import com.remind.core.security.exception.AccessDeniedHandlerImpl;
-import com.remind.core.security.exception.AuthenticationEntryPointImpl;
 import com.remind.core.security.filter.JwtAuthenticationFilter;
 import com.remind.core.security.filter.JwtAuthenticationHandlerFilter;
-import com.remind.core.security.jwt.JwtProvider;
+import com.remind.core.security.provider.JwtAuthenticationProvider;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -34,55 +33,50 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecuirityConfig {
 
-    private final JwtProvider jwtProvider;
-    private final AuthenticationEntryPointImpl authenticationEntryPoint;
     private final AccessDeniedHandlerImpl accessDeniedHandler;
-
-
-    /**
-     * jwt 인증, 인가 적용 x filterChain
-     */
-    @Bean
-    @Order(1) // 우선 순위 1
-    public SecurityFilterChain permitAllFilterChain(HttpSecurity http) throws Exception {
-        httpSecuirtySetting(http);
-
-        http
-                .securityMatchers(matcher -> matcher
-                        .requestMatchers(permitAllRequestMatchers()))  // 해당 endpoint에 대해 filterChain 적용
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(permitAllRequestMatchers()).permitAll()
-                        .anyRequest().denyAll()
-                );
-        return http.build();
-    }
+    private final JwtAuthenticationProvider jwtAuthenticationProvider;
 
     /**
      * jwt 인증, 인가 적용 o filterChain
      */
     @Bean
-    @Order(2) // 우선 순위 2
+    @Order(1) // 우선 순위 1
     public SecurityFilterChain authorizeFilterChain(HttpSecurity http) throws Exception {
         httpSecuirtySetting(http);
 
         http
                 .securityMatchers(matcher -> matcher
-                        .requestMatchers(authorizeRequestMathcers()))  // 해당 endpoint에 대해 filterChain 적용
-                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(authorizeRequestMathcers()))
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers(authorizeRequestMathcers())
-                        .hasAuthority(RolesType.ROLE_USER.name()) // '유저 권한'만 인가 가능
+                        .hasAuthority(RolesType.ROLE_USER.name())
                         .anyRequest().denyAll())
-                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider),
-                        UsernamePasswordAuthenticationFilter.class) // jwt 인증/인가 필터 추가
-                .addFilterBefore(new JwtAuthenticationHandlerFilter(),
-                        JwtAuthenticationFilter.class) // jwt 인증/인가 필터에서 발생한 에러 handle 필터 추가
-                .exceptionHandling(handler ->
-                        handler
-                                .authenticationEntryPoint(
-                                        authenticationEntryPoint)  // filter 과정에서 발생한 AuthenticationException handler 추가
-                                .accessDeniedHandler(
-                                        accessDeniedHandler));  // filter 과정에서 발생한  AccessDeniedException handler 추가
+                // jwt 인증/인가 필터 추가
+                .addFilterBefore(
+                        new JwtAuthenticationFilter(new ProviderManager(jwtAuthenticationProvider)),
+                        UsernamePasswordAuthenticationFilter.class)
+                // jwt 인증/인가 필터에서 발생한 에러 handle 필터 추가
+                .addFilterBefore(new JwtAuthenticationHandlerFilter(), JwtAuthenticationFilter.class)
+                .exceptionHandling(handler -> handler.accessDeniedHandler(accessDeniedHandler));
 
+        return http.build();
+    }
+
+    /**
+     * jwt 인증, 인가 적용 x filterChain
+     */
+    @Bean
+    @Order(2) // 우선 순위 2
+    public SecurityFilterChain permitAllFilterChain(HttpSecurity http) throws Exception {
+        httpSecuirtySetting(http);
+
+        http
+                .securityMatchers(matcher -> matcher
+                        .requestMatchers(permitAllRequestMatchers()))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(permitAllRequestMatchers()).permitAll()
+                        .anyRequest().denyAll()
+                );
         return http.build();
     }
 
@@ -123,12 +117,6 @@ public class SecuirityConfig {
                 antMatcher(GET, "/v3/api-docs/**")
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
-    }
-
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Bean
