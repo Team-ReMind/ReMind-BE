@@ -13,7 +13,7 @@ public class HealthTestController {
 //    @Operation(summary = "Health Check API", description = "Health Check Api입니다.")
     @GetMapping("")
     public String apiHealthTest() {
-        return "remind!";
+        return "remind! v2";
     }
 
 }
