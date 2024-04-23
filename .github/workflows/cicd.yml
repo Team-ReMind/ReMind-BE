@@ -5,6 +5,8 @@ name: Re:mind CI/CD with Gradle
 # event trigger
 # main 브랜치에 push 했을 때 실행되는 트리거
 on:
+  pull_request:
+    branches: [ "master" ]
   push:
     branches: [ "master" ]
 
