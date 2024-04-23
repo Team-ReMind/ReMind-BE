@@ -1,0 +1,73 @@
+# cicd.yml
+# github repository Actions 페이지에 나타낼 이름
+name: Re:mind CI/CD with Gradle
+
+# event trigger
+# main 브랜치에 push 했을 때 실행되는 트리거
+on:
+  push:
+    branches: [ "main", ]
+  pull_request:
+    branches: [ "main",  ]
+
+
+# permissions: write-all
+
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      ## jdk setting
+      - uses: actions/checkout@v3
+      - name: 🐧Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      ## gradle caching
+      - name: 🐧Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: 🐧application.yml 파일을 생성 합니다.
+        run: |
+          cd ./src/main/resources
+          touch ./application.yml
+          echo "${{ secrets.PROPERTIES }}" > ./application.yml
+        shell: bash
+
+      - name: 🐧gradle build를 위한 권한을 부여합니다.
+        run: chmod +x gradlew
+
+      - name: 🐧gradle build 중입니다.
+        run: ./gradlew build
+        shell: bash # ci는 여기까지
+
+      - name: 🐧docker image build 후 NCP Container Registry에 push합니다.
+        run: |
+          docker login -u ${{ secrets.NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT }} -p ${{ secrets.NCP_API_SECRET_KEY }}
+          docker build -f Dockerfile -t ${{ secrets.NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT }}/${{ secrets.NCP_CONTAINER_REGISTRY_IMAGE }} .
+          docker push ${{ secrets.NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT }}/${{ secrets.NCP_CONTAINER_REGISTRY_IMAGE }}
+
+      ## deploy to production
+      - name:  NCP Container Registry에서 pull 후 deploy합니다.
+        uses: appleboy/ssh-action@master
+        #        id: deploy-prod
+        with:
+          username: ${{ secrets.NCP_SERVER_USERNAME }}
+          host: ${{ secrets.NCP_SERVER_HOST }}
+          key: ${{ secrets.NCP_SERVER_PASSWORD }}
+          envs: GITHUB_SHA
+          script: |
+            sudo docker pull ${{ secrets.NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT }}/${{ secrets.NCP_CONTAINER_REGISTRY_IMAGE }}
+            sudo docker rm -f $(docker ps -qa) 
+            docker compose up -d
+            docker image prune -f
