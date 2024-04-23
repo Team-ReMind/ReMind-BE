@@ -3,9 +3,9 @@
 name: Re:mind CI/CD with Gradle
 
 # event trigger
-# main 브랜치에 push 했을 때 실행되는 트리거
+# main 브랜치에 pr을 생성 했을 때 실행되는 트리거
 on:
-  push:
+  pull_request:
     branches: [ "master" ]
 
 # permissions: write-all
@@ -46,22 +46,3 @@ jobs:
       - name: 🐧gradle build 중입니다.
         run: ./gradlew build
         shell: bash # ci는 여기까지
-
-      - name: 🐧NCP Container Registry에 로그인, docker image build 후 NCP Container Registry에 push합니다..
-        run: |
-          docker login -u ${{ secrets.NCP_API_ACCESS_KEY }} -p ${{ secrets.NCP_API_SECRET_KEY }} ${{ secrets.NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT }}
-          docker build -f Dockerfile -t ${{ secrets.NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT }}/${{ secrets.NCP_CONTAINER_REGISTRY_IMAGE }} .
-          docker push ${{ secrets.NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT }}/${{ secrets.NCP_CONTAINER_REGISTRY_IMAGE }}
-
-      ## deploy to production
-      - name: 🐧NCP Container Registry에서 pull 후 deploy합니다.
-        uses: appleboy/ssh-action@master
-        with:
-          username: ${{ secrets.NCP_SERVER_USERNAME }}
-          host: ${{ secrets.NCP_SERVER_HOST }}
-          password: ${{ secrets.NCP_SERVER_PASSWORD }}
-          script: |
-            sudo docker pull ${{ secrets.NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT }}/${{ secrets.NCP_CONTAINER_REGISTRY_IMAGE }}
-            sudo docker rm -f $(docker ps -qa) 
-            docker compose up -d
-            docker image prune -f
