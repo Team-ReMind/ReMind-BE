@@ -77,6 +77,16 @@ jobs:
           docker build -f ./.deploy/Dockerfile -t ${{ secrets.NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT }}/${{ secrets.NCP_CONTAINER_REGISTRY_IMAGE }} .
           docker push ${{ secrets.NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT }}/${{ secrets.NCP_CONTAINER_REGISTRY_IMAGE }}
 
+      - name: 🐧 docker-compose.yml을 서버에 옮깁니다.
+        uses: appleboy/scp-action@master
+        with:
+          username: ${{ secrets.NCP_SERVER_USERNAME }}
+          host: ${{ secrets.NCP_SERVER_HOST }}
+          password: ${{ secrets.NCP_SERVER_PASSWORD }}
+          source: "./.deploy/docker-compose.yml"
+          target: "/root"
+          strip_components: 2
+
       ## deploy to production
       - name: 🐧NCP Container Registry에서 pull 후 deploy합니다.
         uses: appleboy/ssh-action@master
