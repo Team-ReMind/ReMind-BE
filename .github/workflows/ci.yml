@@ -6,7 +6,7 @@ name: Re:mind CI/CD with Gradle
 # main 브랜치에 pr을 생성 했을 때 실행되는 트리거
 on:
   pull_request:
-    branches: [ "master" ]
+    branches: [ "masterteetst" ]
 
 # permissions: write-all
 
