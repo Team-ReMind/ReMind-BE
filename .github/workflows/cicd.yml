@@ -92,6 +92,7 @@ jobs:
           host: ${{ secrets.NCP_SERVER_HOST }}
           password: ${{ secrets.NCP_SERVER_PASSWORD }}
           script: |
+            docker login -u ${{ secrets.NCP_API_ACCESS_KEY }} -p ${{ secrets.NCP_API_SECRET_KEY }} ${{ secrets.NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT }}
             sudo docker pull ${{ secrets.NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT }}/${{ secrets.NCP_CONTAINER_REGISTRY_IMAGE }}
             sudo docker rm -f $(docker ps -qa) 
             docker compose up -d
