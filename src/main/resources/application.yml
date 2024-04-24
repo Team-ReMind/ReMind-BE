@@ -5,10 +5,6 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-    # 스프링부트 개발환경 환경 변수 설정
-#    config:
-#      import: classpath:env.properties
-
   jpa:
     show-sql: true
     hibernate:
