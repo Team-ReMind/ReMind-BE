@@ -94,6 +94,6 @@ jobs:
           script: |
             docker login -u ${{ secrets.NCP_API_ACCESS_KEY }} -p ${{ secrets.NCP_API_SECRET_KEY }} ${{ secrets.NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT }}
             sudo docker pull ${{ secrets.NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT }}/${{ secrets.NCP_CONTAINER_REGISTRY_IMAGE }}
-            sudo docker rm -f $(docker ps -qa) 
+            sudo docker rm -f $(docker ps -qa) || true
             docker compose up -d
             docker image prune -f
