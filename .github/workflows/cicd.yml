@@ -36,7 +36,7 @@ jobs:
             ${{ runner.os }}-gradle-
 
       ####
-      - name: 🐧🐧Set .env for configuration
+      - name: 🐧Set .env for configuration
         uses: appleboy/ssh-action@master
         with:
           username: ${{ secrets.NCP_SERVER_USERNAME }}
@@ -63,13 +63,6 @@ jobs:
 #              echo "AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}" >> ./.env
 #              echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}" >> ./.env
 
-      ####
-#      - name: 🐧application.yml 파일을 생성 합니다.
-#        run: |
-#          cd ./src/main/resources
-#          touch ./application.yml
-#          echo "${{ secrets.PROPERTIES }}" > ./application.yml
-#        shell: bash
 
       - name: 🐧gradle build를 위한 권한을 부여합니다.
         run: chmod +x gradlew
