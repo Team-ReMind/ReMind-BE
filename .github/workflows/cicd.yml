@@ -16,7 +16,6 @@ jobs:
   build:
     runs-on: ubuntu-20.04
     steps:
-      ## jdk setting
       - uses: actions/checkout@v3
       - name: 🐧Set up JDK 17
         uses: actions/setup-java@v3
@@ -24,7 +23,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      ## gradle caching
       - name: 🐧Gradle Caching
         uses: actions/cache@v3
         with:
@@ -35,8 +33,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      ####
-      - name: 🐧Set .env for configuration
+      - name: 🐧Set ".env" for configuration at Server
         uses: appleboy/ssh-action@master
         with:
           username: ${{ secrets.NCP_SERVER_USERNAME }}
@@ -61,7 +58,7 @@ jobs:
 #              echo "APPLE_APP_ID=${{ secrets.APPLE_APP_ID }}" >> ./.env
 #              echo "S3_BUCKET=${{ secrets.S3_BUCKET }}" >> ./.env
 #              echo "AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}" >> ./.env
-#              echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}" >> ./.env
+#              echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}" >> ./.envdx
 
 
       - name: 🐧gradle build를 위한 권한을 부여합니다.
