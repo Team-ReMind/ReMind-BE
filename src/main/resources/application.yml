@@ -5,9 +5,9 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-  # 환경 변수 값 주입
-  #  config:
-  #    import: classpath:env.properties
+
+  config:
+    import: classpath:env.properties
 
   jpa:
     hibernate:
