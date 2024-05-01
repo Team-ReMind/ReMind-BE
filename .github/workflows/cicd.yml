@@ -48,6 +48,7 @@ jobs:
               echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> ./.env
               echo "NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT=${{ secrets.NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT }}" >> ./.env
               echo "NCP_CONTAINER_REGISTRY_IMAGE=${{ secrets.NCP_CONTAINER_REGISTRY_IMAGE }}" >> ./.env
+              echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> ./.env
 
 
       - name: 🐧gradle build를 위한 권한을 부여합니다.
