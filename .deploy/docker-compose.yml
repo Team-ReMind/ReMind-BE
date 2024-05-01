@@ -1,12 +1,12 @@
 version: '3'
 services:
   remind:
-    image: remind-registry.kr.ncr.ntruss.com/remind
-    container_name: remind
+    image: ${NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT}/${NCP_CONTAINER_REGISTRY_IMAGE}
+    container_name: ${NCP_CONTAINER_REGISTRY_IMAGE}
     restart: always
+    env_file:
+      - .env
     ports:
       - 8080:8080
     environment:
       - TZ=Asia/Seoul
-
-
