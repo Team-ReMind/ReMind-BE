@@ -51,18 +51,16 @@ jobs:
 #              echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> ./.env
 
       - name: env.properite 생성
-        run : |
-              touch ./src/main/resources/application.yml
-              echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.yml
-#              touch .src/main/resources/env.properties
-#              echo "DB_USERNAME=${DB_USERNAME}" >> .src/main/resources/env.properties
-#              echo "DB_PASSWORD=${DB_PASSWORD}" >> .src/main/resources/env.properties
-#              echo "DB_HOST=${DB_HOST}" >> .src/main/resources/env.properties
-#              echo "DB_PORT=${DB_PORT}" >> .src/main/resources/env.properties
-#              echo "DB_DATABASE=${DB_DATABASE}" >> .src/main/resources/env.properties
-#              echo "NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT=${NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT}" >> .src/main/resources/env.properties
-#              echo "NCP_CONTAINER_REGISTRY_IMAGE=${NCP_CONTAINER_REGISTRY_IMAGE}" >> .src/main/resources/env.properties
-#              echo "JWT_SECRET_KEY=${JWT_SECRET_KEY}" >> .src/main/resources/env.properties
+        run : |          
+              touch ./src/main/resources/env.properties
+              echo "DB_USERNAME=${DB_USERNAME}" >> ./src/main/resources/env.properties
+              echo "DB_PASSWORD=${DB_PASSWORD}" >> ./src/main/resources/env.properties
+              echo "DB_HOST=${DB_HOST}" >> ./src/main/resources/env.properties
+              echo "DB_PORT=${DB_PORT}" >> ./src/main/resources/env.properties
+              echo "DB_DATABASE=${DB_DATABASE}" >> ./src/main/resources/env.properties
+              echo "NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT=${NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT}" >> ./src/main/resources/env.properties
+              echo "NCP_CONTAINER_REGISTRY_IMAGE=${NCP_CONTAINER_REGISTRY_IMAGE}" >> ./src/main/resources/env.properties
+              echo "JWT_SECRET_KEY=${JWT_SECRET_KEY}" >> ./src/main/resources/env.properties
 
 
 
