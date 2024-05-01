@@ -13,7 +13,7 @@ public class HealthTestController {
 //    @Operation(summary = "Health Check API", description = "Health Check Api입니다.")
     @GetMapping("")
     public String apiHealthTest() {
-        return "remind! v8 : cicd -상민쓰리뷰반영!";
+        return "remind! v9 - cicd찐최종;";
     }
 
 }

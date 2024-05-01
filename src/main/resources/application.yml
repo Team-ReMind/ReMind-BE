@@ -5,8 +5,6 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-  config:
-    import: classpath:env.properties
 
   jpa:
     hibernate:
