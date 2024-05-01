@@ -1,0 +1,13 @@
+version: '3'
+services:
+  remind:
+    image: ${NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT}/${NCP_CONTAINER_REGISTRY_IMAGE}
+    container_name: ${NCP_CONTAINER_REGISTRY_IMAGE}
+    restart: always
+    ports:
+      - 8080:8080
+    environment:
+      - TZ=Asia/Seoul
+      - NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT=${NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT}
+      - NCP_CONTAINER_REGISTRY_IMAGE=${NCP_CONTAINER_REGISTRY_IMAGE}
+
