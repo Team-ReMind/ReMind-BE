@@ -31,6 +31,14 @@ public class Member {
 
     private String name;
 
+    private String age;
+
+    private String gender;
+
+    private String email;
+
+    private String phoneNumber;
+
     @Enumerated(value = EnumType.STRING)
     private RolesType rolesType;
 
