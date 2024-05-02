@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 public interface KakaoFeignClient {
 
     @GetMapping("/v2/user/me")
-//    @GetMapping("/v1/user/access_token_info")
     public KakaoGetMemberInfoResponse getKakaoIdByAccessToken(@RequestHeader("Authorization") String kakaoAccessToken);
 
 //    @GetMapping("/v2/user/me")

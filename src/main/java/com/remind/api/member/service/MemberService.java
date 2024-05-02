@@ -62,7 +62,7 @@ public class MemberService {
 
 
         // redis 토큰 정보 저장
-//        redisRepository.saveToken(userDetail.getMemberId(), newRefreshToken);
+        redisRepository.saveToken(userDetail.getMemberId(), newRefreshToken);
 
         return KakaoLoginResponse.builder()
                 .authId(kakaoMemberInfo.getAuthId())
