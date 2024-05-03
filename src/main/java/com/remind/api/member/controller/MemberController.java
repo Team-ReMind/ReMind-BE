@@ -1,5 +1,7 @@
 package com.remind.api.member.controller;
 
+import com.remind.api.member.dto.request.KakaoLoginRequest;
+import com.remind.api.member.dto.response.KakaoLoginResponse;
 import com.remind.api.member.dto.request.RefreshTokenRequestDto;
 import com.remind.api.member.dto.response.TokenResponseDto;
 import com.remind.api.member.service.MemberService;
@@ -24,10 +26,17 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    //>>>>  소셜 로그인 구현 예정
+    @Operation(
+            summary = "카카오 로그인 API",
+            description = "kakao authorization code를 이용하여 발급받은 kakao accessToken을 사용하여 소셜 로그인 합니다."
+    )
     @PostMapping("/login")
-    public String login() {
-        return "login 성공";
+    public ResponseEntity<ApiSuccessResponse<KakaoLoginResponse>> kakaoLogin(
+            @RequestBody KakaoLoginRequest req
+    ) {
+        return ResponseEntity.ok(
+                new ApiSuccessResponse<>(memberService.kakaoLogin(req))
+        );
 
     }
 

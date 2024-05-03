@@ -31,6 +31,18 @@ public class Member {
 
     private String name;
 
+    private int age;
+
+    private String gender;
+
+    private String email;
+
+    private String phoneNumber;
+
+    private String profileImageUrl;
+
+    private Boolean isOnboardingFinished;
+
     @Enumerated(value = EnumType.STRING)
     private RolesType rolesType;
 
