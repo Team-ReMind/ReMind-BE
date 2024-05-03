@@ -28,7 +28,7 @@ public class MemberController {
 
     @Operation(
             summary = "카카오 로그인 API",
-            description = "kakao access token을 사용하여 소셜 로그인 시도"
+            description = "kakao authorization code를 이용하여 발급받은 kakao accessToken을 사용하여 소셜 로그인 합니다."
     )
     @PostMapping("/login")
     public ResponseEntity<ApiSuccessResponse<KakaoLoginResponse>> kakaoLogin(

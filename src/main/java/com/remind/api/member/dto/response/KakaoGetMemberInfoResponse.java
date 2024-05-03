@@ -17,13 +17,20 @@ public class KakaoGetMemberInfoResponse {
     public static class KakaoAcountDto {
 
         private KakaoProfileDto profile;
+        private String name;
+        private String email;
+        private String birthYear;
+        private String gender;
+        private String phone_number;
 
+        // 추가되는 필드
     }
 
     @Getter
     public static class KakaoProfileDto {
 
-        private String nickname;
+//        private String nickname;
+        private String profile_image_url;
 
     }
 

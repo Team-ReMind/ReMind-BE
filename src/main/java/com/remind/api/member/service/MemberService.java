@@ -21,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -40,7 +42,7 @@ public class MemberService {
         // 그 카카오 아이디는 authId이다.
         KakaoGetMemberInfoResponse kakaoMemberInfo = getKakaoIdByAccessToken("Bearer " + kakaoAccessToken);
 
-        log.info("nickname :: " + kakaoMemberInfo.getKakao_account().getProfile().getNickname());
+        log.info("name :: " + kakaoMemberInfo.getKakao_account().getName());
         log.info("authId :: " + kakaoMemberInfo.getAuthId());
 
         // authId로 찾았을때 존재하지 않으면 등록해주기
@@ -65,9 +67,7 @@ public class MemberService {
         redisRepository.saveToken(userDetail.getMemberId(), newRefreshToken);
 
         return KakaoLoginResponse.builder()
-                .authId(kakaoMemberInfo.getAuthId())
-                .redirectUrl(request.redirectUrl())
-                .name(kakaoMemberInfo.getKakao_account().getProfile().getNickname())
+                .name(kakaoMemberInfo.getKakao_account().getName())
                 .accessToken(newAccessToken)
                 .refreshToken(newRefreshToken)
                 .build();
@@ -89,9 +89,18 @@ public class MemberService {
      * @return
      */
     private Member register(KakaoGetMemberInfoResponse kakaoMemberInfo) {
+        int currentYear = LocalDate.now().getYear();
+        int birthYearInt = Integer.parseInt(kakaoMemberInfo.getKakao_account().getBirthYear());
+        int age = currentYear - birthYearInt;
         Member member = Member.builder()
                 .authId(kakaoMemberInfo.getAuthId())
-                .name(kakaoMemberInfo.getKakao_account().getProfile().getNickname())
+                .name(kakaoMemberInfo.getKakao_account().getName())
+                .age(age)
+                .gender(kakaoMemberInfo.getKakao_account().getGender())
+                .email(kakaoMemberInfo.getKakao_account().getEmail())
+                .phoneNumber(kakaoMemberInfo.getKakao_account().getPhone_number())
+                .profileImageUrl(kakaoMemberInfo.getKakao_account().getProfile().getProfile_image_url())
+                .isOnboardingFinished(false)
                 .build();
 
         return memberRepository.save(member);
