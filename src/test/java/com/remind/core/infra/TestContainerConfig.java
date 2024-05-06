@@ -17,7 +17,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 
-
 @Testcontainers
 @ActiveProfiles("test")
 public abstract class TestContainerConfig {
@@ -26,13 +25,11 @@ public abstract class TestContainerConfig {
      * Mysql Test Container 생성
      */
     @Container
-    static MySQLContainer<?> mySQLContainer = new MySQLContainer<>("mysql:8")
-            .withExposedPorts(3306)
-            .withCreateContainerCmdModifier(e ->
-                    e.withHostConfig(
-                            new HostConfig().withPortBindings(
-                                    new PortBinding(Ports.Binding.bindPort(3306), new ExposedPort(3308)))
-                    ));
+    static MySQLContainer<?> mySQLContainer = new MySQLContainer<>(DockerImageName.parse("mysql:8.0"))
+            .withUsername("root")
+            .withPassword("1234")
+            .withDatabaseName("remind");
+
     /**
      * Redis Test Container 생성
      */
@@ -77,23 +74,5 @@ public abstract class TestContainerConfig {
                 .forEach(e -> {
                     registry.add(e.getKey(), e::getValue);
                 });
-    }
-
-    /**
-     * 테스트 실행 전 수행
-     */
-    @BeforeAll
-    static void beforeAll(){
-        mySQLContainer.start();
-        redisContainer.start();
-    }
-
-    /**
-     * 테스트 실행 후 수행
-     */
-    @AfterAll
-    static void afterAll(){
-        mySQLContainer.stop();
-        redisContainer.stop();
     }
 }
