@@ -15,8 +15,8 @@ public class RedisRepository {
 
     @Value("${jwt.refresh-expiration-seconds}")
     private int refreshExpirationSeconds;
-
     private final RedisTemplate<String, Object> redisTemplate;
+    public static final String REFRESH_TOKEN_KEY = "refresh_token";
 
     /**
      * refresh token 저장
@@ -24,7 +24,7 @@ public class RedisRepository {
     public void saveToken(Long memberId, String refreshToken) {
         ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
         Duration expireDuration = Duration.ofSeconds(refreshExpirationSeconds);
-        valueOperations.set(String.valueOf(memberId), Map.of("refreshToken", refreshToken), expireDuration);
+        valueOperations.set(String.valueOf(memberId), Map.of(REFRESH_TOKEN_KEY, refreshToken), expireDuration);
     }
 
     /**
