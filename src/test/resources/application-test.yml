@@ -1,0 +1,27 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+        show_sql: true
+
+# jwt 토큰 관련 값
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
+  access-expiration-seconds: 60
+  refresh-expiration-seconds: 100
+
+
+# 쿼리문 파라미터 바인딩 값 확인
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql: trace
