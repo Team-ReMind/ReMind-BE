@@ -55,5 +55,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: 🐧gradle build 중입니다.
-        run: ./gradlew build
+        run: |
+          ./gradlew test
+          ./gradlew build
         shell: bash # ci는 여기까지
