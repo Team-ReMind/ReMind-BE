@@ -36,8 +36,7 @@ public abstract class TestContainerConfig {
     @Container
     static GenericContainer<?> redisContainer = new GenericContainer<>(
             DockerImageName.parse("redis:6.2.6"))
-            .withExposedPorts(6379)
-            .withNetworkMode("host");
+            .withExposedPorts(6379);
 
     /**
      * register dynamic properties to be added to the set of PropertySources in the Environment for an
