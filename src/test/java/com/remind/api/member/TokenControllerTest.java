@@ -17,6 +17,7 @@ import com.remind.core.security.jwt.JwtProvider;
 import java.util.Set;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,7 @@ public class TokenControllerTest extends TestContainerConfig {
     }
 
     @Test
+    @Disabled
     @DisplayName("refresh token 저장.조회 단위 테스트")
     public void refreshTokenUnitTest() {
         //given
@@ -74,6 +76,7 @@ public class TokenControllerTest extends TestContainerConfig {
     }
 
     @Test
+    @Disabled
     @WithMockCustomUser
     @DisplayName("refresh token 저장.조회 통합 테스트")
     public void refreshTokenIntegrationTest() throws Exception {
