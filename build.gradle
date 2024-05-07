@@ -59,8 +59,24 @@ dependencies {
 	// open feign
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
+	//test container
+	testImplementation 'org.testcontainers:testcontainers:1.19.3'
+	testImplementation 'org.testcontainers:junit-jupiter:1.19.3'
+	testImplementation 'org.testcontainers:mysql:1.19.3'
+	testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+
+	//Dotenv
+	implementation'io.github.cdimascio:dotenv-java:3.0.0'
+
+
+
+
 }
 
 tasks.named('test') {
+	useJUnitPlatform()
+}
+
+test {
 	useJUnitPlatform()
 }
