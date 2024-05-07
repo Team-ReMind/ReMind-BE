@@ -62,7 +62,6 @@ public class MemberService {
         String newAccessToken = jwtProvider.createAccessToken(userDetail);
         String newRefreshToken = jwtProvider.createRefreshToken(userDetail);
 
-
         // redis 토큰 정보 저장
         redisRepository.saveToken(userDetail.getMemberId(), newRefreshToken);
 
@@ -76,6 +75,7 @@ public class MemberService {
 
     /**
      * Bearer + kakaoAccessToken으로 카카오api를 호출하여 kakao authId를 받아오는 로직
+     *
      * @param kakaoAccessToken
      * @return
      */
@@ -85,6 +85,7 @@ public class MemberService {
 
     /**
      * 카카오 로그인 authId가 존재하지 않는 경우 가입하는 로직
+     *
      * @param kakaoMemberInfo
      * @return
      */
@@ -108,7 +109,7 @@ public class MemberService {
 
     }
 
-    //TODO: NoSql인 redis의 경우, @Transactional을 붙여야하는지 확인
+
     @Transactional
     public TokenResponseDto refreshToken(String oldRefreshToken, Long memberId) {
 
@@ -119,9 +120,9 @@ public class MemberService {
         if (!redisRepository.hasKey(member.getId())) {
             throw new MemberException(REFRESH_TOKEN_NOT_FOUND);
         }
-
         // redis에 저장된 토큰과 비교
-        if (!redisRepository.getRefreshToken(member.getId()).get("refreshToken").equals(oldRefreshToken)) {
+        if (!redisRepository.getRefreshToken(member.getId()).get(RedisRepository.REFRESH_TOKEN_KEY)
+                .equals(oldRefreshToken)) {
             throw new MemberException(REFRESH_TOKEN_NOT_MATCH);
         }
 
