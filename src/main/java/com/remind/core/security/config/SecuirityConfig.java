@@ -94,6 +94,7 @@ public class SecuirityConfig {
     private RequestMatcher[] authorizeRequestMathcers() {
         List<RequestMatcher> requestMatchers = List.of(
                 antMatcher(POST, "/member/refresh")
+//                antMatcher(POST, "/activity")
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
     }
