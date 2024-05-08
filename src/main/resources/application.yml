@@ -14,6 +14,11 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
         show_sql: true
+  # data.sql 실행
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
 
   ## redis 설정
   data:
