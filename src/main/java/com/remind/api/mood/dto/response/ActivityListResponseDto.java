@@ -1,10 +1,11 @@
 package com.remind.api.mood.dto.response;
 
-import com.remind.core.domain.mood.Activity;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
-
+@Schema(description = "추가한 활동 목록")
 public record ActivityListResponseDto(
-        List<Activity> activities
+        @Schema(description = "환자가 추가한 활동들 목록")
+        List<ActivityListDto> activities
 ) {
 
 }
