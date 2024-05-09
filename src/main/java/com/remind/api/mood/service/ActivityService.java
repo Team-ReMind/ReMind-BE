@@ -3,7 +3,7 @@ package com.remind.api.mood.service;
 import static com.remind.core.domain.enums.MemberErrorCode.*;
 
 import com.remind.api.mood.dto.request.ActivitySaveRequestDto;
-import com.remind.api.mood.dto.response.ActivityListDto;
+import com.remind.api.mood.dto.ActivityListDto;
 import com.remind.api.mood.dto.response.ActivityListResponseDto;
 import com.remind.core.domain.common.exception.MemberException;
 import com.remind.core.domain.member.Member;

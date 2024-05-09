@@ -1,4 +1,4 @@
-package com.remind.api.mood.dto.response;
+package com.remind.api.mood.dto;
 
 import com.remind.core.domain.mood.Activity;
 import io.swagger.v3.oas.annotations.media.Schema;
