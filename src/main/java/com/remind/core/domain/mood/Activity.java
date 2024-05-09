@@ -25,7 +25,6 @@ public class Activity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "mood_activity_id", nullable = false)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
