@@ -48,6 +48,12 @@ public class ActivityController {
                 new ApiSuccessResponse<>(Map.of("activityIdd", activityService.save(userDetails, dto))));
     }
 
+    @Operation(
+            summary = "추가한 활동 리스트 조회 API"
+    )
+    @ApiResponse(
+            responseCode = "200", description = "추가한 활동 리스트 조회 성공 응답입니다.", useReturnTypeSchema = true
+    )
     @GetMapping
     public ResponseEntity<ApiSuccessResponse<ActivityListResponseDto>> getActivityList(
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
