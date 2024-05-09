@@ -1,3 +1,4 @@
+version: '3.2'
 services:
   remind:
     image: ${NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT}/${NCP_CONTAINER_REGISTRY_IMAGE}
