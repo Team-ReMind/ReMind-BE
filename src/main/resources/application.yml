@@ -24,8 +24,8 @@ spring:
 # jwt 토큰 관련 값
 jwt:
   secret-key: ${JWT_SECRET_KEY}
-  access-expiration-seconds: 60
-  refresh-expiration-seconds: 100
+  access-expiration-seconds: ${ACCESS_EXPIRATION_SECONDS}
+  refresh-expiration-seconds: ${REFRESH_EXPIRATION_SECONDS}
 
 # 쿼리문 파라미터 바인딩 값 확인
 logging:
