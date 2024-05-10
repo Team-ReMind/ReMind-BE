@@ -19,7 +19,7 @@ public class KakaoGetMemberInfoResponse {
         private KakaoProfileDto profile;
         private String name;
         private String email;
-        private String birthYear;
+        private String birthyear;
         private String gender;
         private String phone_number;
 
