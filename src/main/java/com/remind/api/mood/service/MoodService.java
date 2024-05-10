@@ -8,6 +8,7 @@ import static com.remind.core.domain.enums.MoodErrorCode.MOOD_NOT_FOUND;
 import com.remind.api.mood.dto.request.MoodSaveRequestDto;
 import com.remind.api.mood.dto.response.ModelActivityResponseDto;
 import com.remind.api.mood.dto.response.MoodResponseDto;
+import com.remind.api.mood.repository.DateMoodActivityRepository;
 import com.remind.core.domain.common.exception.ActivityException;
 import com.remind.core.domain.common.exception.MemberException;
 import com.remind.core.domain.common.exception.MoodException;
@@ -36,6 +37,7 @@ public class MoodService {
     private final MoodRepository moodRepository;
     private final MemberRepository memberRepository;
     private final ActivityRepository activityRepository;
+    private final DateMoodActivityRepository dateMoodActivityRepository;
 
     /**
      * 오늘의 기분 기록
@@ -93,7 +95,7 @@ public class MoodService {
         Mood mood = moodRepository.findMoodByPatientAndMoodDate(userDetails.getMemberId(), localDate)
                 .orElseThrow(() -> new MoodException(MOOD_NOT_FOUND));
 
-        List<ModelActivityResponseDto> modelActivities = moodActivityRepository.getModelActivities(mood.getId());
+        List<ModelActivityResponseDto> modelActivities = dateMoodActivityRepository.getModelActivities(mood.getId());
 
         return new MoodResponseDto(mood.getFeelingType(), mood.getMoodDetail(), modelActivities);
     }
