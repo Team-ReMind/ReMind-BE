@@ -51,6 +51,10 @@ public class MemberService {
         //authId로 등록된 유저가 아니면 가입 후 멤버 반환해주기
         if (member == null) {
             member = register(kakaoMemberInfo);
+            log.info("신규 회원 등록 완료");
+        }
+        else{
+            log.info("기존 회원 로그인 완료");
         }
 
         //해당 멤버의 authId로 jwt토큰 발급하기
@@ -89,8 +93,9 @@ public class MemberService {
      * @return
      */
     private Member register(KakaoGetMemberInfoResponse kakaoMemberInfo) {
+        System.out.println("year: " + kakaoMemberInfo.getKakao_account().getBirthyear());
         int currentYear = LocalDate.now().getYear();
-        int birthYearInt = Integer.parseInt(kakaoMemberInfo.getKakao_account().getBirthYear());
+        int birthYearInt = Integer.parseInt(kakaoMemberInfo.getKakao_account().getBirthyear());
         int age = currentYear - birthYearInt;
         Member member = Member.builder()
                 .authId(kakaoMemberInfo.getAuthId())
@@ -102,7 +107,7 @@ public class MemberService {
                 .profileImageUrl(kakaoMemberInfo.getKakao_account().getProfile().getProfile_image_url())
                 .isOnboardingFinished(false)
                 .build();
-
+        System.out.println("year: " + kakaoMemberInfo.getKakao_account().getBirthyear());
         return memberRepository.save(member);
 
 
