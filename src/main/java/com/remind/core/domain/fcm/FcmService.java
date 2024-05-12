@@ -8,6 +8,7 @@ import com.google.common.net.HttpHeaders;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
 import com.remind.core.domain.common.exception.MemberException;
 import com.remind.core.domain.enums.MemberErrorCode;
 import com.remind.core.domain.fcm.dto.MessageDto;
@@ -32,8 +33,8 @@ public class FcmService {
             "remind-b60cb/messages:send";
     private final ObjectMapper objectMapper;
 
-    public void sendMessageTo(String targetToken, String title, String body) throws IOException {
-        String message = makeMessage(targetToken, title, body);
+    public void sendMessage1(MessageDto messageDto) throws IOException {
+        String message = makeMessage(messageDto);
 
         OkHttpClient client = new OkHttpClient();
         RequestBody requestBody = RequestBody.create(message,
@@ -50,13 +51,13 @@ public class FcmService {
         System.out.println(response.body().string());
     }
 
-    private String makeMessage(String targetToken, String title, String body) throws JsonParseException, JsonProcessingException {
+    private String makeMessage(MessageDto messageDto) throws JsonParseException, JsonProcessingException {
         FcmMessage fcmMessage = FcmMessage.builder()
                 .message(FcmMessage.Message.builder()
-                        .token(targetToken)
+                        .token(messageDto.fcmToken())
                         .notification(FcmMessage.Notification.builder()
-                                .title(title)
-                                .body(body)
+                                .title(messageDto.title())
+                                .body(messageDto.body())
                                 .image(null)
                                 .build()
                         ).build()).validateOnly(false).build();
@@ -75,21 +76,30 @@ public class FcmService {
         return googleCredentials.getAccessToken().getTokenValue();
     }
 
-    public void sendByFcmToken(MessageDto dto){
-        String fcmToken = getToken(dto.getMemberId());
+    ///////////////////////////////////////////////////////
+    public void sendMessage2(MessageDto messageDto){
+        //추후 userId를통해 가져오는 것으로
+        String fcmToken = messageDto.fcmToken();
 
+        //알림 메시지에 들어 갈 noti
+        Notification notification = Notification.builder()
+                .setTitle(messageDto.title())
+                .setBody(messageDto.body())
+                .build();
+
+        //메세지
         Message message = Message.builder()
-                .putData("score", "850")
-                .putData("time", "2:45")
                 .setToken(fcmToken)
+                .setNotification(notification)
+                .putData("data1 지누", "이거뭔데지누1")
+                .putData("data2 지누", "이거뭔데지누2")
                 .build();
 
         try {
             String response = FirebaseMessaging.getInstance().send(message);
-
             System.out.println("Successfully sent message: " + response);
         } catch (FirebaseMessagingException e) {
-            log.info("FCMexcept-"+ e.getMessage());
+            log.info("FCM exception - "+ e.getMessage());
         }
     }
 
