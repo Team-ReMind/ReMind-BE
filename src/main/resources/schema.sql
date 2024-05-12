@@ -19,7 +19,11 @@ create table member
     profile_image_url      varchar(50),
     is_onboarding_finished boolean,
     registration_token     varchar(255),
-    roles_type             varchar(255)
+    roles_type             varchar(255),
+    protector_phone_number varchar(20),
+    city                   varchar(50), 
+    district               varchar(50),  
+    center_name            varchar(50)   
 );
 
 create table mood
