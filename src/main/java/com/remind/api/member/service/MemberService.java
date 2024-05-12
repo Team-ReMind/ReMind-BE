@@ -7,8 +7,7 @@ import static com.remind.core.domain.enums.MemberErrorCode.REFRESH_TOKEN_NOT_MAT
 import com.remind.api.member.dto.request.KakaoLoginRequest;
 import com.remind.api.member.dto.response.KakaoGetMemberInfoResponse;
 import com.remind.api.member.dto.response.KakaoLoginResponse;
-import com.remind.api.member.exception.MemberException;
-//import com.remind.api.member.kakao.KakaoFeignClient;
+import com.remind.core.domain.common.exception.MemberException;
 import com.remind.api.member.kakao.KakaoFeignClient;
 import com.remind.core.domain.common.repository.RedisRepository;
 import com.remind.core.domain.member.Member;

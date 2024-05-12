@@ -93,7 +93,12 @@ public class SecuirityConfig {
      */
     private RequestMatcher[] authorizeRequestMathcers() {
         List<RequestMatcher> requestMatchers = List.of(
-                antMatcher(POST, "/member/refresh")
+                antMatcher(POST, "/member/refresh"),
+                antMatcher(POST, "/activity"),
+                antMatcher(GET, "/activity"),
+                antMatcher(POST, "/mood"),
+                antMatcher(GET, "/mood"),
+                antMatcher(GET, "/mood/chart")
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
     }
