@@ -32,7 +32,7 @@ public class MemberController {
     private final MemberService memberService;
     @Operation(
             summary = "카카오 로그인 API",
-            description = "kakao authorization code를 이용하여 발급받은 kakao accessToken을 사용하여 소셜 로그인 합니다."
+            description = "kakao authorization code를 이용하여 발급받은 kakao accessToken을 사용하여 소셜 로그인 합니다.\n 기기 인증용 fcm Token도 같이 전송합니다."
     )
     @PostMapping("/login")
     @SecurityRequirements(value = {})

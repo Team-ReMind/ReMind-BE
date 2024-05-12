@@ -60,6 +60,8 @@ public class Member {
     // 센터를 위한 컬럼
     private String centerName;
 
+    private String fcmToken;
+
     //온보딩 후 특정 컬럼 업데이트를 위한 메서드 - 환자용
     public void updateRolesTypeForUser(RolesType rolesType,String protectorPhoneNumber) {
         this.isOnboardingFinished = true;

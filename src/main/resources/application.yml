@@ -46,3 +46,6 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
 
+# fcm
+#firebase:
+#  key-path: "remind-fcm-key.json"

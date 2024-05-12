@@ -56,7 +56,7 @@ public class MemberService {
 
         //authId로 등록된 유저가 아니면 가입 후 멤버 반환해주기
         if (member == null) {
-            member = register(kakaoMemberInfo);
+            member = register(kakaoMemberInfo, request.fcmToken());
             log.info("신규 회원 등록 완료");
         }
         else{
@@ -97,7 +97,7 @@ public class MemberService {
      * @param kakaoMemberInfo
      * @return
      */
-    private Member register(KakaoGetMemberInfoResponse kakaoMemberInfo) {
+    private Member register(KakaoGetMemberInfoResponse kakaoMemberInfo,String fcmToken) {
         System.out.println("year: " + kakaoMemberInfo.getKakao_account().getBirthyear());
         int currentYear = LocalDate.now().getYear();
         int birthYearInt = Integer.parseInt(kakaoMemberInfo.getKakao_account().getBirthyear());
@@ -111,6 +111,7 @@ public class MemberService {
                 .phoneNumber(kakaoMemberInfo.getKakao_account().getPhone_number())
                 .profileImageUrl(kakaoMemberInfo.getKakao_account().getProfile().getProfile_image_url())
                 .isOnboardingFinished(false)
+                .fcmToken(fcmToken)
                 .build();
         System.out.println("year: " + kakaoMemberInfo.getKakao_account().getBirthyear());
         return memberRepository.save(member);
