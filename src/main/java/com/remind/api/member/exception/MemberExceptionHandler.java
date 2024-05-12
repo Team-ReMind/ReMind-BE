@@ -2,6 +2,7 @@ package com.remind.api.member.exception;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
+import com.remind.core.domain.common.exception.MemberException;
 import com.remind.core.domain.common.response.ErrorResponse;
 import com.remind.core.domain.enums.MemberErrorCode;
 import lombok.extern.slf4j.Slf4j;

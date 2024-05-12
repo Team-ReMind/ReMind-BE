@@ -11,7 +11,7 @@ public enum MemberErrorCode implements BaseErrorCode {
     REFRESH_TOKEN_NOT_MATCH(404, "저장된 refresh token 값과 일치하지 않습니다.", HttpStatus.NOT_FOUND),
     MEMBER_NOT_FOUND(404, "일치하는 member가 없습니다.", HttpStatus.NOT_FOUND),
     AUTH_ID_NOT_FOUND(404, "kakao auth id와 일치하는 member가 없습니다.", HttpStatus.NOT_FOUND),
-    ;
+    MEMBER_UNAUTHORIZED(401, "환자만 접근 가능합니다.", HttpStatus.UNAUTHORIZED);
 
     private final int errorCode;
     private final String errorMessage;

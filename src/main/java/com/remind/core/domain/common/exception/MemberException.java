@@ -1,4 +1,4 @@
-package com.remind.api.member.exception;
+package com.remind.core.domain.common.exception;
 
 import com.remind.core.domain.enums.MemberErrorCode;
 import lombok.Getter;
