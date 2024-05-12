@@ -38,3 +38,5 @@ out/
 
 /.env
 
+### fcm ###
+**/src/main/resources/remind-firebase-service-key.json
