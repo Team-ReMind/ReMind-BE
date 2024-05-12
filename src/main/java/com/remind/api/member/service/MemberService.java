@@ -5,19 +5,24 @@ import static com.remind.core.domain.enums.MemberErrorCode.REFRESH_TOKEN_NOT_FOU
 import static com.remind.core.domain.enums.MemberErrorCode.REFRESH_TOKEN_NOT_MATCH;
 
 import com.remind.api.member.dto.request.KakaoLoginRequest;
+import com.remind.api.member.dto.request.OnboardingRequestDto;
 import com.remind.api.member.dto.response.KakaoGetMemberInfoResponse;
 import com.remind.api.member.dto.response.KakaoLoginResponse;
+import com.remind.api.member.dto.response.OnboardingResponseDto;
 import com.remind.api.member.exception.MemberException;
 //import com.remind.api.member.kakao.KakaoFeignClient;
 import com.remind.api.member.kakao.KakaoFeignClient;
 import com.remind.core.domain.common.repository.RedisRepository;
+import com.remind.core.domain.enums.MemberErrorCode;
 import com.remind.core.domain.member.Member;
+import com.remind.core.domain.member.enums.RolesType;
 import com.remind.core.domain.member.repository.MemberRepository;
 import com.remind.api.member.dto.response.TokenResponseDto;
 import com.remind.core.security.dto.UserDetailsImpl;
 import com.remind.core.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,7 +65,6 @@ public class MemberService {
 
         //해당 멤버의 authId로 jwt토큰 발급하기
 
-        //이 코드는 이해가 안돼
         UserDetailsImpl userDetail = UserDetailsImpl.fromMember(member);
 
         String newAccessToken = jwtProvider.createAccessToken(userDetail);
@@ -113,6 +117,33 @@ public class MemberService {
 
 
     }
+
+    /**
+     * 로그인 후, 온보딩이 완료되었을 때 엔티티의컬럼을 업데이트 하는 로직
+     * @param userDetails
+     * @param req
+     * @return
+     */
+    @Transactional
+    public OnboardingResponseDto onboarding(UserDetailsImpl userDetails, OnboardingRequestDto req) {
+        Member member = memberRepository.findById(userDetails.getMemberId())
+                .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
+
+        //환자, 센터, 의사인 경우
+        if (req.rolesType() == RolesType.ROLE_USER) {
+            member.updateRolesTypeForUser(RolesType.ROLE_USER, req.protectorPhoneNumber());
+        } else if (req.rolesType() == RolesType.ROLE_CENTER) {
+            member.updateRolesTypeForCenter(RolesType.ROLE_CENTER, req.city(), req.district(), req.centerName());
+        } else if (req.rolesType() == RolesType.ROLE_DOCTOR) {
+            member.updateRolesTypeForDoctor(RolesType.ROLE_DOCTOR);
+        }
+
+        return OnboardingResponseDto.builder()
+                .userId(member.getId())
+                .rolesType(member.getRolesType())
+                .build();
+    }
+
 
 
     @Transactional
