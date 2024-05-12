@@ -1,12 +1,10 @@
 package com.remind.api.mood.service;
 
-import static com.remind.core.domain.enums.MoodErrorCode.*;
-
 import com.remind.api.mood.dto.MoodChartDto;
 import com.remind.api.mood.dto.MoodChartDto.MoodChartResponseDto;
 import com.remind.api.mood.dto.response.MoodChartPagingResponseDto;
+import com.remind.api.mood.dto.response.MoodPercentResponseDto;
 import com.remind.api.mood.repository.MoodChartPagingRepository;
-import com.remind.core.domain.common.exception.MoodException;
 import com.remind.core.security.dto.UserDetailsImpl;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -22,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MoodChartService {
 
     private final MoodChartPagingRepository moodChartPagingRepository;
+    private final MoodChartCacheService moodChartCacheService;
 
     @Transactional(readOnly = true)
     public MoodChartPagingResponseDto getMoodChart(UserDetailsImpl userDetails, Integer year, Integer month,
@@ -41,5 +40,10 @@ public class MoodChartService {
             response.add(moodChart.toResponseDto(moodChart.getFeeling(), moodChart.getLocalDate()));
         });
         return new MoodChartPagingResponseDto(response, hasNext);
+    }
+
+    @Transactional(readOnly = true)
+    public List<MoodPercentResponseDto> getActivityChart(UserDetailsImpl userDetails) {
+        return moodChartCacheService.getActivityFeelingTypePercent(userDetails.getMemberId());
     }
 }
