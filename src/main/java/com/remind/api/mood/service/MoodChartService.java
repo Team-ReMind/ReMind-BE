@@ -33,9 +33,6 @@ public class MoodChartService {
         Slice<MoodChartDto> moodChartDtos = moodChartPagingRepository.getMoodChartPaging2(userDetails.getMemberId(),
                 LocalDate.of(year, month, day), Pageable.ofSize(size));
 
-        if (!moodChartDtos.hasContent()) {
-            throw new MoodException(MOOD_CHART_NOT_FOUND);
-        }
         // 다음 페이지 존재 여부
         if (moodChartDtos.hasNext()) {
             hasNext = true;
