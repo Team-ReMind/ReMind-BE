@@ -2,9 +2,11 @@ package com.remind.api.mood.service;
 
 import com.remind.api.mood.dto.MoodChartDto;
 import com.remind.api.mood.dto.MoodChartDto.MoodChartResponseDto;
+import com.remind.api.mood.dto.response.ActivityPercentResponseDto;
 import com.remind.api.mood.dto.response.MoodChartPagingResponseDto;
 import com.remind.api.mood.dto.response.MoodPercentResponseDto;
 import com.remind.api.mood.repository.MoodChartPagingRepository;
+import com.remind.core.domain.mood.enums.FeelingType;
 import com.remind.core.security.dto.UserDetailsImpl;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -45,5 +47,11 @@ public class MoodChartService {
     @Transactional(readOnly = true)
     public List<MoodPercentResponseDto> getActivityChart(UserDetailsImpl userDetails) {
         return moodChartCacheService.getActivityFeelingTypePercent(userDetails.getMemberId());
+    }
+
+    @Transactional(readOnly = true)
+    public List<ActivityPercentResponseDto> getActivityPercentChart(UserDetailsImpl userDetails, FeelingType feelingType) {
+        return moodChartCacheService.getActivityPercentChart(userDetails.getMemberId(), feelingType);
+
     }
 }

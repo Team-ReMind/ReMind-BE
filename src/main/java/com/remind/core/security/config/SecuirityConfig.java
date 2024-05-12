@@ -99,7 +99,8 @@ public class SecuirityConfig {
                 antMatcher(POST, "/mood"),
                 antMatcher(GET, "/mood"),
                 antMatcher(GET, "/mood/chart"),
-                antMatcher(GET, "/mood/chart/percents")
+                antMatcher(GET, "/mood/chart/percents"),
+                antMatcher(GET, "/mood/chart/percent/activity")
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
     }

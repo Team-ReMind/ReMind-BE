@@ -1,5 +1,7 @@
 package com.remind.api.mood.service;
 
+import com.remind.api.mood.dto.ActivityListDto;
+import com.remind.api.mood.dto.response.ActivityPercentResponseDto;
 import com.remind.api.mood.dto.response.MoodPercentResponseDto;
 import com.remind.api.mood.repository.MoodPercentRepository;
 import com.remind.core.domain.mood.enums.FeelingType;
@@ -33,6 +35,32 @@ public class MoodChartCacheService {
                 .forEach((feelingType, count) -> {
                     response.add(
                             new MoodPercentResponseDto(feelingType, ((double) count / feelingResponse.size()) * 100));
+                });
+
+        return response;
+    }
+
+    /**
+     * feelingPercent 이름의 캐시를 사용하고 key는 memberId:feelingType.feeling이다.
+     */
+    @Cacheable(cacheNames = "feelingPercent", key = "#memberId.toString().concat(':').concat(#feelingType.feeling)")
+    public List<ActivityPercentResponseDto> getActivityPercentChart(Long memberId, FeelingType feelingType) {
+
+        List<ActivityPercentResponseDto> response = new ArrayList<>();
+        List<ActivityListDto> activityResponse = moodPercentRepository.getActivityPercent(feelingType, memberId);
+
+        activityResponse.stream()
+                .collect(Collectors.groupingBy(ActivityListDto::name, Collectors.counting()))
+                .forEach((name, count) -> {
+
+                    String iconImage = activityResponse.stream()
+                            .filter(dto -> dto.name().equals(name))
+                            .findAny()
+                            .map(ActivityListDto::iconImage)
+                            .orElse(null);
+
+                    response.add(new ActivityPercentResponseDto(name, iconImage,
+                            ((double) count / activityResponse.size()) * 100));
                 });
 
         return response;
