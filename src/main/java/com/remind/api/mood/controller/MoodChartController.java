@@ -5,6 +5,7 @@ import com.remind.api.mood.service.MoodChartService;
 import com.remind.core.domain.common.response.ApiSuccessResponse;
 import com.remind.core.security.dto.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +33,11 @@ public class MoodChartController {
     @GetMapping
     public ResponseEntity<ApiSuccessResponse<MoodChartPagingResponseDto>> getMoodChart(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestParam("year") Integer year,
-            @RequestParam("month") Integer month) {
-        return ResponseEntity.ok(new ApiSuccessResponse<>(moodChartService.getMoodChart(userDetails, year, month)));
+            @Parameter(description = "년도") @RequestParam("year") Integer year,
+            @Parameter(description = "월") @RequestParam("month") Integer month,
+            @Parameter(description = "마지막으로 조회한 일") @RequestParam("day") Integer day,
+            @Parameter(description = "한 페이지 속 데이터 갯수") @RequestParam("size") Integer size) {
+        return ResponseEntity.ok(
+                new ApiSuccessResponse<>(moodChartService.getMoodChart(userDetails, year, month, day, size)));
     }
 }
