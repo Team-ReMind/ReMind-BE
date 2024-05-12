@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ public class MemberController {
             description = "kakao authorization code를 이용하여 발급받은 kakao accessToken을 사용하여 소셜 로그인 합니다."
     )
     @PostMapping("/login")
+    @SecurityRequirements(value = {})
     public ResponseEntity<ApiSuccessResponse<KakaoLoginResponse>> kakaoLogin(
             @RequestBody KakaoLoginRequest req
     ) {
