@@ -6,7 +6,6 @@ services:
     restart: always
     env_file:
       - .env
-    network_mode: host
     ports:
       - "8080:8080"
     environment:
@@ -15,3 +14,14 @@ services:
       - type: bind
         source: /root/.env
         target: /.env
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    restart: always
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
