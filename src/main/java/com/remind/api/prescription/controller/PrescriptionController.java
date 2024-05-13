@@ -1,8 +1,10 @@
 package com.remind.api.prescription.controller;
 
 import com.remind.api.prescription.dto.request.AcceptRelationRequestDto;
+import com.remind.api.prescription.dto.request.CreatePrescriptionRequestDto;
 import com.remind.api.prescription.dto.request.RequestRelationRequestDto;
 import com.remind.api.prescription.dto.response.AcceptRelationResponseDto;
+import com.remind.api.prescription.dto.response.CreatePrescriptionResponseDto;
 import com.remind.api.prescription.dto.response.RequestRelationResponseDto;
 import com.remind.api.prescription.service.PrescriptionService;
 import com.remind.core.domain.common.response.ApiSuccessResponse;
@@ -45,6 +47,17 @@ public class PrescriptionController {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @Valid @RequestBody AcceptRelationRequestDto req) {
         return ResponseEntity.ok(new ApiSuccessResponse<>(prescriptionService.acceptRelation(userDetails, req)));
+    }
+
+    @Operation(
+            summary = "의사,센터가 약 복용 정보 생성하는 api",
+            description = "의사,센터가 약 복용 정보 생성하는 api"
+    )
+    @PostMapping("")
+    public ResponseEntity<ApiSuccessResponse<CreatePrescriptionResponseDto>> createPrescription(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @Valid @RequestBody CreatePrescriptionRequestDto req) {
+        return ResponseEntity.ok(new ApiSuccessResponse<>(prescriptionService.createPrescription(userDetails, req)));
     }
 
 

@@ -3,6 +3,7 @@ package com.remind.core.domain.prescription;
 import com.remind.core.domain.member.Member;
 import com.remind.core.domain.member.enums.RolesType;
 import com.remind.core.domain.prescription.enums.RelationsType;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -56,5 +57,15 @@ public class Prescription {
 
     public void updateRelationsType(RelationsType relationsType) {
         this.relationsType = relationsType;
+    }
+
+    public void updatePrescriptionInfo(int period, LocalDate prescriptionDate, String memo, int breakfastImportance, int lunchImportance, int dinnerImportance, int etcImportance) {
+        this.period = period;
+        this.prescriptionDate = prescriptionDate;
+        this.memo = memo;
+        this.breakfastImportance = breakfastImportance;
+        this.lunchImportance = lunchImportance;
+        this.dinnerImportance = dinnerImportance;
+        this.etcImportance = etcImportance;
     }
 }
