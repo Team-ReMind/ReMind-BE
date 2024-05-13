@@ -1,6 +1,7 @@
 package com.remind.core.domain.prescription;
 
 import com.remind.core.domain.member.Member;
+import com.remind.core.domain.member.enums.RolesType;
 import com.remind.core.domain.prescription.enums.RelationsType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -52,4 +53,8 @@ public class Prescription {
     @ManyToOne
     @JoinColumn(name = "doctor_id")
     private Member doctor;
+
+    public void updateRelationsType(RelationsType relationsType) {
+        this.relationsType = relationsType;
+    }
 }

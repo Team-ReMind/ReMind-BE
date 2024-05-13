@@ -1,4 +1,7 @@
 package com.remind.api.prescription.dto.response;
 
-public record AcceptRelationResponseDto() {
+import lombok.Builder;
+
+@Builder
+public record AcceptRelationResponseDto(Long prescriptionId) {
 }

@@ -10,6 +10,7 @@ import com.remind.api.member.service.MemberService;
 import com.remind.api.prescription.dto.request.RequestRelationRequestDto;
 import com.remind.api.prescription.dto.response.RequestRelationResponseDto;
 import com.remind.core.domain.common.response.ApiSuccessResponse;
+import com.remind.core.domain.prescription.enums.RelationsType;
 import com.remind.core.security.dto.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -85,7 +86,8 @@ public class MemberController {
     )
     @GetMapping("/patients")
     public ResponseEntity<ApiSuccessResponse<PatientsResponseDto>> getPatientsList(
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok(new ApiSuccessResponse<>(memberService.getPatientsList(userDetails)));
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam(required = true) RelationsType status) {
+        return ResponseEntity.ok(new ApiSuccessResponse<>(memberService.getPatientsList(userDetails,status)));
     }
 }

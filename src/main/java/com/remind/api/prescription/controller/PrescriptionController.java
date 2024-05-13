@@ -14,16 +14,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/prescription")
 @Slf4j
 @RequiredArgsConstructor
-@Tag(name = "prescription API", description = "prescription 관련 API 문서")
+@Tag(name = "의사 - 환자와 관련있는 API", description = "prescription(약 복용 정보, 처방 정보, 의사-환자 관계 관련 API 문서")
 public class PrescriptionController {
 
     private final PrescriptionService prescriptionService;
@@ -39,16 +36,16 @@ public class PrescriptionController {
         return ResponseEntity.ok(new ApiSuccessResponse<>(prescriptionService.requestRelation(userDetails, req)));
     }
 
-//    @Operation(
-//            summary = "환자 -> 의사 관계 수락 API",
-//            description = "의사가 환자의 관계 요청을 수락하는 api"
-//    )
-//    @PostMapping("/relation/accept")
-//    public ResponseEntity<ApiSuccessResponse<AcceptRelationResponseDto>> AcceptRelataion(
-//            @AuthenticationPrincipal UserDetailsImpl userDetails,
-//            @Valid @RequestBody AcceptRelationRequestDto req) {
-//        return ResponseEntity.ok(new ApiSuccessResponse<>(prescriptionService.requestRelation(userDetails, req)));
-//    }
+    @Operation(
+            summary = "의사 -> 환자 관계 수락 API",
+            description = "의사가 환자의 관계 요청을 수락하는 api"
+    )
+    @PostMapping("/relation/accept")
+    public ResponseEntity<ApiSuccessResponse<AcceptRelationResponseDto>> AcceptRelataion(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @Valid @RequestBody AcceptRelationRequestDto req) {
+        return ResponseEntity.ok(new ApiSuccessResponse<>(prescriptionService.acceptRelation(userDetails, req)));
+    }
 
 
 }

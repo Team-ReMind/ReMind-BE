@@ -19,6 +19,7 @@ import com.remind.core.domain.member.repository.MemberRepository;
 import com.remind.core.domain.observation.Observation;
 import com.remind.core.domain.observation.repository.ObservationRepository;
 import com.remind.core.domain.prescription.Prescription;
+import com.remind.core.domain.prescription.enums.RelationsType;
 import com.remind.core.domain.prescription.repository.PrescriptionRepository;
 import com.remind.core.security.dto.UserDetailsImpl;
 import com.remind.core.security.jwt.JwtProvider;
@@ -215,7 +216,8 @@ public class MemberService {
 
     }
 
-    public PatientsResponseDto getPatientsList(UserDetailsImpl userDetails) {
+    @Transactional(readOnly = true)
+    public PatientsResponseDto getPatientsList(UserDetailsImpl userDetails, RelationsType status) {
         //조회하는 사람 정보 조회
         Member member = memberRepository.findById(userDetails.getMemberId())
                 .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
