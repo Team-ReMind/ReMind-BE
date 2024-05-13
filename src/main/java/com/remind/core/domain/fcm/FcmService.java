@@ -33,6 +33,7 @@ public class FcmService {
             "remind-b60cb/messages:send";
     private final ObjectMapper objectMapper;
 
+    // 방식1
     public void sendMessage1(MessageDto messageDto) throws IOException {
         String message = makeMessage(messageDto);
 
@@ -77,6 +78,7 @@ public class FcmService {
     }
 
     ///////////////////////////////////////////////////////
+    // 방식1
     public void sendMessage2(MessageDto messageDto){
         //추후 userId를통해 가져오는 것으로
         String fcmToken = messageDto.fcmToken();
@@ -103,9 +105,5 @@ public class FcmService {
         }
     }
 
-    private String getToken(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND)).getFcmToken();
-    }
 
 }
