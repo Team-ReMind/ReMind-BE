@@ -9,7 +9,8 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - TZ=Asia/Seoul
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
     volumes:
       - type: bind
         source: /root/.env
