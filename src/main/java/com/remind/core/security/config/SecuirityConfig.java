@@ -49,7 +49,7 @@ public class SecuirityConfig {
                         .requestMatchers(authorizeRequestMathcers()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(authorizeRequestMathcers())
-                        .hasAnyAuthority(RolesType.ROLE_USER.name(), RolesType.ROLE_DOCTOR.name(), RolesType.ROLE_CENTER.name(), RolesType.ROLE_UNREGISTER.name())
+                        .hasAnyAuthority(RolesType.ROLE_PATIENT.name(), RolesType.ROLE_DOCTOR.name(), RolesType.ROLE_CENTER.name(), RolesType.ROLE_UNREGISTER.name())
                         .anyRequest().denyAll())
                 // jwt 인증/인가 필터 추가
                 .addFilterBefore(

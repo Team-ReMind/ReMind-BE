@@ -1,9 +1,7 @@
 package com.remind.core.domain.prescription;
 
 import com.remind.core.domain.member.Member;
-import com.remind.core.domain.member.enums.RolesType;
-import com.remind.core.domain.prescription.enums.RelationsType;
-import io.swagger.v3.oas.annotations.media.Schema;
+import com.remind.core.domain.connection.enums.ConnectionStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,9 +42,6 @@ public class Prescription {
     @Column(name = "etc_importance")
     private int etcImportance;
 
-    @Enumerated(value = EnumType.STRING)
-    private RelationsType relationsType;
-
     @ManyToOne
     @JoinColumn(name = "patient_id")
     private Member patient;
@@ -55,9 +50,6 @@ public class Prescription {
     @JoinColumn(name = "doctor_id")
     private Member doctor;
 
-    public void updateRelationsType(RelationsType relationsType) {
-        this.relationsType = relationsType;
-    }
 
     public void updatePrescriptionInfo(int period, LocalDate prescriptionDate, String memo, int breakfastImportance, int lunchImportance, int dinnerImportance, int etcImportance) {
         this.period = period;
