@@ -49,7 +49,7 @@ public class SecuirityConfig {
                         .requestMatchers(authorizeRequestMathcers()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(authorizeRequestMathcers())
-                        .hasAuthority(RolesType.ROLE_USER.name())
+                        .hasAnyAuthority(RolesType.ROLE_USER.name(), RolesType.ROLE_DOCTOR.name(), RolesType.ROLE_CENTER.name(), RolesType.ROLE_UNREGISTER.name())
                         .anyRequest().denyAll())
                 // jwt 인증/인가 필터 추가
                 .addFilterBefore(
@@ -94,11 +94,16 @@ public class SecuirityConfig {
     private RequestMatcher[] authorizeRequestMathcers() {
         List<RequestMatcher> requestMatchers = List.of(
                 antMatcher(POST, "/member/refresh"),
+                antMatcher(POST, "/member/onboarding"),
+                antMatcher(GET, "/member/patients"),
                 antMatcher(POST, "/activity"),
                 antMatcher(GET, "/activity"),
                 antMatcher(POST, "/mood"),
                 antMatcher(GET, "/mood"),
-                antMatcher(GET, "/mood/chart")
+                antMatcher(GET, "/mood/chart"),
+                antMatcher(POST, "/prescription/relation/request"),
+                antMatcher(POST, "/prescription/relation/accept")
+
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
     }
