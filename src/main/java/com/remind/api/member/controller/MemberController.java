@@ -4,8 +4,11 @@ import com.remind.api.member.dto.request.KakaoLoginRequest;
 import com.remind.api.member.dto.request.OnboardingRequestDto;
 import com.remind.api.member.dto.response.KakaoLoginResponse;
 import com.remind.api.member.dto.request.RefreshTokenRequestDto;
+import com.remind.api.member.dto.response.PatientsResponseDto;
 import com.remind.api.member.dto.response.TokenResponseDto;
 import com.remind.api.member.service.MemberService;
+import com.remind.api.prescription.dto.request.RequestRelationRequestDto;
+import com.remind.api.prescription.dto.response.RequestRelationResponseDto;
 import com.remind.core.domain.common.response.ApiSuccessResponse;
 import com.remind.core.security.dto.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,10 +21,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/member")
@@ -77,5 +77,15 @@ public class MemberController {
     ) {
         return ResponseEntity.ok(
                 new ApiSuccessResponse<>(memberService.refreshToken(dto.refreshToken(), userDetails.getMemberId())));
+    }
+
+    @Operation(
+            summary = "의사/센터가 관리중인 환자의 목록을 불러오는 api",
+            description = "의사/센터가 관리중인 환자의 목록을 불러오는 api"
+    )
+    @GetMapping("/patients")
+    public ResponseEntity<ApiSuccessResponse<PatientsResponseDto>> getPatientsList(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(new ApiSuccessResponse<>(memberService.getPatientsList(userDetails)));
     }
 }
