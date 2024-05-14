@@ -101,6 +101,8 @@ public class SecuirityConfig {
                 antMatcher(POST, "/mood"),
                 antMatcher(GET, "/mood"),
                 antMatcher(GET, "/mood/chart"),
+                antMatcher(GET, "/mood/chart/percents"),
+                antMatcher(GET, "/mood/chart/percent/activity"),
                 antMatcher(POST, "/prescription/relation/request"),
                 antMatcher(POST, "/prescription/relation/accept"),
                 antMatcher(POST, "/prescription")
@@ -130,33 +132,11 @@ public class SecuirityConfig {
         return requestMatchers.toArray(RequestMatcher[]::new);
     }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-
-        configuration.setAllowedOrigins(
-                List.of("http://localhost:8080")
-        );
-
-        configuration.setAllowedMethods(
-                List.of("GET", "POST", "PUT", "PATCH", "DELETE")
-        );
-
-        configuration.addAllowedHeader("*"); // 모든 헤더 허용
-        configuration.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-
-        return source;
-
-    }
 
     private void httpSecuirtySetting(HttpSecurity http) throws Exception {
 
         http
                 .csrf(AbstractHttpConfigurer::disable) //jwt를 사용함으로 csrf 비활성
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // cors 정책 반영
                 .sessionManagement(
                         session -> session.sessionCreationPolicy(
                                 SessionCreationPolicy.STATELESS)) // jwt를 사용함으로 세션 비활성

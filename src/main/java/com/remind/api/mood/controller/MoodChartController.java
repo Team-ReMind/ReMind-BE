@@ -1,13 +1,17 @@
 package com.remind.api.mood.controller;
 
+import com.remind.api.mood.dto.response.ActivityPercentResponseDto;
 import com.remind.api.mood.dto.response.MoodChartPagingResponseDto;
+import com.remind.api.mood.dto.response.MoodPercentResponseDto;
 import com.remind.api.mood.service.MoodChartService;
 import com.remind.core.domain.common.response.ApiSuccessResponse;
+import com.remind.core.domain.mood.enums.FeelingType;
 import com.remind.core.security.dto.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -39,5 +43,31 @@ public class MoodChartController {
             @Parameter(description = "한 페이지 속 데이터 갯수") @RequestParam("size") Integer size) {
         return ResponseEntity.ok(
                 new ApiSuccessResponse<>(moodChartService.getMoodChart(userDetails, year, month, day, size)));
+    }
+
+    @Operation(
+            summary = "기분 별 활동 차트 안의 기분 percent 조회"
+    )
+    @ApiResponse(
+            responseCode = "200", description = "기분 별 활동 차트 안의 기분 percent 조회 성공 응답입니다.", useReturnTypeSchema = true
+    )
+    @GetMapping("/percents")
+    public ResponseEntity<ApiSuccessResponse<List<MoodPercentResponseDto>>> getMoodChartPercents(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(new ApiSuccessResponse<>(moodChartService.getActivityChart(userDetails)));
+    }
+
+    @Operation(
+            summary = "특정 기분에 대한 활동 퍼센트 조회"
+    )
+    @ApiResponse(
+            responseCode = "200", description = "특정 기분에 대한 활동 퍼센트 조회 성공 응답입니다.", useReturnTypeSchema = true
+    )
+    @GetMapping("/percent/activity")
+    public ResponseEntity<ApiSuccessResponse<List<ActivityPercentResponseDto>>> getActivityPercentChart(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @Parameter(description = "감정") @RequestParam("feelingType") FeelingType feelingType) {
+        return ResponseEntity.ok(
+                new ApiSuccessResponse<>(moodChartService.getActivityPercentChart(userDetails, feelingType)));
     }
 }
