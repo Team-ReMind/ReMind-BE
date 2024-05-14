@@ -39,4 +39,11 @@ public class TakingMedicine {
     @ManyToOne
     @JoinColumn(name = "prescription_id")
     private Prescription prescription;
+
+    public void updateTakingTime(LocalTime localTime) {
+        this.takingTime = localTime;
+    }
+    public void updateNotTakingReason(String notTakingReason) {
+        this.notTakingReason = notTakingReason;
+    }
 }

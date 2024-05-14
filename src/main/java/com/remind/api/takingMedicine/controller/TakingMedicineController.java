@@ -1,16 +1,58 @@
 package com.remind.api.takingMedicine.controller;
 
+import com.remind.api.prescription.dto.request.CreatePrescriptionRequestDto;
+import com.remind.api.takingMedicine.dto.request.CheckTakingMedicineRequest;
+import com.remind.api.takingMedicine.dto.response.CheckTakingMedicineResponse;
+import com.remind.api.takingMedicine.dto.response.TakingMedicineInfoResponse;
 import com.remind.api.takingMedicine.service.TakingMedicineService;
+import com.remind.core.domain.common.response.ApiSuccessResponse;
+import com.remind.core.domain.takingMedicine.enums.MedicinesType;
+import com.remind.core.security.dto.UserDetailsImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/taking-medicine")
 @Slf4j
+@Tag(name = "TakingMedicine(약 복용 정보) API", description = "TakingMedicine(약 복용 정보) API 문서")
+
 public class TakingMedicineController {
     private final TakingMedicineService takingMedicineService;
+    @Operation(
+            summary = "memberId, 날짜로 해당 날짜의 약 복용 정보를 조회하는 api",
+            description = "memberId, 날짜로 해당 날짜의 약 복용 정보를 조회하는 api"
+    )
+    @GetMapping("")
+    public ResponseEntity<ApiSuccessResponse<TakingMedicineInfoResponse>> getDailyTakingMedicineInfo(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam Long memberId,
+            @RequestParam LocalDate date
+    ) {
+        return ResponseEntity.ok(new ApiSuccessResponse<>(takingMedicineService.getDailyTakingMedicineInfo(userDetails, memberId, date)));
+    }
 
-
+    @Operation(
+            summary = "특정 날짜의 약 복용 정보를 등록하는 api",
+            description = "특정 날짜의 약 복용 정보를 등록하는 api"
+    )
+    @PostMapping("")
+    public ResponseEntity<ApiSuccessResponse<CheckTakingMedicineResponse>> checkTakingMedicine(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody CheckTakingMedicineRequest req,
+            @RequestParam LocalDate date,
+            @RequestParam MedicinesType medicinesType,
+            @RequestParam Boolean isTaking
+    ) {
+        return ResponseEntity.ok(new ApiSuccessResponse<>(takingMedicineService.checkTakingMedicine(userDetails, req, date,medicinesType, isTaking)));
+    }
 
 }

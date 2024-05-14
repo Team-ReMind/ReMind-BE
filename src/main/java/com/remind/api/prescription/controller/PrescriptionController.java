@@ -21,14 +21,14 @@ import java.util.List;
 @RequestMapping("/prescription")
 @Slf4j
 @RequiredArgsConstructor
-@Tag(name = "Prescription(약 처방 정보) API", description = "prescription(약 복용 정보, 처방 정보) API 문서")
+@Tag(name = "Prescription(약 처방 정보) API", description = "prescription(처방 정보) API 문서")
 public class PrescriptionController {
 
     private final PrescriptionService prescriptionService;
 
     @Operation(
-            summary = "의사가 약 복용 정보 생성하는 api",
-            description = "의사가 약 복용 정보 생성하는 api"
+            summary = "의사가 약 처방 정보 생성 또는 업데이트 하는 api",
+            description = "의사가 약 처방 정보 생성 또는 업데이트 하는 api"
     )
     @PostMapping("")
     public ResponseEntity<ApiSuccessResponse<CreatePrescriptionResponseDto>> createPrescription(

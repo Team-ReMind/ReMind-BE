@@ -37,7 +37,6 @@ import java.util.stream.Collectors;
 public class PrescriptionService {
     private final PrescriptionRepository prescriptionRepository;
     private final ConnectionRepository connectionRepository;
-
     private final MemberRepository memberRepository;
     private final TakingMedicineService takingMedicineService;
 
