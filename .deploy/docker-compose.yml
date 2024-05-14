@@ -6,12 +6,21 @@ services:
     restart: always
     env_file:
       - .env
-    network_mode: host
     ports:
       - "8080:8080"
     environment:
-      - TZ=Asia/Seoul
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
     volumes:
       - type: bind
         source: /root/.env
         target: /.env
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    restart: always
+

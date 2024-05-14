@@ -42,8 +42,8 @@ public class Member {
 
     private String profileImageUrl;
 
-    @ColumnDefault("false")
-    private Boolean isOnboardingFinished;
+//    @ColumnDefault("false")
+//    private Boolean isOnboardingFinished;
 
     @Enumerated(value = EnumType.STRING)
     private RolesType rolesType;
@@ -60,16 +60,18 @@ public class Member {
     // 센터를 위한 컬럼
     private String centerName;
 
+    private String memberCode;
+
     //온보딩 후 특정 컬럼 업데이트를 위한 메서드 - 환자용
     public void updateRolesTypeForUser(RolesType rolesType,String protectorPhoneNumber) {
-        this.isOnboardingFinished = true;
+//        this.isOnboardingFinished = true;
         this.rolesType = rolesType;
         this.protectorPhoneNumber = protectorPhoneNumber;
     }
 
     //온보딩 후 특정 컬럼 업데이트를 위한 메서드 - 센터용
     public void updateRolesTypeForCenter(RolesType rolesType,String city, String district, String centerName) {
-        this.isOnboardingFinished = true;
+//        this.isOnboardingFinished = true;
         this.rolesType = rolesType;
         this.city = city;
         this.district = district;
@@ -78,7 +80,7 @@ public class Member {
 
     //온보딩 후 특정 컬럼 업데이트를 위한 메서드 - 의사용
     public void updateRolesTypeForDoctor(RolesType rolesType) {
-        this.isOnboardingFinished = true;
+//        this.isOnboardingFinished = true;
         this.rolesType = rolesType;
     }
 }

@@ -4,29 +4,33 @@ import static com.remind.core.domain.enums.MemberErrorCode.MEMBER_NOT_FOUND;
 import static com.remind.core.domain.enums.MemberErrorCode.REFRESH_TOKEN_NOT_FOUND;
 import static com.remind.core.domain.enums.MemberErrorCode.REFRESH_TOKEN_NOT_MATCH;
 
+import com.remind.api.member.dto.PatientDto;
 import com.remind.api.member.dto.request.KakaoLoginRequest;
 import com.remind.api.member.dto.request.OnboardingRequestDto;
-import com.remind.api.member.dto.response.KakaoGetMemberInfoResponse;
-import com.remind.api.member.dto.response.KakaoLoginResponse;
+import com.remind.api.member.dto.response.*;
 
-import com.remind.api.member.dto.response.OnboardingResponseDto;
 import com.remind.core.domain.common.exception.MemberException;
 import com.remind.api.member.kakao.KakaoFeignClient;
 import com.remind.core.domain.common.repository.RedisRepository;
+import com.remind.core.domain.connection.Connection;
+import com.remind.core.domain.connection.repository.ConnectionRepository;
 import com.remind.core.domain.enums.MemberErrorCode;
 import com.remind.core.domain.member.Member;
 import com.remind.core.domain.member.enums.RolesType;
 import com.remind.core.domain.member.repository.MemberRepository;
-import com.remind.api.member.dto.response.TokenResponseDto;
+import com.remind.core.domain.prescription.Prescription;
+import com.remind.core.domain.connection.enums.ConnectionStatus;
+import com.remind.core.domain.prescription.repository.PrescriptionRepository;
 import com.remind.core.security.dto.UserDetailsImpl;
 import com.remind.core.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -77,6 +81,7 @@ public class MemberService {
                 .name(kakaoMemberInfo.getKakao_account().getName())
                 .accessToken(newAccessToken)
                 .refreshToken(newRefreshToken)
+                .rolesType(member.getRolesType())
                 .build();
         // authId로 멤버를 찾을 때, 유저가 존재하면 jwt토큰 발급해주기
     }
@@ -102,6 +107,7 @@ public class MemberService {
         int currentYear = LocalDate.now().getYear();
         int birthYearInt = Integer.parseInt(kakaoMemberInfo.getKakao_account().getBirthyear());
         int age = currentYear - birthYearInt;
+        String memberCode = createMemberCode();
         Member member = Member.builder()
                 .authId(kakaoMemberInfo.getAuthId())
                 .name(kakaoMemberInfo.getKakao_account().getName())
@@ -110,12 +116,39 @@ public class MemberService {
                 .email(kakaoMemberInfo.getKakao_account().getEmail())
                 .phoneNumber(kakaoMemberInfo.getKakao_account().getPhone_number())
                 .profileImageUrl(kakaoMemberInfo.getKakao_account().getProfile().getProfile_image_url())
-                .isOnboardingFinished(false)
+                .memberCode(memberCode)
+                .rolesType(RolesType.ROLE_UNREGISTER)
+//                .isOnboardingFinished(false)
                 .build();
         System.out.println("year: " + kakaoMemberInfo.getKakao_account().getBirthyear());
         return memberRepository.save(member);
 
 
+    }
+
+    /**
+     * 각 멤버마다 6자리의 독립된 코드 번호를 생성하는 로직
+     * @return
+     */
+    private String createMemberCode() {
+        String memberCode = "";
+
+        do {
+            memberCode = "";
+            Random random = new Random();
+            for (int i = 0; i < 6; i++) {
+                int randomNumber = random.nextInt(36); // 0~9, A~Z
+                if (randomNumber < 10) {
+                    memberCode += Integer.toString(randomNumber); //0~9
+                } else {
+                    memberCode += String.valueOf((char) (randomNumber - 10 + 'A')); //A~Z
+                }
+            }
+            log.info("memberCode : " + memberCode);
+        }
+        while (memberRepository.findByMemberCode(memberCode).isPresent());
+
+        return memberCode;
     }
 
     /**
@@ -129,9 +162,11 @@ public class MemberService {
         Member member = memberRepository.findById(userDetails.getMemberId())
                 .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
 
+        //이미 온보딩 된환자 예외처리 로직 추가
+
         //환자, 센터, 의사인 경우
-        if (req.rolesType() == RolesType.ROLE_USER) {
-            member.updateRolesTypeForUser(RolesType.ROLE_USER, req.protectorPhoneNumber());
+        if (req.rolesType() == RolesType.ROLE_PATIENT) {
+            member.updateRolesTypeForUser(RolesType.ROLE_PATIENT, req.protectorPhoneNumber());
         } else if (req.rolesType() == RolesType.ROLE_CENTER) {
             member.updateRolesTypeForCenter(RolesType.ROLE_CENTER, req.city(), req.district(), req.centerName());
         } else if (req.rolesType() == RolesType.ROLE_DOCTOR) {
@@ -179,4 +214,34 @@ public class MemberService {
         return tokenResponseDto;
 
     }
+
+    /**
+     * 의사, 센터가 관리중인 환자의 리스트를 불러오는 로직
+     * @param userDetails
+     * @param status
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public PatientsResponseDto getPatientsList(UserDetailsImpl userDetails, ConnectionStatus status) {
+        //조회하는 사람 정보 조회
+        Member member = memberRepository.findById(userDetails.getMemberId())
+                .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
+
+        //의사 또는 센터가 아니면 조회 불가
+        if (!member.getRolesType().equals(RolesType.ROLE_DOCTOR) &&
+                !member.getRolesType().equals(RolesType.ROLE_CENTER)) {
+            throw new MemberException(MemberErrorCode.MEMBER_NOT_DOCTOR_OR_CENTER);
+        }
+
+
+        //dto 리스트
+        List<PatientDto> patientDtos = memberRepository.findPatientInfoByTargetMemberIdAndStatus(member.getId(), status);
+
+
+        return PatientsResponseDto.builder()
+                .patientDtos(patientDtos)
+                .build();
+
+    }
+
 }
