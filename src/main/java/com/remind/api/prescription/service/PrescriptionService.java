@@ -5,6 +5,7 @@ import com.remind.api.prescription.dto.request.CreatePrescriptionRequestDto;
 import com.remind.api.prescription.dto.request.PrescriptionInfoRequestDto;
 import com.remind.api.prescription.dto.response.CreatePrescriptionResponseDto;
 import com.remind.api.prescription.dto.response.PrescriptionInfoResponseDto;
+import com.remind.api.takingMedicine.service.TakingMedicineService;
 import com.remind.core.domain.common.exception.ConnectionException;
 import com.remind.core.domain.common.exception.MemberException;
 import com.remind.core.domain.common.exception.PrescriptionException;
@@ -38,6 +39,7 @@ public class PrescriptionService {
     private final ConnectionRepository connectionRepository;
 
     private final MemberRepository memberRepository;
+    private final TakingMedicineService takingMedicineService;
 
     /**
      * 의사가 환자의 약 복용 정보를 업데이트하는 서비스 로직
@@ -75,6 +77,9 @@ public class PrescriptionService {
 
         //업데이트
         prescription.updatePrescriptionInfo(req.period(), req.memo(), req.breakfastImportance(), req.lunchImportance(), req.dinnerImportance(), req.etcImportance());
+
+        //해당 날짜의 약 복용 엔티티 생성
+        takingMedicineService.updateTakingMedicine(prescription.getId(),prescription.getPrescriptionDate(),prescription.getPeriod());
 
         return CreatePrescriptionResponseDto.builder()
                 .PrescriptionId(prescription.getId())
