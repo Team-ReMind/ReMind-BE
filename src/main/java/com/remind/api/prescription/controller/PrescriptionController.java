@@ -2,6 +2,7 @@ package com.remind.api.prescription.controller;
 
 import com.remind.api.prescription.dto.request.CreatePrescriptionRequestDto;
 import com.remind.api.prescription.dto.response.CreatePrescriptionResponseDto;
+import com.remind.api.prescription.dto.response.PrescriptionInfoResponseDto;
 import com.remind.api.prescription.service.PrescriptionService;
 import com.remind.core.domain.common.response.ApiSuccessResponse;
 import com.remind.core.security.dto.UserDetailsImpl;
@@ -14,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/prescription")
 @Slf4j
@@ -23,8 +26,6 @@ public class PrescriptionController {
 
     private final PrescriptionService prescriptionService;
 
-
-    //밥먹고 수정
     @Operation(
             summary = "의사가 약 복용 정보 생성하는 api",
             description = "의사가 약 복용 정보 생성하는 api"
@@ -36,5 +37,15 @@ public class PrescriptionController {
         return ResponseEntity.ok(new ApiSuccessResponse<>(prescriptionService.createPrescription(userDetails, req)));
     }
 
+    @Operation(
+            summary = "특정 환자의 처방 목록을 조회하는 api",
+            description = "특정 환자의 처방 목록을 조회하는 api"
+    )
+    @GetMapping("")
+    public ResponseEntity<ApiSuccessResponse<PrescriptionInfoResponseDto>> getPrescriptionInfo(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam Long memberId) {
+        return ResponseEntity.ok(new ApiSuccessResponse<>(prescriptionService.getPrescriptionInfo(userDetails,memberId)));
+    }
 
 }

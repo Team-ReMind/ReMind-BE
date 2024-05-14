@@ -42,8 +42,7 @@ public class Member {
 
     private String profileImageUrl;
 
-//    @ColumnDefault("false")
-//    private Boolean isOnboardingFinished;
+
 
     @Enumerated(value = EnumType.STRING)
     private RolesType rolesType;

@@ -233,10 +233,8 @@ public class MemberService {
             throw new MemberException(MemberErrorCode.MEMBER_NOT_DOCTOR_OR_CENTER);
         }
 
-
         //dto 리스트
         List<PatientDto> patientDtos = memberRepository.findPatientInfoByTargetMemberIdAndStatus(member.getId(), status);
-
 
         return PatientsResponseDto.builder()
                 .patientDtos(patientDtos)
