@@ -13,7 +13,7 @@ public class WithMockCustomUserSecurityContextFactory implements WithSecurityCon
 
     public static Long TEST_MEMBER_ID = 1L;
     public static String TEST_MEMBER_NAME = "이상민";
-    public static RolesType TEST_MEMBER_ROLE_TYPE = RolesType.ROLE_USER;
+    public static RolesType TEST_MEMBER_ROLE_TYPE = RolesType.ROLE_PATIENT;
 
     @Override
     public SecurityContext createSecurityContext(WithMockCustomUser annotation) {

@@ -12,19 +12,19 @@ import com.remind.api.member.dto.response.*;
 import com.remind.core.domain.common.exception.MemberException;
 import com.remind.api.member.kakao.KakaoFeignClient;
 import com.remind.core.domain.common.repository.RedisRepository;
+import com.remind.core.domain.connection.Connection;
+import com.remind.core.domain.connection.repository.ConnectionRepository;
 import com.remind.core.domain.enums.MemberErrorCode;
 import com.remind.core.domain.member.Member;
 import com.remind.core.domain.member.enums.RolesType;
 import com.remind.core.domain.member.repository.MemberRepository;
-import com.remind.core.domain.observation.Observation;
-import com.remind.core.domain.observation.repository.ObservationRepository;
 import com.remind.core.domain.prescription.Prescription;
+import com.remind.core.domain.connection.enums.ConnectionStatus;
 import com.remind.core.domain.prescription.repository.PrescriptionRepository;
 import com.remind.core.security.dto.UserDetailsImpl;
 import com.remind.core.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,8 +39,6 @@ public class MemberService {
 
     private final KakaoFeignClient kakaoFeignClient;
     private final MemberRepository memberRepository;
-    private final PrescriptionRepository prescriptionRepository;
-    private final ObservationRepository observationRepository;
     private final RedisRepository redisRepository;
     private final JwtProvider jwtProvider;
 
@@ -164,9 +162,11 @@ public class MemberService {
         Member member = memberRepository.findById(userDetails.getMemberId())
                 .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
 
+        //이미 온보딩 된환자 예외처리 로직 추가
+
         //환자, 센터, 의사인 경우
-        if (req.rolesType() == RolesType.ROLE_USER) {
-            member.updateRolesTypeForUser(RolesType.ROLE_USER, req.protectorPhoneNumber());
+        if (req.rolesType() == RolesType.ROLE_PATIENT) {
+            member.updateRolesTypeForUser(RolesType.ROLE_PATIENT, req.protectorPhoneNumber());
         } else if (req.rolesType() == RolesType.ROLE_CENTER) {
             member.updateRolesTypeForCenter(RolesType.ROLE_CENTER, req.city(), req.district(), req.centerName());
         } else if (req.rolesType() == RolesType.ROLE_DOCTOR) {
@@ -215,53 +215,33 @@ public class MemberService {
 
     }
 
-    public PatientsResponseDto getPatientsList(UserDetailsImpl userDetails) {
+    /**
+     * 의사, 센터가 관리중인 환자의 리스트를 불러오는 로직
+     * @param userDetails
+     * @param status
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public PatientsResponseDto getPatientsList(UserDetailsImpl userDetails, ConnectionStatus status) {
         //조회하는 사람 정보 조회
         Member member = memberRepository.findById(userDetails.getMemberId())
                 .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
 
-        List<PatientDto> patientDtos = new ArrayList<>();
-
-        // patientsDto에 이름을 넣기 위해, DB에서 한번에 조회한 해시맵
-        Map<Long, String> memberIdToNameMap = new HashMap<>();
-        for (Member tmpMember : memberRepository.findAll()) {
-            memberIdToNameMap.put(tmpMember.getId(), tmpMember.getName());
+        //의사 또는 센터가 아니면 조회 불가
+        if (!member.getRolesType().equals(RolesType.ROLE_DOCTOR) &&
+                !member.getRolesType().equals(RolesType.ROLE_CENTER)) {
+            throw new MemberException(MemberErrorCode.MEMBER_NOT_DOCTOR_OR_CENTER);
         }
 
-        //조회하는 사람이 의사인 경우
-        if(member.getRolesType().equals(RolesType.ROLE_DOCTOR)){
-            List<Prescription> prescriptionList = prescriptionRepository.findAllByDoctorId(member.getId());
 
-            patientDtos = prescriptionList.stream()
-                    .map(prescription ->{
-                        Long memberId = prescription.getPatient().getId();
-                        String name = memberIdToNameMap.getOrDefault(memberId, "Unknown");
-                        return PatientDto.builder()
-                                .memberId(prescription.getPatient().getId())
-                                .name(name)
-                                .build();
-                    })
-                    .collect(Collectors.toList());
-        }
-        //조회하는 사람이 센터인 경우
-        else if(member.getRolesType().equals(RolesType.ROLE_CENTER)){
-            List<Observation> observationList = observationRepository.findAllByCenterId(member.getId());
+        //dto 리스트
+        List<PatientDto> patientDtos = memberRepository.findPatientInfoByTargetMemberIdAndStatus(member.getId(), status);
 
-            patientDtos = observationList.stream()
-                    .map(observation ->{
-                        Long memberId = observation.getPatient().getId();
-                        String name = memberIdToNameMap.getOrDefault(memberId, "Unknown");
-                        return PatientDto.builder()
-                                .memberId(observation.getPatient().getId())
-                                .name(name)
-                                .build();
-                    })
-                    .collect(Collectors.toList());
-        }
 
         return PatientsResponseDto.builder()
                 .patientDtos(patientDtos)
                 .build();
+
     }
 
 }

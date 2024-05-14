@@ -7,9 +7,8 @@ import com.remind.api.member.dto.request.RefreshTokenRequestDto;
 import com.remind.api.member.dto.response.PatientsResponseDto;
 import com.remind.api.member.dto.response.TokenResponseDto;
 import com.remind.api.member.service.MemberService;
-import com.remind.api.prescription.dto.request.RequestRelationRequestDto;
-import com.remind.api.prescription.dto.response.RequestRelationResponseDto;
 import com.remind.core.domain.common.response.ApiSuccessResponse;
+import com.remind.core.domain.connection.enums.ConnectionStatus;
 import com.remind.core.security.dto.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -53,7 +52,7 @@ public class MemberController {
             content = @Content(
                     mediaType = "application/json",
                     examples = {
-                            @ExampleObject(value = "{\"code\":201, \"message:\": \"정상 처리되었습니다.\", \"data\": {\"userId\": 1, \"roles_type\": ROLE_USER}}")
+                            @ExampleObject(value = "{\"code\":201, \"message:\": \"정상 처리되었습니다.\", \"data\": {\"userId\": 1, \"roles_type\": ROLE_PATIENT}}")
                     }
             )
     )
@@ -85,7 +84,8 @@ public class MemberController {
     )
     @GetMapping("/patients")
     public ResponseEntity<ApiSuccessResponse<PatientsResponseDto>> getPatientsList(
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok(new ApiSuccessResponse<>(memberService.getPatientsList(userDetails)));
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam(required = true) ConnectionStatus status) {
+        return ResponseEntity.ok(new ApiSuccessResponse<>(memberService.getPatientsList(userDetails,status)));
     }
 }
