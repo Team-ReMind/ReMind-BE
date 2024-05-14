@@ -30,92 +30,6 @@ public class PrescriptionService {
     private final PrescriptionRepository prescriptionRepository;
 
     private final MemberRepository memberRepository;
-//
-//    /**
-//     * 환자가 의사와의 관계를 요청하는 로직
-//     *
-//     * @param req
-//     * @return
-//     */
-//    @Transactional
-//    public RequestConnectionResponseDto requestRelation(UserDetailsImpl userDetails, RequestConnectionRequestDto req) {
-//        Member patient = memberRepository.findById(userDetails.getMemberId())
-//                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
-//
-//        Member doctor = memberRepository.findByMemberCode(req.doctorMemberCode())
-//                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
-//
-//        //요청을 보내는 사람이 환자가아니거나 역할이 없는경우 예외처리?
-//        if (!patient.getRolesType().equals(RolesType.ROLE_USER)) {
-//            throw new PrescriptionException(PresciptionErrorCode.MEMBER_NOT_PATIENT);
-//        }
-//
-//        //요청을 보내는 대상이 의사가 아니거나 역할이 없는 경우 예외처리
-//        if (!doctor.getRolesType().equals(RolesType.ROLE_DOCTOR)) {
-//            throw new PrescriptionException(PresciptionErrorCode.MEMBER_NOT_DOCTOR);
-//        }
-//
-//        //이미 보낸 요청이 존재할 경우 예외처리
-//        if (con.findByDoctorIdAndPatientId(doctor.getId(), patient.getId()).isPresent()) {
-//            throw new PrescriptionException(PresciptionErrorCode.DUPLICATE_PRESCRIPTION_REQUEST);
-//        }
-//
-//        if (prescriptionRepository.findByDoctorIdAndPatientId(doctor.getId(), patient.getId()).isPresent()) {
-//            throw new PrescriptionException(PresciptionErrorCode.DUPLICATE_PRESCRIPTION_REQUEST);
-//        }
-//
-//        //의사인경우, 테이블 추가 후 RelationType = Pending으로 설정
-//        Prescription prescription = Prescription.builder()
-//                .connectionStatus(ConnectionStatus.PENDING)
-//                .patient(patient)
-//                .doctor(doctor)
-//                .build();
-//
-//        prescriptionRepository.save(prescription);
-//
-//        return RequestConnectionResponseDto.builder()
-//                .PrescriptionId(prescription.getId())
-//                .build();
-//    }
-//
-//    /**
-//     * 의사가 환자와의 관계를 수락하는 로직
-//     *
-//     * @param req
-//     * @return
-//     */
-//    @Transactional
-//    public AcceptConnectionResponseDto acceptRelation(UserDetailsImpl userDetails, AcceptConnectionRequestDto req) {
-//        Member doctor = memberRepository.findById(userDetails.getMemberId())
-//                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
-//
-//        Member patient = memberRepository.findById(req.memberId())
-//                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
-//
-//        //요청을 보내는 사람이 의사가 아니거나 역할이 없는 경우 예외처리
-//        if (!doctor.getRolesType().equals(RolesType.ROLE_DOCTOR)) {
-//            throw new PrescriptionException(PresciptionErrorCode.MEMBER_NOT_DOCTOR);
-//        }
-//
-//        //요청을 보내는 대상이 환자 아니거나 역할이 없는 경우 예외처리
-//        if (!patient.getRolesType().equals(RolesType.ROLE_USER)) {
-//            throw new PrescriptionException(PresciptionErrorCode.MEMBER_NOT_PATIENT);
-//        }
-//
-//        //Pending 상태의 요청이 없는 경우 예외처리
-//        Prescription prescription = prescriptionRepository.findByDoctorIdAndPatientId(doctor.getId(), patient.getId())
-//                .orElseThrow(() -> new PrescriptionException(PresciptionErrorCode.NO_PRESCRIPTION_REQUEST));
-//        if (prescription.getConnectionStatus().equals(ConnectionStatus.ACCEPT)) {
-//            throw new PrescriptionException(PresciptionErrorCode.ALREADY_PRESCRIPTION_ACCEPTED);
-//        }
-//
-//        prescription.updateRelationsType(ConnectionStatus.ACCEPT);
-//
-//
-//        return AcceptConnectionResponseDto.builder()
-//                .prescriptionId(prescription.getId())
-//                .build();
-//    }
 
     /**
      * 의사,센터가 환자의 약 복용 정보를 업데이트하는 서비스 로직
@@ -132,6 +46,7 @@ public class PrescriptionService {
                 .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         // 약 복용 정보는 의사 또는 센터만 등록 가능
+        //밥먹고 수정
         if (!(doctor.getRolesType().equals(RolesType.ROLE_DOCTOR) || doctor.getRolesType().equals(RolesType.ROLE_CENTER))) {
             throw new PrescriptionException(PresciptionErrorCode.MEMBER_UNAUTHORIZED);
         }

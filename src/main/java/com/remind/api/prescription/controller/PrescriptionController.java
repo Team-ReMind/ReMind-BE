@@ -23,28 +23,8 @@ public class PrescriptionController {
 
     private final PrescriptionService prescriptionService;
 
-//    @Operation(
-//            summary = "환자 -> 의사 관계 요청 API",
-//            description = "환자가 의사의 멤버코드를 이용하여 관계를 요청하는 api"
-//    )
-//    @PostMapping("/relation/request")
-//    public ResponseEntity<ApiSuccessResponse<RequestRelationResponseDto>> requestRelataion(
-//            @AuthenticationPrincipal UserDetailsImpl userDetails,
-//            @Valid @RequestBody RequestRelationRequestDto req) {
-//        return ResponseEntity.ok(new ApiSuccessResponse<>(prescriptionService.requestRelation(userDetails, req)));
-//    }
-//
-//    @Operation(
-//            summary = "의사 -> 환자 관계 수락 API",
-//            description = "의사가 환자의 관계 요청을 수락하는 api"
-//    )
-//    @PostMapping("/relation/accept")
-//    public ResponseEntity<ApiSuccessResponse<AcceptRelationResponseDto>> AcceptRelataion(
-//            @AuthenticationPrincipal UserDetailsImpl userDetails,
-//            @Valid @RequestBody AcceptRelationRequestDto req) {
-//        return ResponseEntity.ok(new ApiSuccessResponse<>(prescriptionService.acceptRelation(userDetails, req)));
-//    }
 
+    //밥먹고 수정
     @Operation(
             summary = "의사,센터가 약 복용 정보 생성하는 api",
             description = "의사,센터가 약 복용 정보 생성하는 api"
