@@ -91,8 +91,8 @@ public class ConnectionService {
                 .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         //수락 요청을 보내는 사람이 의사 또는 센터가 아니거나 역할이 없는 경우 예외처리
-        if (!targetMember.getRolesType().equals(RolesType.ROLE_DOCTOR)) {
-            //센터추가
+        if (!targetMember.getRolesType().equals(RolesType.ROLE_DOCTOR) &&
+                !targetMember.getRolesType().equals(RolesType.ROLE_CENTER)) {
             throw new ConnectionException(ConnectionErrorCode.SEND_MEMBER_NOT_DOCTOR_OR_CENTER);
         }
 

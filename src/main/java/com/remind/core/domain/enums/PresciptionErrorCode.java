@@ -12,7 +12,8 @@ public enum PresciptionErrorCode implements BaseErrorCode {
 //    DUPLICATE_CONNECTION_REQUEST(400, "이미 보낸 요청이 존재합니다.", HttpStatus.BAD_REQUEST),
 //    NO_CONNECTION_REQUEST(400, "보낸 요청이 존재하지 않습니다.", HttpStatus.BAD_REQUEST),
 //    ALREADY_CONNECTION_ACCEPTED(400, "이미 요청이 수락되었습니다.", HttpStatus.BAD_REQUEST),
-    MEMBER_UNAUTHORIZED(401, "의사 또는 센터 관계자만 접근 가능합니다.", HttpStatus.UNAUTHORIZED),
+    PRESCRIPTION_ONLY_DOCTOR(401, "약 복용 정보는 의사만 접근 가능합니다.", HttpStatus.UNAUTHORIZED),
+    PRESCRIPTION_ONLY_TO_PATIENT(400, "약 복용 정보는 환자에게만 등록 가능합니다.", HttpStatus.BAD_REQUEST),
     PRESCRIPTION_NOT_FOUND(404, "해당 정보로 약 처방 정보를 찾을 수 없습니다", HttpStatus.NOT_FOUND);
 
 

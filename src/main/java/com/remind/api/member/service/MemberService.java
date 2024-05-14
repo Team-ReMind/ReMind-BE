@@ -234,9 +234,6 @@ public class MemberService {
         }
 
 
-        //status에 따른 관리중 또는 요청대기 환자 조회
-//        List<Connection> connectionList = connectionRepository.findAllByTargetMemberAndConnectionStatus(member.getId(), status);
-
         //dto 리스트
         List<PatientDto> patientDtos = memberRepository.findPatientInfoByTargetMemberIdAndStatus(member.getId(), status);
 
@@ -245,27 +242,6 @@ public class MemberService {
                 .patientDtos(patientDtos)
                 .build();
 
-//        //DB에서 전부 조회하여 해시맵에 저장.
-//        Map<Long, PatientDto> memberIdToPatientDtoMap = new HashMap<>();
-//        memberRepository.findAll().forEach(tmpMember ->
-//                memberIdToPatientDtoMap.put(tmpMember.getId(), PatientDto.builder()
-//                        .memberId(tmpMember.getId())
-//                        .name(tmpMember.getName())
-//                        .gender(tmpMember.getGender())
-//                        .age(tmpMember.getAge())
-//                        .build())
-//        );
-//
-//
-//        patientDtos = connectionList.stream().map(connection -> {
-//            Long patientId = connection.getPatient().getId();
-//        })
-//
-//
-//
-//        return PatientsResponseDto.builder()
-//                .patientDtos(patientDtos)
-//                .build();
     }
 
 }

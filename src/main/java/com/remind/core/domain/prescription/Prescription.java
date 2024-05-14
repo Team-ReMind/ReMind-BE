@@ -1,5 +1,6 @@
 package com.remind.core.domain.prescription;
 
+import com.remind.core.domain.connection.Connection;
 import com.remind.core.domain.member.Member;
 import com.remind.core.domain.connection.enums.ConnectionStatus;
 import jakarta.persistence.*;
@@ -43,17 +44,16 @@ public class Prescription {
     private int etcImportance;
 
     @ManyToOne
-    @JoinColumn(name = "patient_id")
-    private Member patient;
+    @JoinColumn(name = "connection_id")
+    private Connection connection;
 
-    @ManyToOne
-    @JoinColumn(name = "doctor_id")
-    private Member doctor;
+//    @ManyToOne
+//    @JoinColumn(name = "doctor_id")
+//    private Member doctor;
 
 
-    public void updatePrescriptionInfo(int period, LocalDate prescriptionDate, String memo, int breakfastImportance, int lunchImportance, int dinnerImportance, int etcImportance) {
+    public void updatePrescriptionInfo(int period, String memo, int breakfastImportance, int lunchImportance, int dinnerImportance, int etcImportance) {
         this.period = period;
-        this.prescriptionDate = prescriptionDate;
         this.memo = memo;
         this.breakfastImportance = breakfastImportance;
         this.lunchImportance = lunchImportance;
