@@ -24,9 +24,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity(debug = true)
@@ -49,7 +46,8 @@ public class SecuirityConfig {
                         .requestMatchers(authorizeRequestMathcers()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(authorizeRequestMathcers())
-                        .hasAnyAuthority(RolesType.ROLE_PATIENT.name(), RolesType.ROLE_DOCTOR.name(), RolesType.ROLE_CENTER.name(), RolesType.ROLE_UNREGISTER.name())
+                        .hasAnyAuthority(RolesType.ROLE_PATIENT.name(), RolesType.ROLE_DOCTOR.name(),
+                                RolesType.ROLE_CENTER.name(), RolesType.ROLE_UNREGISTER.name())
                         .anyRequest().denyAll())
                 // jwt 인증/인가 필터 추가
                 .addFilterBefore(
@@ -108,8 +106,9 @@ public class SecuirityConfig {
                 antMatcher(GET, "/prescription"),
                 antMatcher(GET, "/prescription"),
                 antMatcher(GET, "/taking-medicine"),
-                antMatcher(POST, "/taking-medicine")
-
+                antMatcher(POST, "/taking-medicine"),
+                antMatcher(POST, "/alarm"),
+                antMatcher(GET, "/alarm/{prescriptionId}")
 
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
