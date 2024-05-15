@@ -4,7 +4,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 import com.remind.core.domain.common.exception.MemberException;
 import com.remind.core.domain.common.response.ErrorResponse;
-import com.remind.core.domain.enums.MemberErrorCode;
+import com.remind.core.domain.common.enums.MemberErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

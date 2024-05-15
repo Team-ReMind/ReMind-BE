@@ -1,9 +1,9 @@
 package com.remind.api.mood.service;
 
-import static com.remind.core.domain.enums.ActivityErrorCode.*;
-import static com.remind.core.domain.enums.MemberErrorCode.*;
-import static com.remind.core.domain.enums.MoodErrorCode.MOOD_ALREADY_EXIST;
-import static com.remind.core.domain.enums.MoodErrorCode.MOOD_NOT_FOUND;
+import static com.remind.core.domain.common.enums.ActivityErrorCode.*;
+import static com.remind.core.domain.common.enums.MemberErrorCode.*;
+import static com.remind.core.domain.common.enums.MoodErrorCode.MOOD_ALREADY_EXIST;
+import static com.remind.core.domain.common.enums.MoodErrorCode.MOOD_NOT_FOUND;
 
 import com.remind.api.mood.dto.request.MoodSaveRequestDto;
 import com.remind.api.mood.dto.response.ModelActivityResponseDto;

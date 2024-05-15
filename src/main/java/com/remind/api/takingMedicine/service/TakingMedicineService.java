@@ -8,8 +8,8 @@ import com.remind.api.takingMedicine.dto.response.DailyTakingMedicineInfoRespons
 import com.remind.api.takingMedicine.dto.response.MonthlyTakingMedicineInfoResponse;
 import com.remind.core.domain.common.exception.PrescriptionException;
 import com.remind.core.domain.common.exception.TakingMedicineException;
-import com.remind.core.domain.enums.PresciptionErrorCode;
-import com.remind.core.domain.enums.TakingMedicineErrorCode;
+import com.remind.core.domain.common.enums.PresciptionErrorCode;
+import com.remind.core.domain.common.enums.TakingMedicineErrorCode;
 import com.remind.core.domain.prescription.Prescription;
 import com.remind.core.domain.prescription.repository.PrescriptionRepository;
 import com.remind.core.domain.takingMedicine.TakingMedicine;

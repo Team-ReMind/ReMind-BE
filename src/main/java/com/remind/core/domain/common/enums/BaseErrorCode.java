@@ -1,4 +1,4 @@
-package com.remind.core.domain.enums;
+package com.remind.core.domain.common.enums;
 
 import com.remind.core.domain.common.response.ErrorResponse;
 import org.springframework.http.HttpStatus;

@@ -1,12 +1,11 @@
 package com.remind.api.mood.controller;
 
-import static com.remind.core.domain.enums.GlobalSuccessCode.*;
+import static com.remind.core.domain.common.enums.GlobalSuccessCode.*;
 
 import com.remind.api.mood.dto.request.MoodSaveRequestDto;
 import com.remind.api.mood.dto.response.MoodResponseDto;
 import com.remind.api.mood.service.MoodService;
 import com.remind.core.domain.common.response.ApiSuccessResponse;
-import com.remind.core.domain.enums.GlobalSuccessCode;
 import com.remind.core.security.dto.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController

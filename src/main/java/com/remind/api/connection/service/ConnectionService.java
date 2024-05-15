@@ -1,24 +1,19 @@
 package com.remind.api.connection.service;
 
 import com.remind.api.connection.dto.reqeust.AcceptConnectionRequestDto;
-import com.remind.api.prescription.dto.request.CreatePrescriptionRequestDto;
 import com.remind.api.connection.dto.reqeust.RequestConnectionRequestDto;
 import com.remind.api.connection.dto.response.AcceptConnectionResponseDto;
-import com.remind.api.prescription.dto.response.CreatePrescriptionResponseDto;
 import com.remind.api.connection.dto.response.RequestConnectionResponseDto;
 import com.remind.core.domain.common.exception.ConnectionException;
 import com.remind.core.domain.common.exception.MemberException;
-import com.remind.core.domain.common.exception.PrescriptionException;
 import com.remind.core.domain.connection.Connection;
 import com.remind.core.domain.connection.enums.ConnectionStatus;
 import com.remind.core.domain.connection.repository.ConnectionRepository;
-import com.remind.core.domain.enums.ConnectionErrorCode;
-import com.remind.core.domain.enums.MemberErrorCode;
-import com.remind.core.domain.enums.PresciptionErrorCode;
+import com.remind.core.domain.common.enums.ConnectionErrorCode;
+import com.remind.core.domain.common.enums.MemberErrorCode;
 import com.remind.core.domain.member.Member;
 import com.remind.core.domain.member.enums.RolesType;
 import com.remind.core.domain.member.repository.MemberRepository;
-import com.remind.core.domain.prescription.Prescription;
 import com.remind.core.security.dto.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
