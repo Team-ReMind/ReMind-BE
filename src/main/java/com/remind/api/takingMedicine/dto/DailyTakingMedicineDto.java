@@ -8,7 +8,7 @@ import java.time.LocalTime;
 
 @Schema(description = "특정 날짜의 약 복용 정보를 반환할 dto")
 @Builder
-public record TakingMedicineDto(
+public record DailyTakingMedicineDto(
         @Schema(description = "복용 엔티티의 식별 id")
         Long takingMedicineId,
         @Schema(description = "약의 종류(BREAKFAST, LUNCH, DINNER")

@@ -1,16 +1,15 @@
 package com.remind.api.takingMedicine.controller;
 
-import com.remind.api.prescription.dto.request.CreatePrescriptionRequestDto;
 import com.remind.api.takingMedicine.dto.request.CheckTakingMedicineRequest;
 import com.remind.api.takingMedicine.dto.response.CheckTakingMedicineResponse;
-import com.remind.api.takingMedicine.dto.response.TakingMedicineInfoResponse;
+import com.remind.api.takingMedicine.dto.response.DailyTakingMedicineInfoResponse;
+import com.remind.api.takingMedicine.dto.response.MonthlyTakingMedicineInfoResponse;
 import com.remind.api.takingMedicine.service.TakingMedicineService;
 import com.remind.core.domain.common.response.ApiSuccessResponse;
 import com.remind.core.domain.takingMedicine.enums.MedicinesType;
 import com.remind.core.security.dto.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -32,12 +31,27 @@ public class TakingMedicineController {
             description = "memberId, 날짜로 해당 날짜의 약 복용 정보를 조회하는 api"
     )
     @GetMapping("")
-    public ResponseEntity<ApiSuccessResponse<TakingMedicineInfoResponse>> getDailyTakingMedicineInfo(
+    public ResponseEntity<ApiSuccessResponse<DailyTakingMedicineInfoResponse>> getDailyTakingMedicineInfo(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam Long memberId,
             @RequestParam LocalDate date
     ) {
         return ResponseEntity.ok(new ApiSuccessResponse<>(takingMedicineService.getDailyTakingMedicineInfo(userDetails, memberId, date)));
+    }
+
+    @Operation(
+            summary = "memberId, year, month로 해당 약 복용 정보를 조회하는 api",
+            description = "memberId, year, month로 해당 약 복용 정보를 조회하는 api"
+    )
+    @GetMapping("statistic")
+    public ResponseEntity<ApiSuccessResponse<MonthlyTakingMedicineInfoResponse>> getMonthlyTakingMedicineInfo(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam Long memberId,
+            @RequestParam int year,
+            @RequestParam int month
+
+    ) {
+        return ResponseEntity.ok(new ApiSuccessResponse<>(takingMedicineService.getMonthlyTakingMedicineInfo(userDetails, memberId, year,month)));
     }
 
     @Operation(
