@@ -105,7 +105,11 @@ public class SecuirityConfig {
                 antMatcher(GET, "/mood/chart/percent/activity"),
                 antMatcher(POST, "/prescription/relation/request"),
                 antMatcher(POST, "/prescription/relation/accept"),
-                antMatcher(POST, "/prescription")
+                antMatcher(GET, "/prescription"),
+                antMatcher(GET, "/prescription"),
+                antMatcher(GET, "/taking-medicine"),
+                antMatcher(POST, "/taking-medicine")
+
 
         );
         return requestMatchers.toArray(RequestMatcher[]::new);

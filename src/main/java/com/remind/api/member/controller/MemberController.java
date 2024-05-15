@@ -2,6 +2,7 @@ package com.remind.api.member.controller;
 
 import com.remind.api.member.dto.request.KakaoLoginRequest;
 import com.remind.api.member.dto.request.OnboardingRequestDto;
+import com.remind.api.member.dto.response.CautionPatientsResponseDto;
 import com.remind.api.member.dto.response.KakaoLoginResponse;
 import com.remind.api.member.dto.request.RefreshTokenRequestDto;
 import com.remind.api.member.dto.response.PatientsResponseDto;
@@ -85,7 +86,20 @@ public class MemberController {
     @GetMapping("/patients")
     public ResponseEntity<ApiSuccessResponse<PatientsResponseDto>> getPatientsList(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestParam(required = true) ConnectionStatus status) {
+            @RequestParam(required = true) ConnectionStatus status
+    ) {
         return ResponseEntity.ok(new ApiSuccessResponse<>(memberService.getPatientsList(userDetails,status)));
     }
+
+//    @Operation(
+//            summary = "센터에서 주의가 필요한 환자를 불러오는 api",
+//            description = "센터에서 주의가 필요한 환자를 불러오는 api"
+//    )
+//    @GetMapping("/patients")
+//    public ResponseEntity<ApiSuccessResponse<CautionPatientsResponseDto>> getPatientsList(
+//            @AuthenticationPrincipal UserDetailsImpl userDetails,
+//            @RequestParam Boolean caution
+//            ) {
+//        return ResponseEntity.ok(new ApiSuccessResponse<>(memberService.getPatientsList(userDetails,caution)));
+//    }
 }
