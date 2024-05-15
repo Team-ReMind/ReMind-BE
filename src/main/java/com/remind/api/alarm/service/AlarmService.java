@@ -11,8 +11,12 @@ import com.remind.core.domain.alarm.AlarmDay;
 import com.remind.core.domain.alarm.enums.AlarmDayOfWeek;
 import com.remind.core.domain.alarm.repository.AlarmDayRepository;
 import com.remind.core.domain.alarm.repository.AlarmRepository;
+import com.remind.core.domain.common.enums.MemberErrorCode;
 import com.remind.core.domain.common.exception.AlarmException;
+import com.remind.core.domain.common.exception.MemberException;
 import com.remind.core.domain.common.exception.PrescriptionException;
+import com.remind.core.domain.member.Member;
+import com.remind.core.domain.member.repository.MemberRepository;
 import com.remind.core.domain.prescription.Prescription;
 import com.remind.core.domain.prescription.repository.PrescriptionRepository;
 import com.remind.core.security.dto.UserDetailsImpl;
@@ -32,6 +36,7 @@ public class AlarmService {
     private final PrescriptionRepository prescriptionRepository;
     private final AlarmDayRepository alarmDayRepository;
     private final AlarmListRepository alarmListRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * 처방전에 대해 알림 생성
@@ -44,6 +49,9 @@ public class AlarmService {
             throw new AlarmException(INVALID_CREATE_REQUEST);
         }
 
+        Member member = memberRepository.findById(userDetails.getMemberId())
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+
         Prescription prescription = prescriptionRepository.findById(dto.prescriptionId())
                 .orElseThrow(() -> new PrescriptionException(
                         PRESCRIPTION_NOT_FOUND));
@@ -52,6 +60,7 @@ public class AlarmService {
                 Alarm.builder()
                         .prescription(prescription)
                         .alarmTime(LocalTime.of(Integer.parseInt(dto.alarmHour()), Integer.parseInt(dto.alarmMinute())))
+                        .fcmToken(member.getFcmToken())
                         .build());
 
         dto.alarmDaysOfWeek().forEach((dayOfWeek) -> {

@@ -161,9 +161,10 @@ public class MemberService {
 
         //환자, 센터, 의사인 경우
         if (req.rolesType() == RolesType.ROLE_PATIENT) {
-            member.updateRolesTypeForUser(RolesType.ROLE_PATIENT, req.protectorPhoneNumber());
+            member.updateRolesTypeForUser(RolesType.ROLE_PATIENT, req.protectorPhoneNumber(), req.fcmToken());
         } else if (req.rolesType() == RolesType.ROLE_CENTER) {
-            member.updateRolesTypeForCenter(RolesType.ROLE_CENTER, req.city(), req.district(), req.centerName());
+            member.updateRolesTypeForCenter(RolesType.ROLE_CENTER, req.city(), req.district(), req.centerName(),
+                    req.fcmToken());
         } else if (req.rolesType() == RolesType.ROLE_DOCTOR) {
             member.updateRolesTypeForDoctor(RolesType.ROLE_DOCTOR);
         }
@@ -173,7 +174,6 @@ public class MemberService {
                 .rolesType(member.getRolesType())
                 .build();
     }
-
 
 
     @Transactional
@@ -229,7 +229,8 @@ public class MemberService {
         }
 
         //dto 리스트
-        List<PatientDto> patientDtos = memberRepository.findPatientInfoByTargetMemberIdAndStatus(member.getId(), status);
+        List<PatientDto> patientDtos = memberRepository.findPatientInfoByTargetMemberIdAndStatus(member.getId(),
+                status);
 
         return PatientsResponseDto.builder()
                 .patientDtos(patientDtos)

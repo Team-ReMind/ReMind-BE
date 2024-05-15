@@ -16,7 +16,9 @@ public record OnboardingRequestDto(
         @Schema(description = " ROLE_CENTER인 경우, 군/구")
         String district,
         @Schema(description = " ROLE_CENTER인 경우, 센터명")
-        String centerName
+        String centerName,
+        @Schema(description = "기기 등록 토큰 값입니다.")
+        String fcmToken
 
 ) {
 }

@@ -29,9 +29,12 @@ public class Alarm {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "prescription_id",nullable = false)
+    @JoinColumn(name = "prescription_id", nullable = false)
     private Prescription prescription;
 
-    @Column(name = "alarm_time",nullable = false)
+    @Column(name = "alarm_time", nullable = false)
     private LocalTime alarmTime;
+
+    @Column(name = "fcm_token", nullable = false)
+    private String fcmToken;
 }
