@@ -37,9 +37,9 @@ logging:
   level:
     org:
       hibernate:
-        type:
-          descriptor:
-            sql: trace
+        orm:
+          jdbc:
+            bind: trace
 
 #custom swagger url
 springdoc:
