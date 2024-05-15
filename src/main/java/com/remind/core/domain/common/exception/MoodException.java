@@ -1,7 +1,7 @@
 package com.remind.core.domain.common.exception;
 
 
-import com.remind.core.domain.enums.MoodErrorCode;
+import com.remind.core.domain.common.enums.MoodErrorCode;
 import lombok.Getter;
 
 @Getter

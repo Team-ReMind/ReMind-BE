@@ -1,6 +1,6 @@
 package com.remind.core.domain.common.exception;
 
-import com.remind.core.domain.enums.ActivityErrorCode;
+import com.remind.core.domain.common.enums.ActivityErrorCode;
 import lombok.Getter;
 
 @Getter

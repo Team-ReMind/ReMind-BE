@@ -1,11 +1,11 @@
 package com.remind.core.security.filter;
 
-import static com.remind.core.domain.enums.SecurityErrorCode.INVALID_TOKEN;
-import static com.remind.core.domain.enums.SecurityErrorCode.TOKEN_EXPIRED;
+import static com.remind.core.domain.common.enums.SecurityErrorCode.INVALID_TOKEN;
+import static com.remind.core.domain.common.enums.SecurityErrorCode.TOKEN_EXPIRED;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.remind.core.domain.common.response.ErrorResponse;
-import com.remind.core.domain.enums.SecurityErrorCode;
+import com.remind.core.domain.common.enums.SecurityErrorCode;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;

@@ -1,6 +1,6 @@
 package com.remind.core.domain.common.exception;
 
-import com.remind.core.domain.enums.MemberErrorCode;
+import com.remind.core.domain.common.enums.MemberErrorCode;
 import lombok.Getter;
 
 @Getter

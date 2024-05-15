@@ -1,9 +1,9 @@
 package com.remind.core.domain.common.response;
 
-import static com.remind.core.domain.enums.GlobalSuccessCode.SUCCESS;
+import static com.remind.core.domain.common.enums.GlobalSuccessCode.SUCCESS;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.remind.core.domain.enums.GlobalSuccessCode;
+import com.remind.core.domain.common.enums.GlobalSuccessCode;
 import lombok.Getter;
 
 @Getter

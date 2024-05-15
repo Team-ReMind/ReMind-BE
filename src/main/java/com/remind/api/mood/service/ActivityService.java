@@ -1,6 +1,6 @@
 package com.remind.api.mood.service;
 
-import static com.remind.core.domain.enums.MemberErrorCode.*;
+import static com.remind.core.domain.common.enums.MemberErrorCode.*;
 
 import com.remind.api.mood.dto.request.ActivitySaveRequestDto;
 import com.remind.api.mood.dto.ActivityListDto;

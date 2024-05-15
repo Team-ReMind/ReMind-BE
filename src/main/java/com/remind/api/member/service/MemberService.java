@@ -1,8 +1,8 @@
 package com.remind.api.member.service;
 
-import static com.remind.core.domain.enums.MemberErrorCode.MEMBER_NOT_FOUND;
-import static com.remind.core.domain.enums.MemberErrorCode.REFRESH_TOKEN_NOT_FOUND;
-import static com.remind.core.domain.enums.MemberErrorCode.REFRESH_TOKEN_NOT_MATCH;
+import static com.remind.core.domain.common.enums.MemberErrorCode.MEMBER_NOT_FOUND;
+import static com.remind.core.domain.common.enums.MemberErrorCode.REFRESH_TOKEN_NOT_FOUND;
+import static com.remind.core.domain.common.enums.MemberErrorCode.REFRESH_TOKEN_NOT_MATCH;
 
 import com.remind.api.member.dto.PatientDto;
 import com.remind.api.member.dto.request.KakaoLoginRequest;
@@ -12,15 +12,11 @@ import com.remind.api.member.dto.response.*;
 import com.remind.core.domain.common.exception.MemberException;
 import com.remind.api.member.kakao.KakaoFeignClient;
 import com.remind.core.domain.common.repository.RedisRepository;
-import com.remind.core.domain.connection.Connection;
-import com.remind.core.domain.connection.repository.ConnectionRepository;
-import com.remind.core.domain.enums.MemberErrorCode;
+import com.remind.core.domain.common.enums.MemberErrorCode;
 import com.remind.core.domain.member.Member;
 import com.remind.core.domain.member.enums.RolesType;
 import com.remind.core.domain.member.repository.MemberRepository;
-import com.remind.core.domain.prescription.Prescription;
 import com.remind.core.domain.connection.enums.ConnectionStatus;
-import com.remind.core.domain.prescription.repository.PrescriptionRepository;
 import com.remind.core.security.dto.UserDetailsImpl;
 import com.remind.core.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
