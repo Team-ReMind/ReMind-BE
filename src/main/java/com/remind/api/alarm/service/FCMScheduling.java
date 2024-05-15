@@ -34,6 +34,8 @@ public class FCMScheduling {
         List<String> fcmTokens = alarmListRepository.getAlarmsByDays(dayOfWeek, now, now.plusMinutes(INTERVALMINUTE));
 
         //알림 전송
-        fcmUtil.sendReservationRemindMessages(fcmTokens);
+        if (fcmTokens.size() > 0) {
+            fcmUtil.sendReservationRemindMessages(fcmTokens);
+        }
     }
 }
