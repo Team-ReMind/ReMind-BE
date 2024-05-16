@@ -32,7 +32,7 @@ public class MoodChartService {
         boolean hasNext = false;
         // 요청한 정보에 대해 커서 기반 pagination
         Slice<MoodChartDto> moodChartDtos = moodChartPagingRepository.getMoodChartPaging2(userDetails.getMemberId(),
-                LocalDate.of(year, month, day), Pageable.ofSize(size));
+                LocalDate.of(year, month, day + 1), Pageable.ofSize(size));
 
         // 다음 페이지 존재 여부
         if (moodChartDtos.hasNext()) {
@@ -50,7 +50,8 @@ public class MoodChartService {
     }
 
     @Transactional(readOnly = true)
-    public List<ActivityPercentResponseDto> getActivityPercentChart(UserDetailsImpl userDetails, FeelingType feelingType) {
+    public List<ActivityPercentResponseDto> getActivityPercentChart(UserDetailsImpl userDetails,
+                                                                    FeelingType feelingType) {
         return moodChartCacheService.getActivityPercentChart(userDetails.getMemberId(), feelingType);
 
     }

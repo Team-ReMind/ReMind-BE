@@ -16,7 +16,7 @@ public interface MoodChartPagingRepository extends MoodRepository {
     @Query("select new com.remind.api.mood.dto.MoodChartDto"
             + "(mood.moodDate,mood.feelingType) "
             + "from Mood mood "
-            + "where mood.patient.id = :memberId and mood.moodDate > :moodDate "
+            + "where mood.patient.id = :memberId and mood.moodDate >= :moodDate "
             + "order by mood.moodDate asc")
     Slice<MoodChartDto> getMoodChartPaging2(@Param("memberId") Long memberId,
                                             @Param("moodDate") LocalDate moodDate,
