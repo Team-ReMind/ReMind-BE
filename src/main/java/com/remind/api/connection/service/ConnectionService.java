@@ -39,7 +39,7 @@ public class ConnectionService {
                 .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         //의사 또는 센터
-        Member targetMember = memberRepository.findByMemberCode(req.doctorMemberCode())
+        Member targetMember = memberRepository.findByMemberCode(req.targetMemberCode())
                 .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         //요청을 보내는 사람이 환자가아니거나 역할이 없는경우 예외처리?

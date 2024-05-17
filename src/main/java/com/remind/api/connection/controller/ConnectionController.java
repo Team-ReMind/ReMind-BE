@@ -25,14 +25,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/prescription")
 @Slf4j
 @RequiredArgsConstructor
-@Tag(name = "Connection API", description = "의사 - 환자 / 센터 - 환자 관계와 관련있는 API")
+@Tag(name = "Connection API", description = "의사/센터 - 환자 커넥션 관련 API")
 public class ConnectionController {
 
     private final ConnectionService connectionService;
 
     @Operation(
-            summary = "환자 -> 의사 관계 요청 API",
-            description = "환자가 의사의 멤버코드를 이용하여 관계를 요청하는 api"
+            summary = "환자 -> 의사/센터 관계 요청 API",
+            description = "환자가 의사/센터의 멤버코드를 이용하여 관계를 요청하는 api"
     )
     @PostMapping("/relation/request")
     public ResponseEntity<ApiSuccessResponse<RequestConnectionResponseDto>> requestRelataion(
@@ -42,8 +42,8 @@ public class ConnectionController {
     }
 
     @Operation(
-            summary = "의사 -> 환자 관계 수락 API",
-            description = "의사가 환자의 관계 요청을 수락하는 api"
+            summary = "의사/센터 -> 환자 관계 수락 API",
+            description = "의사/센터가 환자의 관계 요청을 수락하는 api"
     )
     @PostMapping("/relation/accept")
     public ResponseEntity<ApiSuccessResponse<AcceptConnectionResponseDto>> AcceptRelataion(
