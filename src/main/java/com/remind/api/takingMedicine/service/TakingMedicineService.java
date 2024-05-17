@@ -105,67 +105,72 @@ public class TakingMedicineService {
             return null;
         }
 
+
+
+
         //오늘 필요한 약 처방 정보
         Prescription prescription = optionalPrescription.get();
 
-        //기본적으로 반환할 dto.
-        AtomicReference<DailyTakingMedicineDto> breakfastDto = new AtomicReference<>(DailyTakingMedicineDto.builder()
-                .medicinesType(MedicinesType.BREAKFAST)
-                .importance(prescription.getBreakfastImportance())
-                .build());
-        AtomicReference<DailyTakingMedicineDto> lunchDto = new AtomicReference<>(DailyTakingMedicineDto.builder()
-                .medicinesType(MedicinesType.LUNCH)
-                .importance(prescription.getLunchImportance())
-                .build());
-        AtomicReference<DailyTakingMedicineDto> dinnerDto = new AtomicReference<>(DailyTakingMedicineDto.builder()
-                .medicinesType(MedicinesType.DINNER)
-                .importance(prescription.getDinnerImportance())
-                .build());
 
-
-        //오늘 먹어야 할 약 정보
+        //오늘 복용 또는 미복용했던 정보(아점저)
         List<TakingMedicine> takingMedicineList = takingMedicineRepository.findAllByPrescriptionIdAndDate(prescription.getId(), date);
 
-        takingMedicineList.forEach(takingMedicine -> {
-            //특정 시간의 약 복용/미복용 정보 존재
-            switch (takingMedicine.getMedicinesType()) {
-                case BREAKFAST :
-                    breakfastDto.set(DailyTakingMedicineDto.builder()
-                            .medicinesType(MedicinesType.BREAKFAST)
-                            .importance(prescription.getBreakfastImportance())
-                            .isTaking(takingMedicine.getIsTaking())
-                            .takingTime(takingMedicine.getTakingTime())
-                            .notTakingReason(takingMedicine.getNotTakingReason())
-                            .build());
-                    break;
-                case LUNCH:
-                    lunchDto.set(DailyTakingMedicineDto.builder()
-                            .medicinesType(MedicinesType.LUNCH)
-                            .importance(prescription.getLunchImportance())
-                            .isTaking(takingMedicine.getIsTaking())
-                            .takingTime(takingMedicine.getTakingTime())
-                            .notTakingReason(takingMedicine.getNotTakingReason())
-                            .build());
-                    break;
-                case DINNER:
-                    dinnerDto.set(DailyTakingMedicineDto.builder()
-                            .medicinesType(MedicinesType.DINNER)
-                            .importance(prescription.getDinnerImportance())
-                            .isTaking(takingMedicine.getIsTaking())
-                            .takingTime(takingMedicine.getTakingTime())
-                            .notTakingReason(takingMedicine.getNotTakingReason())
-                            .build());
-                    break;
-                default:
-                    throw new PrescriptionException(PresciptionErrorCode.WRONG_MEDICINE_TYPE);
-            }
-        });
+        //아침 약 정보
+        DailyTakingMedicineDto breakfastDto = takingMedicineList.stream()
+                .filter(takingMedicine -> takingMedicine.getMedicinesType().equals(MedicinesType.BREAKFAST))
+                .findFirst()
+                .map(takingMedicine -> {
+                    //약을 복용한 정보가 존재할 경우 - 복용
+                    if (takingMedicine.getIsTaking() == true) {
+                        return DailyTakingMedicineDto.ofTaking(MedicinesType.BREAKFAST, prescription.getBreakfastImportance(), takingMedicine.getTakingTime());
+                    }
+                    //약을 복용한 정보가 존재할 경우 - 미복용
+                    else {
+                        return DailyTakingMedicineDto.ofUntaking(MedicinesType.BREAKFAST, prescription.getBreakfastImportance(), takingMedicine.getNotTakingReason());
+                    }
+                    //약을 복용 또는 미복용 정보를 체크하지 않은 경우(미복용)
+                })
+                .orElse(DailyTakingMedicineDto.ofUnchecking(MedicinesType.BREAKFAST, prescription.getBreakfastImportance()));
+
+        //점심 약 정보
+        DailyTakingMedicineDto lunchDto = takingMedicineList.stream()
+                .filter(takingMedicine -> takingMedicine.getMedicinesType().equals(MedicinesType.LUNCH))
+                .findFirst()
+                .map(takingMedicine -> {
+                    //약을 복용한 정보가 존재할 경우 - 복용
+                    if (takingMedicine.getIsTaking() == true) {
+                        return DailyTakingMedicineDto.ofTaking(MedicinesType.LUNCH, prescription.getLunchImportance(), takingMedicine.getTakingTime());
+                    }
+                    //약을 복용한 정보가 존재할 경우 - 미복용
+                    else {
+                        return DailyTakingMedicineDto.ofUntaking(MedicinesType.LUNCH, prescription.getLunchImportance(), takingMedicine.getNotTakingReason());
+                    }
+                    //약을 복용 또는 미복용 정보를 체크하지 않은 경우(미복용)
+                })
+                .orElse(DailyTakingMedicineDto.ofUnchecking(MedicinesType.LUNCH, prescription.getLunchImportance()));
+
+        //저녁 약 정보
+        DailyTakingMedicineDto dinnerDto = takingMedicineList.stream()
+                .filter(takingMedicine -> takingMedicine.getMedicinesType().equals(MedicinesType.DINNER))
+                .findFirst()
+                .map(takingMedicine -> {
+                    //약을 복용한 정보가 존재할 경우 - 복용
+                    if (takingMedicine.getIsTaking() == true) {
+                        return DailyTakingMedicineDto.ofTaking(MedicinesType.DINNER, prescription.getDinnerImportance(), takingMedicine.getTakingTime());
+                    }
+                    //약을 복용한 정보가 존재할 경우 - 미복용
+                    else {
+                        return DailyTakingMedicineDto.ofUntaking(MedicinesType.DINNER, prescription.getDinnerImportance(), takingMedicine.getNotTakingReason());
+                    }
+                    //약을 복용 또는 미복용 정보를 체크하지 않은 경우(미복용)
+                })
+                .orElse(DailyTakingMedicineDto.ofUnchecking(MedicinesType.DINNER, prescription.getDinnerImportance()));
 
         //오늘(아침,점심,저녁) 먹어야 할 약 정보 dto - 중요도, 복용여부, 복용시간 등
         List<DailyTakingMedicineDto> dailyTakingMedicineDtos = new ArrayList<>();
-        dailyTakingMedicineDtos.add(breakfastDto.get());
-        dailyTakingMedicineDtos.add(lunchDto.get());
-        dailyTakingMedicineDtos.add(dinnerDto.get());
+        dailyTakingMedicineDtos.add(breakfastDto);
+        dailyTakingMedicineDtos.add(lunchDto);
+        dailyTakingMedicineDtos.add(dinnerDto);
 
 
         return DailyTakingMedicineInfoResponse.builder()

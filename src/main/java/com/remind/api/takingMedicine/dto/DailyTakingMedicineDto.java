@@ -22,4 +22,33 @@ public record DailyTakingMedicineDto(
         @Schema(description = "약을 먹지 않은 이유")
         String notTakingReason) {
 
+        //약 미복용,복용 기록 정보가 없을 시 호출할 dto
+        public static DailyTakingMedicineDto ofUnchecking(MedicinesType medicinesType,  int importance) {
+                return DailyTakingMedicineDto.builder()
+                        .medicinesType(medicinesType)
+                        .importance(importance)
+                        .isTaking(false)
+                        .build();
+        }
+
+        //약 미복용시 호출할 dto
+         public static  DailyTakingMedicineDto ofUntaking(MedicinesType medicinesType,  int importance, String notTakingReason) {
+                return DailyTakingMedicineDto.builder()
+                        .medicinesType(medicinesType)
+                        .importance(importance)
+                        .isTaking(false)
+                        .notTakingReason(notTakingReason)
+                        .build();
+        }
+
+        //약 복용시 호출할 dto
+        public static DailyTakingMedicineDto ofTaking(MedicinesType medicinesType,  int importance,LocalTime takingTime) {
+                return DailyTakingMedicineDto.builder()
+                        .medicinesType(medicinesType)
+                        .importance(importance)
+                        .isTaking(true)
+                        .takingTime(takingTime)
+                        .build();
+        }
+
 }
