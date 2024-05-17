@@ -13,7 +13,10 @@ public record PatientsResponseDto(
         List<PatientDto> patientDtos,
 
         @Schema(description = "관리중인 환자 인원수")
-        Integer patientNumber
+        Integer patientNumber,
+
+        @Schema(description = "의사/센터의 코드 번호")
+        String  targetMemberCode
 
 ) {
 }
