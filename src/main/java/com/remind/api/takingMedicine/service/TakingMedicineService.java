@@ -2,8 +2,8 @@ package com.remind.api.takingMedicine.service;
 
 import com.remind.api.takingMedicine.dto.DailyTakingMedicineDto;
 import com.remind.api.takingMedicine.dto.MonthlyTakingMedicineDto;
-import com.remind.api.takingMedicine.dto.request.CheckTakingMedicineRequest;
-import com.remind.api.takingMedicine.dto.response.CheckTakingMedicineResponse;
+import com.remind.api.takingMedicine.dto.request.CreateTakingMedicineRequest;
+import com.remind.api.takingMedicine.dto.response.CreateTakingMedicineResponse;
 import com.remind.api.takingMedicine.dto.response.DailyTakingMedicineInfoResponse;
 import com.remind.api.takingMedicine.dto.response.MonthlyTakingMedicineInfoResponse;
 import com.remind.core.domain.common.exception.PrescriptionException;
@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -122,15 +121,18 @@ public class TakingMedicineService {
                 .map(takingMedicine -> {
                     //약을 복용한 정보가 존재할 경우 - 복용
                     if (takingMedicine.getIsTaking() == true) {
-                        return DailyTakingMedicineDto.ofTaking(MedicinesType.BREAKFAST, prescription.getBreakfastImportance(), takingMedicine.getTakingTime());
+                        return DailyTakingMedicineDto
+                                .ofTaking(prescription.getId(), MedicinesType.BREAKFAST, prescription.getBreakfastImportance(), takingMedicine.getTakingTime());
                     }
                     //약을 복용한 정보가 존재할 경우 - 미복용
                     else {
-                        return DailyTakingMedicineDto.ofUntaking(MedicinesType.BREAKFAST, prescription.getBreakfastImportance(), takingMedicine.getNotTakingReason());
+                        return DailyTakingMedicineDto
+                                .ofUntaking(prescription.getId(), MedicinesType.BREAKFAST, prescription.getBreakfastImportance(), takingMedicine.getNotTakingReason());
                     }
                     //약을 복용 또는 미복용 정보를 체크하지 않은 경우(미복용)
                 })
-                .orElse(DailyTakingMedicineDto.ofUnchecking(MedicinesType.BREAKFAST, prescription.getBreakfastImportance()));
+                .orElse(DailyTakingMedicineDto
+                        .ofUnchecking(prescription.getId(), MedicinesType.BREAKFAST, prescription.getBreakfastImportance()));
 
         //점심 약 정보
         DailyTakingMedicineDto lunchDto = takingMedicineList.stream()
@@ -139,15 +141,18 @@ public class TakingMedicineService {
                 .map(takingMedicine -> {
                     //약을 복용한 정보가 존재할 경우 - 복용
                     if (takingMedicine.getIsTaking() == true) {
-                        return DailyTakingMedicineDto.ofTaking(MedicinesType.LUNCH, prescription.getLunchImportance(), takingMedicine.getTakingTime());
+                        return DailyTakingMedicineDto
+                                .ofTaking(prescription.getId(), MedicinesType.LUNCH, prescription.getLunchImportance(), takingMedicine.getTakingTime());
                     }
                     //약을 복용한 정보가 존재할 경우 - 미복용
                     else {
-                        return DailyTakingMedicineDto.ofUntaking(MedicinesType.LUNCH, prescription.getLunchImportance(), takingMedicine.getNotTakingReason());
+                        return DailyTakingMedicineDto
+                                .ofUntaking(prescription.getId(), MedicinesType.LUNCH, prescription.getLunchImportance(), takingMedicine.getNotTakingReason());
                     }
                     //약을 복용 또는 미복용 정보를 체크하지 않은 경우(미복용)
                 })
-                .orElse(DailyTakingMedicineDto.ofUnchecking(MedicinesType.LUNCH, prescription.getLunchImportance()));
+                .orElse(DailyTakingMedicineDto
+                        .ofUnchecking(prescription.getId(), MedicinesType.LUNCH, prescription.getLunchImportance()));
 
         //저녁 약 정보
         DailyTakingMedicineDto dinnerDto = takingMedicineList.stream()
@@ -156,15 +161,18 @@ public class TakingMedicineService {
                 .map(takingMedicine -> {
                     //약을 복용한 정보가 존재할 경우 - 복용
                     if (takingMedicine.getIsTaking() == true) {
-                        return DailyTakingMedicineDto.ofTaking(MedicinesType.DINNER, prescription.getDinnerImportance(), takingMedicine.getTakingTime());
+                        return DailyTakingMedicineDto
+                                .ofTaking(prescription.getId(), MedicinesType.DINNER, prescription.getDinnerImportance(), takingMedicine.getTakingTime());
                     }
                     //약을 복용한 정보가 존재할 경우 - 미복용
                     else {
-                        return DailyTakingMedicineDto.ofUntaking(MedicinesType.DINNER, prescription.getDinnerImportance(), takingMedicine.getNotTakingReason());
+                        return DailyTakingMedicineDto
+                                .ofUntaking(prescription.getId(), MedicinesType.DINNER, prescription.getDinnerImportance(), takingMedicine.getNotTakingReason());
                     }
                     //약을 복용 또는 미복용 정보를 체크하지 않은 경우(미복용)
                 })
-                .orElse(DailyTakingMedicineDto.ofUnchecking(MedicinesType.DINNER, prescription.getDinnerImportance()));
+                .orElse(DailyTakingMedicineDto
+                        .ofUnchecking(prescription.getId(), MedicinesType.DINNER, prescription.getDinnerImportance()));
 
         //오늘(아침,점심,저녁) 먹어야 할 약 정보 dto - 중요도, 복용여부, 복용시간 등
         List<DailyTakingMedicineDto> dailyTakingMedicineDtos = new ArrayList<>();
@@ -269,40 +277,35 @@ public class TakingMedicineService {
     }
 
 
-
-        /**
-         * 특정 날짜약 복용 정보를 등록하는 서비스 로직
-         *
-         * @return
-         */
+    /**
+     * 특정 날짜약 복용 정보를 등록하는 서비스 로직
+     *
+     * @return
+     */
     @Transactional
-    public CheckTakingMedicineResponse checkTakingMedicine(UserDetailsImpl userDetails,
-                                                           CheckTakingMedicineRequest req,
-                                                           LocalDate date,
-                                                           MedicinesType medicinesType,
-                                                           Boolean isTaking) {
-        List<TakingMedicine> takingMedicineList = takingMedicineRepository.findAllByDateAndMemberIdAndMedicinesType(date, userDetails.getMemberId(), medicinesType);
+    public CreateTakingMedicineResponse createTakingMedicine(UserDetailsImpl userDetails,
+                                                            CreateTakingMedicineRequest req) {
 
-        // 조회 결과 없음!
-        if (takingMedicineList.isEmpty()) {
-            throw new TakingMedicineException(TakingMedicineErrorCode.TAKING_MEDICINE_NOT_FOUND);
-        }
+        //멤버가 가진 모든 처방 정보 조회
+        List<Prescription> prescriptionList = prescriptionRepository.findAllByPatientId(userDetails.getMemberId());
 
-        //현재는 약 복용 정보가 하나만 존재한다고 가정
-        TakingMedicine takingMedicine = takingMedicineList.get(0);
+        // 날짜에 맞는 약 처방 조회
+        Prescription prescription = prescriptionList.stream().filter(tmpPrescription -> tmpPrescription.isDateInPrescription(req.date()))
+                .findFirst().orElseThrow(() -> new TakingMedicineException(TakingMedicineErrorCode.TAKING_MEDICINE_NOT_FOUND));
 
-        //약 복용
-        if (isTaking) {
-            takingMedicine.updateTakingTime(LocalTime.now());
+        takingMedicineRepository.save(
+                TakingMedicine.builder()
+                        .prescription(prescription)
+                        .date(req.date())
+                        .medicinesType(req.medicinesType())
+                        .isTaking(req.isTaking())
+                        .takingTime(LocalTime.now())
+                        .notTakingReason(req.notTakingReason())
+                        .build());
 
-        } else { //약 미복용
-            takingMedicine.updateNotTakingReason(req.notTakingReason());
-
-
-        }
-        return CheckTakingMedicineResponse.builder()
+        return CreateTakingMedicineResponse.builder()
+                .isTaking(req.isTaking())
                 .notTakingReason(req.notTakingReason())
-                .isTaking(isTaking)
                 .build();
 
     }

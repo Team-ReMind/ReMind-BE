@@ -1,7 +1,7 @@
 package com.remind.api.takingMedicine.controller;
 
-import com.remind.api.takingMedicine.dto.request.CheckTakingMedicineRequest;
-import com.remind.api.takingMedicine.dto.response.CheckTakingMedicineResponse;
+import com.remind.api.takingMedicine.dto.request.CreateTakingMedicineRequest;
+import com.remind.api.takingMedicine.dto.response.CreateTakingMedicineResponse;
 import com.remind.api.takingMedicine.dto.response.DailyTakingMedicineInfoResponse;
 import com.remind.api.takingMedicine.dto.response.MonthlyTakingMedicineInfoResponse;
 import com.remind.api.takingMedicine.service.TakingMedicineService;
@@ -59,14 +59,11 @@ public class TakingMedicineController {
             description = "특정 날짜의 약 복용 정보를 등록하는 api"
     )
     @PostMapping("")
-    public ResponseEntity<ApiSuccessResponse<CheckTakingMedicineResponse>> checkTakingMedicine(
+    public ResponseEntity<ApiSuccessResponse<CreateTakingMedicineResponse>> createTakingMedicine(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody CheckTakingMedicineRequest req,
-            @RequestParam LocalDate date,
-            @RequestParam MedicinesType medicinesType,
-            @RequestParam Boolean isTaking
+            @RequestBody CreateTakingMedicineRequest req
     ) {
-        return ResponseEntity.ok(new ApiSuccessResponse<>(takingMedicineService.checkTakingMedicine(userDetails, req, date,medicinesType, isTaking)));
+        return ResponseEntity.ok(new ApiSuccessResponse<>(takingMedicineService.createTakingMedicine(userDetails, req)));
     }
 
 }
