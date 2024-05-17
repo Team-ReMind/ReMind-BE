@@ -30,7 +30,7 @@ public class TakingMedicineController {
             summary = "memberId(), 날짜로 해당 날짜의 약 복용 정보를 조회하는 api",
             description = "memberId(), 날짜로 해당 날짜의 약 복용 정보를 조회하는 api\n 나의 정보를 조회하는 경우에는 memberId = 0 을 넣어주세요"
     )
-    @GetMapping("")
+    @GetMapping("/daily")
     public ResponseEntity<ApiSuccessResponse<DailyTakingMedicineInfoResponse>> getDailyTakingMedicineInfo(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam Long memberId,
@@ -40,10 +40,10 @@ public class TakingMedicineController {
     }
 
     @Operation(
-            summary = "memberId, year, month로 해당 약 복용 정보를 조회하는 api",
-            description = "memberId, year, month로 해당 약 복용 정보를 조회하는 api"
+            summary = "memberId, year, month로 월 단위 약 복용 정보를 조회하는 api",
+            description = "memberId, year, month로 월 단위 약 복용 정보를 조회하는 api\n 나의 정보를 조회하는 경우에는 memberId = 0 을 넣어주세요\""
     )
-    @GetMapping("statistic")
+    @GetMapping("/monthly")
     public ResponseEntity<ApiSuccessResponse<MonthlyTakingMedicineInfoResponse>> getMonthlyTakingMedicineInfo(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam Long memberId,

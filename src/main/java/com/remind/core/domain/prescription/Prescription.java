@@ -58,9 +58,19 @@ public class Prescription {
         LocalDate startDate = this.getPrescriptionDate().plus(1, ChronoUnit.DAYS);
         LocalDate endDate = this.getPrescriptionDate().plus(this.period, ChronoUnit.DAYS);
 
-        System.out.println("startDate = " + startDate.toString());
-        System.out.println("endDate = " + endDate.toString());
+//        System.out.println("startDate = " + startDate.toString());
+//        System.out.println("endDate = " + endDate.toString());
 
         return !date.isAfter(endDate) && !date.isBefore(startDate);
+    }
+
+    /**
+     * 본 처방에 할당된 일일 약 복용 횟수
+     * @return
+     */
+    public int takingMedicineCount() {
+        return (this.breakfastImportance > 0 ? 1 : 0)
+                + (this.lunchImportance > 0 ? 1 : 0)
+                + (this.dinnerImportance > 0 ? 1 : 0);
     }
 }
