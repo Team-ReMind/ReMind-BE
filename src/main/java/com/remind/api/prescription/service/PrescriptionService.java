@@ -1,6 +1,5 @@
 package com.remind.api.prescription.service;
 
-import com.remind.api.prescription.dto.PrescriptionDto;
 import com.remind.api.prescription.dto.request.CreatePrescriptionRequestDto;
 import com.remind.api.prescription.dto.response.CreatePrescriptionResponseDto;
 import com.remind.api.prescription.dto.response.PrescriptionInfoResponseDto;
@@ -27,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -102,24 +102,42 @@ public class PrescriptionService {
      */
     @Transactional(readOnly = true)
     public PrescriptionInfoResponseDto getPrescriptionInfo(UserDetailsImpl userDetails, Long memberId) {
+
+        if (memberId == 0) {
+            memberId = userDetails.getMemberId();
+        }
+
+
         //아무나 조회할 수 없도록 수정해야 함
         Member patient = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 
+        //모든 처방 정보 조회
         List<Prescription> patientPrescriptionList = prescriptionRepository.findAllByPatientId(patient.getId());
 
-        List<PrescriptionDto> prescriptionDtos = new ArrayList<>();
-        prescriptionDtos = patientPrescriptionList.stream()
-                .map(prescription -> PrescriptionDto.builder()
-                        .prescriptionId(prescription.getId())
-                        .build())
-                .collect(Collectors.toList());
+        // 오늘이 포함된 처방 찾기
+        Optional<Prescription> optionalPrescription = patientPrescriptionList.stream().filter(tmpPrescription -> tmpPrescription.isDateInPrescription(LocalDate.now()))
+                .findFirst();
 
+        //등록된 약이 없음!
+        if (optionalPrescription.isEmpty()) {
+            return null;
+        }
 
-        System.out.println("sze : " +prescriptionDtos.size());
+        //오늘 필요한 약 처방 정보
+        Prescription prescription = optionalPrescription.get();
+
         return PrescriptionInfoResponseDto.builder()
-                .prescriptionDtos(prescriptionDtos)
+                .name(patient.getName())
+                .prescriptionDate(prescription.getPrescriptionDate())
+                .period(prescription.getPeriod())
+                .breakfastImportance(prescription.getBreakfastImportance())
+                .lunchImportance(prescription.getLunchImportance())
+                .dinnerImportance(prescription.getDinnerImportance())
+                .memo(prescription.getMemo())
                 .build();
+
+
 
     }
 }

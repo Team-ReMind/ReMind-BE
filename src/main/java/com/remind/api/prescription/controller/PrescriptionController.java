@@ -38,8 +38,8 @@ public class PrescriptionController {
     }
 
     @Operation(
-            summary = "특정 환자의 처방 목록을 조회하는 api",
-            description = "특정 환자의 처방 목록을 조회하는 api"
+            summary = "특정 환자의 현재 처방 정보를 조회하는 api",
+            description = "특정 환자의 현재 처방 정보을 조회하는 api\n 내 처방 정보를 조회하고 싶으면 memberId = 0\n 오늘 해당되는 정보가 없으면 null "
     )
     @GetMapping("")
     public ResponseEntity<ApiSuccessResponse<PrescriptionInfoResponseDto>> getPrescriptionInfo(
