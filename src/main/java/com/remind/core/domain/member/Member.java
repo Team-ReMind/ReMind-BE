@@ -50,6 +50,9 @@ public class Member {
     // 환자를 위한 컬럼
     private String protectorPhoneNumber;
 
+    //의사를 위한 컬럼
+    private String doctorLicenseNumber;
+
     // 센터를 위한 컬럼
     private String city;
 
@@ -81,8 +84,8 @@ public class Member {
     }
 
     //온보딩 후 특정 컬럼 업데이트를 위한 메서드 - 의사용
-    public void updateRolesTypeForDoctor(RolesType rolesType) {
-//        this.isOnboardingFinished = true;
+    public void updateRolesTypeForDoctor(RolesType rolesType,String doctorLicenseNumber) {
         this.rolesType = rolesType;
+        this.doctorLicenseNumber = doctorLicenseNumber;
     }
 }

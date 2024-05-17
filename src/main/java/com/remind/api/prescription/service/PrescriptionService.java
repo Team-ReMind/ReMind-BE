@@ -40,7 +40,7 @@ public class PrescriptionService {
     private final TakingMedicineService takingMedicineService;
 
     /**
-     * 의사가 환자의 약 복용 정보를 업데이트하는 서비스 로직
+     * 의사가 환자의 약 복용 정보를 등록하는 서비스 로직
      * @param userDetails
      * @param req
      * @return

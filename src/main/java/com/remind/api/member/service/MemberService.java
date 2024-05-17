@@ -166,7 +166,7 @@ public class MemberService {
             member.updateRolesTypeForCenter(RolesType.ROLE_CENTER, req.city(), req.district(), req.centerName(),
                     req.fcmToken());
         } else if (req.rolesType() == RolesType.ROLE_DOCTOR) {
-            member.updateRolesTypeForDoctor(RolesType.ROLE_DOCTOR);
+            member.updateRolesTypeForDoctor(RolesType.ROLE_DOCTOR, req.doctorLicenseNumber());
         }
 
         return OnboardingResponseDto.builder()
