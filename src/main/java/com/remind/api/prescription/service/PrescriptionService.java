@@ -69,8 +69,8 @@ public class PrescriptionService {
                 .orElseThrow(() -> new ConnectionException(ConnectionErrorCode.NO_CONNECTION_REQUEST));
 
 
-        // 오늘 기준으로, 처방 정보가 존재하면 생성하지 않기
-        List<Prescription> prescriptionList = prescriptionRepository.findByConnectionId(connection.getId());
+        // 오늘 기준으로, 모든, 처방 정보가 존재하면 생성하지 않기
+        List<Prescription> prescriptionList = prescriptionRepository.findAllByPatientId(patient.getId());
         prescriptionList.forEach(prescription -> {
             //오늘 기준, 처방 정보가 존재하면 생성하지 않음
             if (prescription.isDateInPrescription(LocalDate.now())) {

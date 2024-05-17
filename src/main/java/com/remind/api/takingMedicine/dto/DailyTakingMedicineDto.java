@@ -16,10 +16,8 @@ public record DailyTakingMedicineDto(
         @Schema(description = "처방 약의중요도")
         int importance,
         @Schema(description = "약 복용 여부")
-
         Boolean isTaking,
         @Schema(description = "약 먹은 시각")
-
         LocalTime takingTime,
         @Schema(description = "약을 먹지 않은 이유")
         String notTakingReason) {

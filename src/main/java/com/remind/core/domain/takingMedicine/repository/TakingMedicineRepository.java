@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface TakingMedicineRepository extends JpaRepository<TakingMedicine, Long> {
-    List<TakingMedicine> findByPrescriptionIdAndDate(Long prescriptionId, LocalDate date);
+    List<TakingMedicine> findAllByPrescriptionIdAndDate(Long prescriptionId, LocalDate date);
 
     List<TakingMedicine> findAllByPrescriptionId( Long prescriptionId);
 

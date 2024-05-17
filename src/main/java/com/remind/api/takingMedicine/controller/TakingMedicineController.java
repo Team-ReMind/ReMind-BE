@@ -27,8 +27,8 @@ import java.time.LocalDate;
 public class TakingMedicineController {
     private final TakingMedicineService takingMedicineService;
     @Operation(
-            summary = "memberId, 날짜로 해당 날짜의 약 복용 정보를 조회하는 api",
-            description = "memberId, 날짜로 해당 날짜의 약 복용 정보를 조회하는 api"
+            summary = "memberId(), 날짜로 해당 날짜의 약 복용 정보를 조회하는 api",
+            description = "memberId(), 날짜로 해당 날짜의 약 복용 정보를 조회하는 api\n 나의 정보를 조회하는 경우에는 memberId = 0 을 넣어주세요"
     )
     @GetMapping("")
     public ResponseEntity<ApiSuccessResponse<DailyTakingMedicineInfoResponse>> getDailyTakingMedicineInfo(

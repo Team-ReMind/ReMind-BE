@@ -47,14 +47,7 @@ public class Prescription {
     private Connection connection;
 
 
-    //약 처방 정보를 업데이트하는 메서드
-    public void updatePrescriptionInfo(int period, String memo, int breakfastImportance, int lunchImportance, int dinnerImportance, int etcImportance) {
-        this.period = period;
-        this.memo = memo;
-        this.breakfastImportance = breakfastImportance;
-        this.lunchImportance = lunchImportance;
-        this.dinnerImportance = dinnerImportance;
-    }
+
 
     /**
      * date가 처방 날짜 안에 존재하는 정보인지 확인
