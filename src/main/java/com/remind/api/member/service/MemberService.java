@@ -234,6 +234,7 @@ public class MemberService {
 
         return PatientsResponseDto.builder()
                 .patientDtos(patientDtos)
+                .patientNumber(patientDtos.size())
                 .build();
 
     }
