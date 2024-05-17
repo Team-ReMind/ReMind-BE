@@ -69,27 +69,31 @@ public class PrescriptionService {
                 .orElseThrow(() -> new ConnectionException(ConnectionErrorCode.NO_CONNECTION_REQUEST));
 
 
-        //prescription정보가 존재하지 않으면, 생성하기
-        Prescription prescription = prescriptionRepository.findByConnectionId(connection.getId())
-                .orElseGet(() -> registerPrescription(connection));
+        // 오늘 기준으로, 처방 정보가 존재하면 생성하지 않기
+        List<Prescription> prescriptionList = prescriptionRepository.findByConnectionId(connection.getId());
+        prescriptionList.forEach(prescription -> {
+            //오늘 기준, 처방 정보가 존재하면 생성하지 않음
+            if (prescription.isDateInPrescription(LocalDate.now())) {
+                throw new PrescriptionException(PresciptionErrorCode.PRESCRIPTION_ALREADY_EXIST);
+            }
+        });
 
-        //업데이트
-        prescription.updatePrescriptionInfo(req.period(), req.memo(), req.breakfastImportance(), req.lunchImportance(), req.dinnerImportance(), req.etcImportance());
-
-        //해당 날짜의 약 복용 엔티티 생성
-        takingMedicineService.updateTakingMedicine(prescription.getId(),prescription.getPrescriptionDate(),prescription.getPeriod());
+        //처방 정보 생성하기
+        Prescription prescription = prescriptionRepository.save(Prescription.builder()
+                .prescriptionDate(LocalDate.now())
+                .period(req.period())
+                .breakfastImportance(req.breakfastImportance())
+                .lunchImportance(req.lunchImportance())
+                .dinnerImportance(req.dinnerImportance())
+                .memo(req.memo())
+                .connection(connection)
+                .build());
 
         return CreatePrescriptionResponseDto.builder()
                 .PrescriptionId(prescription.getId())
                 .build();
     }
 
-    private Prescription registerPrescription(Connection connection) {
-        return prescriptionRepository.save(Prescription.builder()
-                .prescriptionDate(LocalDate.now())
-                .connection(connection)
-                .build());
-    }
 
     /**
      * 특정 멤버의 처방 정보를 조회하는 로직

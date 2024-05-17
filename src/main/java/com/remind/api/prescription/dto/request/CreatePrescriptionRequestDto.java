@@ -13,9 +13,6 @@ public record CreatePrescriptionRequestDto(
         @Schema(description = "약 처방 기간")
         int period,
 
-        @Schema(description = "약 처방 날짜")
-        LocalDate prescriptionDate,
-
         @Schema(description = "약 처방 메모")
         String memo,
 
@@ -26,9 +23,8 @@ public record CreatePrescriptionRequestDto(
         int lunchImportance,
 
         @Schema(description = "저녁 약 중요도(0~3)")
-        int dinnerImportance,
+        int dinnerImportance
 
-        @Schema(description = "기타 약 중요도(0~3)")
-        int etcImportance
+
 ) {
 }

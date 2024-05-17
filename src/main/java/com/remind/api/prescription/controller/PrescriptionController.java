@@ -27,8 +27,8 @@ public class PrescriptionController {
     private final PrescriptionService prescriptionService;
 
     @Operation(
-            summary = "의사가 약 처방 정보 생성 또는 업데이트 하는 api",
-            description = "의사가 약 처방 정보 생성 또는 업데이트 하는 api"
+            summary = "의사가 약 처방 정보 생성 하는 api",
+            description = "의사가 약 처방 정보 생성 하는 api"
     )
     @PostMapping("")
     public ResponseEntity<ApiSuccessResponse<CreatePrescriptionResponseDto>> createPrescription(
