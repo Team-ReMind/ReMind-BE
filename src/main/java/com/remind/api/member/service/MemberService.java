@@ -4,6 +4,7 @@ import static com.remind.core.domain.common.enums.MemberErrorCode.MEMBER_NOT_FOU
 import static com.remind.core.domain.common.enums.MemberErrorCode.REFRESH_TOKEN_NOT_FOUND;
 import static com.remind.core.domain.common.enums.MemberErrorCode.REFRESH_TOKEN_NOT_MATCH;
 
+import com.remind.api.member.dto.CautionPatientDto;
 import com.remind.api.member.dto.PatientDto;
 import com.remind.api.member.dto.request.KakaoLoginRequest;
 import com.remind.api.member.dto.request.OnboardingRequestDto;
@@ -239,5 +240,34 @@ public class MemberService {
                 .build();
 
     }
+
+
+    /**
+     * 센터가 관리중인 위험도가 높은 환자의 리스트를 불러오는 로직
+     * @param userDetails
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public CautionPatientsResponseDto getCautionPatientsList(UserDetailsImpl userDetails) {
+        //조회하는 사람 정보 조회
+        Member member = memberRepository.findById(userDetails.getMemberId())
+                .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
+
+        //의사 또는 센터가 아니면 조회 불가
+        if (!member.getRolesType().equals(RolesType.ROLE_DOCTOR) &&
+                !member.getRolesType().equals(RolesType.ROLE_CENTER)) {
+            throw new MemberException(MemberErrorCode.MEMBER_NOT_DOCTOR_OR_CENTER);
+        }
+
+        //dto 리스트. 통계 테이블 추가 후 수정
+        List<CautionPatientDto> cautionPatientDtos = memberRepository.findCautionPatients(member.getId());
+
+        return CautionPatientsResponseDto.builder()
+                .cautionPatientDtos(cautionPatientDtos)
+                .patientNumber(cautionPatientDtos.size())
+                .build();
+
+    }
+
 
 }

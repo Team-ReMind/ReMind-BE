@@ -1,5 +1,6 @@
 package com.remind.core.domain.member.repository;
 
+import com.remind.api.member.dto.CautionPatientDto;
 import com.remind.api.member.dto.PatientDto;
 import com.remind.core.domain.connection.enums.ConnectionStatus;
 import com.remind.core.domain.member.Member;
@@ -22,4 +23,13 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
             "WHERE c.targetMember.id = :targetMemberId AND c.connectionStatus = :connectionStatus")
     List<PatientDto> findPatientInfoByTargetMemberIdAndStatus(@Param("targetMemberId") Long targetMemberId,
                                                               @Param("connectionStatus") ConnectionStatus connectionStatus);
+
+
+    //위험도가 높은 환자 찾는 쿼리
+    @Query("SELECT new com.remind.api.member.dto.CautionPatientDto(p.id, p.name, 1, 2, p.protectorPhoneNumber, p.phoneNumber) " +
+            "FROM Connection c " +
+            "JOIN c.patient p " +
+            "WHERE c.targetMember.id = :targetMemberId AND c.connectionStatus = 'ACCEPT'")
+    List<CautionPatientDto> findCautionPatients(@Param("targetMemberId") Long targetMemberId);
+
 }

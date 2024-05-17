@@ -91,15 +91,13 @@ public class MemberController {
         return ResponseEntity.ok(new ApiSuccessResponse<>(memberService.getPatientsList(userDetails,status)));
     }
 
-//    @Operation(
-//            summary = "센터에서 주의가 필요한 환자를 불러오는 api",
-//            description = "센터에서 주의가 필요한 환자를 불러오는 api"
-//    )
-//    @GetMapping("/patients")
-//    public ResponseEntity<ApiSuccessResponse<CautionPatientsResponseDto>> getPatientsList(
-//            @AuthenticationPrincipal UserDetailsImpl userDetails,
-//            @RequestParam Boolean caution
-//            ) {
-//        return ResponseEntity.ok(new ApiSuccessResponse<>(memberService.getPatientsList(userDetails,caution)));
-//    }
+    @Operation(
+            summary = "센터에서 주의가 필요한 환자를 불러오는 api",
+            description = "센터에서 주의가 필요한 환자를 불러오는 api"
+    )
+    @GetMapping("/patients/caution")
+    public ResponseEntity<ApiSuccessResponse<CautionPatientsResponseDto>> getPatientsList(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(new ApiSuccessResponse<>(memberService.getCautionPatientsList(userDetails)));
+    }
 }
