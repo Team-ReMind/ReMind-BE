@@ -27,8 +27,8 @@ public class PrescriptionController {
     private final PrescriptionService prescriptionService;
 
     @Operation(
-            summary = "의사가 약 처방 정보 생성 또는 업데이트 하는 api",
-            description = "의사가 약 처방 정보 생성 또는 업데이트 하는 api"
+            summary = "의사가 약 처방 정보 생성 하는 api",
+            description = "의사가 약 처방 정보 생성 하는 api"
     )
     @PostMapping("")
     public ResponseEntity<ApiSuccessResponse<CreatePrescriptionResponseDto>> createPrescription(
@@ -38,8 +38,8 @@ public class PrescriptionController {
     }
 
     @Operation(
-            summary = "특정 환자의 처방 목록을 조회하는 api",
-            description = "특정 환자의 처방 목록을 조회하는 api"
+            summary = "특정 환자의 현재 처방 정보를 조회하는 api",
+            description = "특정 환자의 현재 처방 정보을 조회하는 api\n 내 처방 정보를 조회하고 싶으면 memberId = 0\n 오늘 해당되는 정보가 없으면 null "
     )
     @GetMapping("")
     public ResponseEntity<ApiSuccessResponse<PrescriptionInfoResponseDto>> getPrescriptionInfo(

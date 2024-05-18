@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 @Entity
 @Getter
@@ -22,42 +23,54 @@ public class Prescription {
     @Column(name = "prescription_id")
     private Long id;
 
-    @Column(name = "period")
+    @Column(name = "period", nullable = false)
     private int period;
 
-    @Column(name = "prescription_date")
+    @Column(name = "prescription_date", nullable = false)
     private LocalDate prescriptionDate;
 
     @Column(name = "memo")
     private String memo;
 
-    @Column(name = "breakfast_importance")
+    @Column(name = "breakfast_importance", nullable = false)
     private int breakfastImportance;
 
-    @Column(name = "lunch_importance")
+    @Column(name = "lunch_importance", nullable = false)
     private int lunchImportance;
 
-    @Column(name = "dinner_importance")
+    @Column(name = "dinner_importance", nullable = false)
     private int dinnerImportance;
 
-    @Column(name = "etc_importance")
-    private int etcImportance;
 
     @ManyToOne
     @JoinColumn(name = "connection_id")
     private Connection connection;
 
-//    @ManyToOne
-//    @JoinColumn(name = "doctor_id")
-//    private Member doctor;
 
 
-    public void updatePrescriptionInfo(int period, String memo, int breakfastImportance, int lunchImportance, int dinnerImportance, int etcImportance) {
-        this.period = period;
-        this.memo = memo;
-        this.breakfastImportance = breakfastImportance;
-        this.lunchImportance = lunchImportance;
-        this.dinnerImportance = dinnerImportance;
-        this.etcImportance = etcImportance;
+
+    /**
+     * date가 처방 날짜 안에 존재하는 정보인지 확인
+     * @param date
+     * @return
+     */
+    public Boolean isDateInPrescription(LocalDate date) {
+        LocalDate startDate = this.getPrescriptionDate().plus(1, ChronoUnit.DAYS);
+        LocalDate endDate = this.getPrescriptionDate().plus(this.period, ChronoUnit.DAYS);
+
+//        System.out.println("startDate = " + startDate.toString());
+//        System.out.println("endDate = " + endDate.toString());
+
+        return !date.isAfter(endDate) && !date.isBefore(startDate);
+    }
+
+    /**
+     * 본 처방에 할당된 일일 약 복용 횟수
+     * @return
+     */
+    public int takingMedicineCount() {
+        return (this.breakfastImportance > 0 ? 1 : 0)
+                + (this.lunchImportance > 0 ? 1 : 0)
+                + (this.dinnerImportance > 0 ? 1 : 0);
     }
 }

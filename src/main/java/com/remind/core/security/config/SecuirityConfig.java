@@ -94,6 +94,7 @@ public class SecuirityConfig {
                 antMatcher(POST, "/member/refresh"),
                 antMatcher(POST, "/member/onboarding"),
                 antMatcher(GET, "/member/patients"),
+                antMatcher(GET, "/member/patients/caution"),
                 antMatcher(POST, "/activity"),
                 antMatcher(GET, "/activity"),
                 antMatcher(POST, "/mood"),
@@ -105,7 +106,8 @@ public class SecuirityConfig {
                 antMatcher(POST, "/prescription/relation/accept"),
                 antMatcher(GET, "/prescription"),
                 antMatcher(POST, "/prescription"),
-                antMatcher(GET, "/taking-medicine"),
+                antMatcher(GET, "/taking-medicine/daily"),
+                antMatcher(GET, "/taking-medicine/monthly"),
                 antMatcher(POST, "/taking-medicine"),
                 antMatcher(POST, "/alarm"),
                 antMatcher(GET, "/alarm/{prescriptionId}")

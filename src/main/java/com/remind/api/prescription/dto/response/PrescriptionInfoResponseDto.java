@@ -1,13 +1,32 @@
 package com.remind.api.prescription.dto.response;
 
-import com.remind.api.prescription.dto.PrescriptionDto;
+import com.remind.core.domain.takingMedicine.enums.MedicinesType;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Builder
+@Schema(description = "환자 관리 페이지에서 약 처방 정보")
 public record PrescriptionInfoResponseDto(
-       List<PrescriptionDto> prescriptionDtos
+
+        @Schema(description = "환자의 이름")
+        String name,
+        @Schema(description = "처방 날짜")
+        LocalDate prescriptionDate,
+        @Schema(description = "처방 기간")
+        int period,
+        @Schema(description = "아침 약 중요도")
+        int breakfastImportance,
+        @Schema(description = "점심 약 중요도")
+        int lunchImportance,
+        @Schema(description = "저녁 약 중요도")
+        int dinnerImportance,
+
+        @Schema(description = "처방 메모")
+        String memo
+
 
 ) {
 }

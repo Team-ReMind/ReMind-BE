@@ -1,6 +1,5 @@
 package com.remind.api.prescription.service;
 
-import com.remind.api.prescription.dto.PrescriptionDto;
 import com.remind.api.prescription.dto.request.CreatePrescriptionRequestDto;
 import com.remind.api.prescription.dto.response.CreatePrescriptionResponseDto;
 import com.remind.api.prescription.dto.response.PrescriptionInfoResponseDto;
@@ -27,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -40,7 +40,7 @@ public class PrescriptionService {
     private final TakingMedicineService takingMedicineService;
 
     /**
-     * 의사가 환자의 약 복용 정보를 업데이트하는 서비스 로직
+     * 의사가 환자의 약 복용 정보를 등록하는 서비스 로직
      * @param userDetails
      * @param req
      * @return
@@ -69,27 +69,31 @@ public class PrescriptionService {
                 .orElseThrow(() -> new ConnectionException(ConnectionErrorCode.NO_CONNECTION_REQUEST));
 
 
-        //prescription정보가 존재하지 않으면, 생성하기
-        Prescription prescription = prescriptionRepository.findByConnectionId(connection.getId())
-                .orElseGet(() -> registerPrescription(connection));
+        // 오늘 기준으로, 모든, 처방 정보가 존재하면 생성하지 않기
+        List<Prescription> prescriptionList = prescriptionRepository.findAllByPatientId(patient.getId());
+        prescriptionList.forEach(prescription -> {
+            //오늘 기준, 처방 정보가 존재하면 생성하지 않음
+            if (prescription.isDateInPrescription(LocalDate.now())) {
+                throw new PrescriptionException(PresciptionErrorCode.PRESCRIPTION_ALREADY_EXIST);
+            }
+        });
 
-        //업데이트
-        prescription.updatePrescriptionInfo(req.period(), req.memo(), req.breakfastImportance(), req.lunchImportance(), req.dinnerImportance(), req.etcImportance());
-
-        //해당 날짜의 약 복용 엔티티 생성
-        takingMedicineService.updateTakingMedicine(prescription.getId(),prescription.getPrescriptionDate(),prescription.getPeriod());
+        //처방 정보 생성하기
+        Prescription prescription = prescriptionRepository.save(Prescription.builder()
+                .prescriptionDate(LocalDate.now())
+                .period(req.period())
+                .breakfastImportance(req.breakfastImportance())
+                .lunchImportance(req.lunchImportance())
+                .dinnerImportance(req.dinnerImportance())
+                .memo(req.memo())
+                .connection(connection)
+                .build());
 
         return CreatePrescriptionResponseDto.builder()
                 .PrescriptionId(prescription.getId())
                 .build();
     }
 
-    private Prescription registerPrescription(Connection connection) {
-        return prescriptionRepository.save(Prescription.builder()
-                .prescriptionDate(LocalDate.now())
-                .connection(connection)
-                .build());
-    }
 
     /**
      * 특정 멤버의 처방 정보를 조회하는 로직
@@ -98,24 +102,42 @@ public class PrescriptionService {
      */
     @Transactional(readOnly = true)
     public PrescriptionInfoResponseDto getPrescriptionInfo(UserDetailsImpl userDetails, Long memberId) {
+
+        if (memberId == 0) {
+            memberId = userDetails.getMemberId();
+        }
+
+
         //아무나 조회할 수 없도록 수정해야 함
         Member patient = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 
+        //모든 처방 정보 조회
         List<Prescription> patientPrescriptionList = prescriptionRepository.findAllByPatientId(patient.getId());
 
-        List<PrescriptionDto> prescriptionDtos = new ArrayList<>();
-        prescriptionDtos = patientPrescriptionList.stream()
-                .map(prescription -> PrescriptionDto.builder()
-                        .prescriptionId(prescription.getId())
-                        .build())
-                .collect(Collectors.toList());
+        // 오늘이 포함된 처방 찾기
+        Optional<Prescription> optionalPrescription = patientPrescriptionList.stream().filter(tmpPrescription -> tmpPrescription.isDateInPrescription(LocalDate.now()))
+                .findFirst();
 
+        //등록된 약이 없음!
+        if (optionalPrescription.isEmpty()) {
+            return null;
+        }
 
-        System.out.println("sze : " +prescriptionDtos.size());
+        //오늘 필요한 약 처방 정보
+        Prescription prescription = optionalPrescription.get();
+
         return PrescriptionInfoResponseDto.builder()
-                .prescriptionDtos(prescriptionDtos)
+                .name(patient.getName())
+                .prescriptionDate(prescription.getPrescriptionDate())
+                .period(prescription.getPeriod())
+                .breakfastImportance(prescription.getBreakfastImportance())
+                .lunchImportance(prescription.getLunchImportance())
+                .dinnerImportance(prescription.getDinnerImportance())
+                .memo(prescription.getMemo())
                 .build();
+
+
 
     }
 }

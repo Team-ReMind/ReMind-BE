@@ -10,7 +10,14 @@ import java.util.List;
 @Builder
 public record PatientsResponseDto(
         @Schema(description = "관리중인 환자 목록 리스트")
-        List<PatientDto> patientDtos
+        List<PatientDto> patientDtos,
+
+        @Schema(description = "관리중인 환자 인원수")
+        Integer patientNumber,
+
+        @Schema(description = "의사/센터의 코드 번호")
+        String  targetMemberCode
+
 ) {
 }
 

@@ -11,6 +11,9 @@ public record OnboardingRequestDto(
         RolesType rolesType,
         @Schema(description = " ROLE_PATIENT 인 경우, 보호자 전화번호")
         String protectorPhoneNumber,
+
+        @Schema(description = " ROLE_DOCTOR인 경우, 의사 면허 번호")
+        String doctorLicenseNumber,
         @Schema(description = " ROLE_CENTER인 경우, 시/도")
         String city,
         @Schema(description = " ROLE_CENTER인 경우, 군/구")

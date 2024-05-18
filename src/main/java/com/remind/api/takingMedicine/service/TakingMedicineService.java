@@ -2,8 +2,8 @@ package com.remind.api.takingMedicine.service;
 
 import com.remind.api.takingMedicine.dto.DailyTakingMedicineDto;
 import com.remind.api.takingMedicine.dto.MonthlyTakingMedicineDto;
-import com.remind.api.takingMedicine.dto.request.CheckTakingMedicineRequest;
-import com.remind.api.takingMedicine.dto.response.CheckTakingMedicineResponse;
+import com.remind.api.takingMedicine.dto.request.CreateTakingMedicineRequest;
+import com.remind.api.takingMedicine.dto.response.CreateTakingMedicineResponse;
 import com.remind.api.takingMedicine.dto.response.DailyTakingMedicineInfoResponse;
 import com.remind.api.takingMedicine.dto.response.MonthlyTakingMedicineInfoResponse;
 import com.remind.core.domain.common.exception.PrescriptionException;
@@ -16,6 +16,7 @@ import com.remind.core.domain.takingMedicine.TakingMedicine;
 import com.remind.core.domain.takingMedicine.enums.MedicinesType;
 import com.remind.core.domain.takingMedicine.repository.TakingMedicineRepository;
 import com.remind.core.security.dto.UserDetailsImpl;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,10 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -86,56 +86,104 @@ public class TakingMedicineService {
     @Transactional(readOnly = true)
     public DailyTakingMedicineInfoResponse getDailyTakingMedicineInfo(UserDetailsImpl userDetails, Long memberId, LocalDate date) {
 
-        //특정 날짜, 환자의 약 복용리스트
-        List<TakingMedicine> takingMedicineList = takingMedicineRepository.findAllByDateAndMemberId(date, memberId);
-        for (TakingMedicine takingMedicine : takingMedicineList) {
-            System.out.println(takingMedicine.getDate().toString() + takingMedicine.getMedicinesType() + "@@id : " + takingMedicine.getPrescription().getId());
+        //파라미터가 0이면, 나를 조회하도록 하기.
+        if (memberId == 0) {
+            memberId = userDetails.getMemberId();
         }
 
+        //멤버가 가진 모든 처방 정보 조회
+        List<Prescription> prescriptionList = prescriptionRepository.findAllByPatientId(memberId);
+
+        // 날짜가 약복용이 필요한 날인 경우
+        Optional<Prescription> optionalPrescription = prescriptionList.stream().filter(tmpPrescription -> tmpPrescription.isDateInPrescription(date))
+                .findFirst();
+
+        //등록된 약이 없음!
+        if (optionalPrescription.isEmpty()) {
+            return null;
+        }
+
+
+        //오늘 필요한 약 처방 정보
+        Prescription prescription = optionalPrescription.get();
+
+
+        //오늘 복용 또는 미복용했던 정보(아점저)
+        List<TakingMedicine> takingMedicineList = takingMedicineRepository.findAllByPrescriptionIdAndDate(prescription.getId(), date);
+
+        //아침 약 정보
+        DailyTakingMedicineDto breakfastDto = takingMedicineList.stream()
+                .filter(takingMedicine -> takingMedicine.getMedicinesType().equals(MedicinesType.BREAKFAST))
+                .findFirst()
+                .map(takingMedicine -> {
+                    //약을 복용한 정보가 존재할 경우 - 복용
+                    if (takingMedicine.getIsTaking() == true) {
+                        return DailyTakingMedicineDto
+                                .ofTaking(prescription.getId(), MedicinesType.BREAKFAST, prescription.getBreakfastImportance(), takingMedicine.getTakingTime());
+                    }
+                    //약을 복용한 정보가 존재할 경우 - 미복용
+                    else {
+                        return DailyTakingMedicineDto
+                                .ofUntaking(prescription.getId(), MedicinesType.BREAKFAST, prescription.getBreakfastImportance(), takingMedicine.getNotTakingReason());
+                    }
+                    //약을 복용 또는 미복용 정보를 체크하지 않은 경우(미복용)
+                })
+                .orElse(DailyTakingMedicineDto
+                        .ofUnchecking(prescription.getId(), MedicinesType.BREAKFAST, prescription.getBreakfastImportance()));
+
+        //점심 약 정보
+        DailyTakingMedicineDto lunchDto = takingMedicineList.stream()
+                .filter(takingMedicine -> takingMedicine.getMedicinesType().equals(MedicinesType.LUNCH))
+                .findFirst()
+                .map(takingMedicine -> {
+                    //약을 복용한 정보가 존재할 경우 - 복용
+                    if (takingMedicine.getIsTaking() == true) {
+                        return DailyTakingMedicineDto
+                                .ofTaking(prescription.getId(), MedicinesType.LUNCH, prescription.getLunchImportance(), takingMedicine.getTakingTime());
+                    }
+                    //약을 복용한 정보가 존재할 경우 - 미복용
+                    else {
+                        return DailyTakingMedicineDto
+                                .ofUntaking(prescription.getId(), MedicinesType.LUNCH, prescription.getLunchImportance(), takingMedicine.getNotTakingReason());
+                    }
+                    //약을 복용 또는 미복용 정보를 체크하지 않은 경우(미복용)
+                })
+                .orElse(DailyTakingMedicineDto
+                        .ofUnchecking(prescription.getId(), MedicinesType.LUNCH, prescription.getLunchImportance()));
+
+        //저녁 약 정보
+        DailyTakingMedicineDto dinnerDto = takingMedicineList.stream()
+                .filter(takingMedicine -> takingMedicine.getMedicinesType().equals(MedicinesType.DINNER))
+                .findFirst()
+                .map(takingMedicine -> {
+                    //약을 복용한 정보가 존재할 경우 - 복용
+                    if (takingMedicine.getIsTaking() == true) {
+                        return DailyTakingMedicineDto
+                                .ofTaking(prescription.getId(), MedicinesType.DINNER, prescription.getDinnerImportance(), takingMedicine.getTakingTime());
+                    }
+                    //약을 복용한 정보가 존재할 경우 - 미복용
+                    else {
+                        return DailyTakingMedicineDto
+                                .ofUntaking(prescription.getId(), MedicinesType.DINNER, prescription.getDinnerImportance(), takingMedicine.getNotTakingReason());
+                    }
+                    //약을 복용 또는 미복용 정보를 체크하지 않은 경우(미복용)
+                })
+                .orElse(DailyTakingMedicineDto
+                        .ofUnchecking(prescription.getId(), MedicinesType.DINNER, prescription.getDinnerImportance()));
+
+        //오늘(아침,점심,저녁) 먹어야 할 약 정보 dto - 중요도, 복용여부, 복용시간 등
         List<DailyTakingMedicineDto> dailyTakingMedicineDtos = new ArrayList<>();
+        dailyTakingMedicineDtos.add(breakfastDto);
+        dailyTakingMedicineDtos.add(lunchDto);
+        dailyTakingMedicineDtos.add(dinnerDto);
 
-        // 조회 결과 없음!
-        if (takingMedicineList.isEmpty()) {
-            return DailyTakingMedicineInfoResponse.builder()
-                    .dailyTakingMedicineDtos(dailyTakingMedicineDtos)
-                    .build();
-        }
-
-        //처방 정보 가져오기
-        Prescription prescription = prescriptionRepository.findById(takingMedicineList.get(0).getPrescription().getId())
-                .orElseThrow(() -> new PrescriptionException(PresciptionErrorCode.PRESCRIPTION_NOT_FOUND));
-
-        dailyTakingMedicineDtos = takingMedicineList.stream().map(takingMedicine -> {
-            int importance = 999;
-            switch (takingMedicine.getMedicinesType()) {
-                case BREAKFAST:
-                    importance = prescription.getBreakfastImportance();
-                    break;
-                case LUNCH:
-                    importance = prescription.getLunchImportance();
-                    break;
-                case DINNER:
-                    importance = prescription.getDinnerImportance();
-                    break;
-                default:
-                    throw new PrescriptionException(PresciptionErrorCode.WRONG_MEDICINE_TYPE);
-            }
-
-            return DailyTakingMedicineDto.builder()
-                    .takingMedicineId(takingMedicine.getId())
-                    .medicinesType(takingMedicine.getMedicinesType())
-                    .isTaking(takingMedicine.getIsTaking())
-                    .takingTime(takingMedicine.getTakingTime())
-                    .notTakingReason(takingMedicine.getNotTakingReason())
-                    .importance(importance)
-                    .build();
-        }).collect(Collectors.toList());
 
         return DailyTakingMedicineInfoResponse.builder()
                 .dailyTakingMedicineDtos(dailyTakingMedicineDtos)
                 .build();
 
-//
+
+
     }
 
     /**
@@ -149,117 +197,174 @@ public class TakingMedicineService {
                                                                           Long memberId,
                                                                           int year,
                                                                           int month) {
-        //특정 날짜, 환자의 약 복용리스트
-        List<TakingMedicine> takingMedicineList = takingMedicineRepository.findAllByYearAndMonthAndMemberId(memberId, year, month);
-
-
-        List<MonthlyTakingMedicineDto> monthlyTakingMedicineDtos = new ArrayList<>();
-
-        // 조회 결과 없음!
-        if (takingMedicineList.isEmpty()) {
-            return MonthlyTakingMedicineInfoResponse.builder()
-                    .monthlyTakingMedicineDtos(monthlyTakingMedicineDtos)
-                    .build();
+        //파라미터가 0이면, 나를 조회하도록 하기.
+        if (memberId == 0) {
+            memberId = userDetails.getMemberId();
         }
 
-        //날짜에 따른 카운트를 저장하기 위한 해시맵
-        HashMap<LocalDate, Integer> localDateCountHashMap = new HashMap<>();
+        //멤버가 가진 모든 처방 정보 조회
+        List<Prescription> prescriptionList = prescriptionRepository.findAllByPatientId(memberId);
 
-        //아침,점심,저녁에 따른 카운트를 저장하기 위한 해시맵
-        HashMap<MedicinesType, Integer> medicinesTypeCountHashMap = new HashMap<>();
+        //1일부터 말일까지
+        YearMonth yearMonth = YearMonth.of(year, month);
+        LocalDate startDate = LocalDate.of(year, month, 1);
+        LocalDate endDate = yearMonth.atEndOfMonth();
 
-        //복용 정보를 조회하여 날짜별, 아점저별로 카운트를 추가함
-        takingMedicineList.forEach(takingMedicine -> {
-            LocalDate date = takingMedicine.getDate();
-            MedicinesType medicinesType = takingMedicine.getMedicinesType();
+        //한 달의 정보를 담을 dto
+        List<MonthlyTakingMedicineDto> monthlyTakingMedicineDtos = new ArrayList<>();
 
-            Integer medicineTypeCount = medicinesTypeCountHashMap.getOrDefault(medicinesType, 0);
-            Integer dateCount = localDateCountHashMap.getOrDefault(date, 0);
+        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+            // 날짜가 약복용이 필요했던 날인 경우
+            LocalDate tmpDate = date;
+            Optional<Prescription> optionalPrescription = prescriptionList.stream().filter(tmpPrescription -> tmpPrescription.isDateInPrescription(tmpDate))
+                    .findFirst();
 
-            //약을 복용했으면 카운트 추가
-            if (takingMedicine.getIsTaking()) {
-                medicinesTypeCountHashMap.put(medicinesType, medicineTypeCount + 1);
-                localDateCountHashMap.put(date, dateCount + 1);
+            // 약 복용이 필요없는 날
+            if (optionalPrescription.isEmpty()) {
+                monthlyTakingMedicineDtos.add(MonthlyTakingMedicineDto.builder()
+                        .needMedicine(false)
+                        .date(date)
+                        .build());
+                continue;
             }
-            else{
-                //약을 복용하지 않았어도, 해시맵에 추가
-                medicinesTypeCountHashMap.put(medicinesType, medicineTypeCount);
-                localDateCountHashMap.put(date, dateCount);
+
+            //약 복용이 필요한 날. 해당되는 약 처방 정보
+            Prescription prescription = optionalPrescription.get();
+
+            int realTakingMedicineCount = takingMedicineRepository.countByDateAndPrescriptionIdAndIsTakingIsTrue(date, prescription.getId());
+            int needTakingMedicineCount = prescription.takingMedicineCount();
+            int takingMedicineLevel;
+
+            //약 복용 정도
+            if(realTakingMedicineCount == needTakingMedicineCount){
+                takingMedicineLevel = 2;
+            } else if (realTakingMedicineCount == 0) {
+                takingMedicineLevel = 0;
+            } else {
+                takingMedicineLevel = 1;
             }
-        });
 
-        //dto 변환하기 - 날 별
-        monthlyTakingMedicineDtos = localDateCountHashMap.entrySet().stream().map(localDateIntegerEntry -> {
-            MonthlyTakingMedicineDto monthlyTakingMedicineDto = MonthlyTakingMedicineDto.builder()
-                    .date(localDateIntegerEntry.getKey())
-                    .takingCount(localDateIntegerEntry.getValue())
-                    .build();
-            return monthlyTakingMedicineDto;
-        }).collect(Collectors.toList());
-
-        //dto변환하기 - 아점저 별
-        int totalSize = localDateCountHashMap.size();
-        int totalCount = totalSize * 3;
-
-        int breakfastCount = medicinesTypeCountHashMap.getOrDefault(MedicinesType.BREAKFAST,0);
-        int lunchCount = medicinesTypeCountHashMap.getOrDefault(MedicinesType.LUNCH,0);
-        int dinnerCount = medicinesTypeCountHashMap.getOrDefault(MedicinesType.DINNER,0);
-
-        System.out.println("totalSize = " + totalSize);
-        System.out.println("totalCount = " + totalCount);
-        System.out.println("breakfastCount = " + breakfastCount);
-        System.out.println("lunchCount = " + lunchCount);
-        System.out.println("dinnerCount = " + dinnerCount);
-
-        double breakfastRatio = (double) breakfastCount / totalSize * 100;
-        double lunchRatio = (double) lunchCount / totalSize * 100;
-        double dinnerRatio =(double) dinnerCount / totalSize * 100;
-        double totalRatio = (double) (breakfastCount + lunchCount + dinnerCount) / totalCount * 100;
+            monthlyTakingMedicineDtos.add(MonthlyTakingMedicineDto.builder()
+                    .needMedicine(true)
+                    .date(date)
+                    .takingCount(realTakingMedicineCount)
+                    .takingLevel(takingMedicineLevel)
+                    .build());
+        }
 
         return MonthlyTakingMedicineInfoResponse.builder()
                 .monthlyTakingMedicineDtos(monthlyTakingMedicineDtos)
-                .breakfastRatio(breakfastRatio)
-                .lunchRatio(lunchRatio)
-                .dinnerRatio(dinnerRatio)
-                .totalRatio(totalRatio)
                 .build();
+
+
+
+//
+//
+//        List<TakingMedicine> takingMedicineList = takingMedicineRepository.findAllByYearAndMonthAndMemberId(memberId, year, month);
+//
+//
+//        List<MonthlyTakingMedicineDto> monthlyTakingMedicineDtos = new ArrayList<>();
+//
+//        // 조회 결과 없음!
+//        if (takingMedicineList.isEmpty()) {
+//            return MonthlyTakingMedicineInfoResponse.builder()
+//                    .monthlyTakingMedicineDtos(monthlyTakingMedicineDtos)
+//                    .build();
+//        }
+//
+//        //날짜에 따른 카운트를 저장하기 위한 해시맵
+//        HashMap<LocalDate, Integer> localDateCountHashMap = new HashMap<>();
+//
+//        //아침,점심,저녁에 따른 카운트를 저장하기 위한 해시맵
+//        HashMap<MedicinesType, Integer> medicinesTypeCountHashMap = new HashMap<>();
+//
+//        //복용 정보를 조회하여 날짜별, 아점저별로 카운트를 추가함
+//        takingMedicineList.forEach(takingMedicine -> {
+//            LocalDate date = takingMedicine.getDate();
+//            MedicinesType medicinesType = takingMedicine.getMedicinesType();
+//
+//            Integer medicineTypeCount = medicinesTypeCountHashMap.getOrDefault(medicinesType, 0);
+//            Integer dateCount = localDateCountHashMap.getOrDefault(date, 0);
+//
+//            //약을 복용했으면 카운트 추가
+//            if (takingMedicine.getIsTaking()) {
+//                medicinesTypeCountHashMap.put(medicinesType, medicineTypeCount + 1);
+//                localDateCountHashMap.put(date, dateCount + 1);
+//            }
+//            else{
+//                //약을 복용하지 않았어도, 해시맵에 추가
+//                medicinesTypeCountHashMap.put(medicinesType, medicineTypeCount);
+//                localDateCountHashMap.put(date, dateCount);
+//            }
+//        });
+//
+//        //dto 변환하기 - 날 별
+//        monthlyTakingMedicineDtos = localDateCountHashMap.entrySet().stream().map(localDateIntegerEntry -> {
+//            MonthlyTakingMedicineDto monthlyTakingMedicineDto = MonthlyTakingMedicineDto.builder()
+//                    .date(localDateIntegerEntry.getKey())
+//                    .takingCount(localDateIntegerEntry.getValue())
+//                    .build();
+//            return monthlyTakingMedicineDto;
+//        }).collect(Collectors.toList());
+//
+//        //dto변환하기 - 아점저 별
+//        int totalSize = localDateCountHashMap.size();
+//        int totalCount = totalSize * 3;
+//
+//        int breakfastCount = medicinesTypeCountHashMap.getOrDefault(MedicinesType.BREAKFAST,0);
+//        int lunchCount = medicinesTypeCountHashMap.getOrDefault(MedicinesType.LUNCH,0);
+//        int dinnerCount = medicinesTypeCountHashMap.getOrDefault(MedicinesType.DINNER,0);
+//
+//        System.out.println("totalSize = " + totalSize);
+//        System.out.println("totalCount = " + totalCount);
+//        System.out.println("breakfastCount = " + breakfastCount);
+//        System.out.println("lunchCount = " + lunchCount);
+//        System.out.println("dinnerCount = " + dinnerCount);
+//
+//        double breakfastRatio = (double) breakfastCount / totalSize * 100;
+//        double lunchRatio = (double) lunchCount / totalSize * 100;
+//        double dinnerRatio =(double) dinnerCount / totalSize * 100;
+//        double totalRatio = (double) (breakfastCount + lunchCount + dinnerCount) / totalCount * 100;
+//
+//        return MonthlyTakingMedicineInfoResponse.builder()
+//                .monthlyTakingMedicineDtos(monthlyTakingMedicineDtos)
+//                .breakfastRatio(breakfastRatio)
+//                .lunchRatio(lunchRatio)
+//                .dinnerRatio(dinnerRatio)
+//                .totalRatio(totalRatio)
+//                .build();
     }
 
 
-
-        /**
-         * 특정 날짜약 복용 정보를 등록하는 서비스 로직
-         *
-         * @return
-         */
+    /**
+     * 특정 날짜약 복용 정보를 등록하는 서비스 로직
+     *
+     * @return
+     */
     @Transactional
-    public CheckTakingMedicineResponse checkTakingMedicine(UserDetailsImpl userDetails,
-                                                           CheckTakingMedicineRequest req,
-                                                           LocalDate date,
-                                                           MedicinesType medicinesType,
-                                                           Boolean isTaking) {
-        List<TakingMedicine> takingMedicineList = takingMedicineRepository.findAllByDateAndMemberIdAndMedicinesType(date, userDetails.getMemberId(), medicinesType);
+    public CreateTakingMedicineResponse createTakingMedicine(UserDetailsImpl userDetails,
+                                                            CreateTakingMedicineRequest req) {
 
-        // 조회 결과 없음!
-        if (takingMedicineList.isEmpty()) {
-            throw new TakingMedicineException(TakingMedicineErrorCode.TAKING_MEDICINE_NOT_FOUND);
-        }
+        //멤버가 가진 모든 처방 정보 조회
+        List<Prescription> prescriptionList = prescriptionRepository.findAllByPatientId(userDetails.getMemberId());
 
-        //현재는 약 복용 정보가 하나만 존재한다고 가정
-        TakingMedicine takingMedicine = takingMedicineList.get(0);
+        // 날짜에 맞는 약 처방 조회
+        Prescription prescription = prescriptionList.stream().filter(tmpPrescription -> tmpPrescription.isDateInPrescription(req.date()))
+                .findFirst().orElseThrow(() -> new TakingMedicineException(TakingMedicineErrorCode.TAKING_MEDICINE_NOT_FOUND));
 
-        //약 복용
-        if (isTaking) {
-            takingMedicine.updateTakingTime(LocalTime.now());
+        takingMedicineRepository.save(
+                TakingMedicine.builder()
+                        .prescription(prescription)
+                        .date(req.date())
+                        .medicinesType(req.medicinesType())
+                        .isTaking(req.isTaking())
+                        .takingTime(LocalTime.now())
+                        .notTakingReason(req.notTakingReason())
+                        .build());
 
-        } else { //약 미복용
-            takingMedicine.updateNotTakingReason(req.notTakingReason());
-
-
-        }
-        return CheckTakingMedicineResponse.builder()
+        return CreateTakingMedicineResponse.builder()
+                .isTaking(req.isTaking())
                 .notTakingReason(req.notTakingReason())
-                .isTaking(isTaking)
                 .build();
 
     }

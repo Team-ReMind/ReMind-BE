@@ -3,7 +3,7 @@ package com.remind.api.takingMedicine.dto.response;
 import lombok.Builder;
 
 @Builder
-public record CheckTakingMedicineResponse(
+public record CreateTakingMedicineResponse(
         String notTakingReason,
         Boolean isTaking
 ) {

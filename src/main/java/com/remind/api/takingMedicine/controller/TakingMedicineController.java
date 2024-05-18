@@ -1,7 +1,7 @@
 package com.remind.api.takingMedicine.controller;
 
-import com.remind.api.takingMedicine.dto.request.CheckTakingMedicineRequest;
-import com.remind.api.takingMedicine.dto.response.CheckTakingMedicineResponse;
+import com.remind.api.takingMedicine.dto.request.CreateTakingMedicineRequest;
+import com.remind.api.takingMedicine.dto.response.CreateTakingMedicineResponse;
 import com.remind.api.takingMedicine.dto.response.DailyTakingMedicineInfoResponse;
 import com.remind.api.takingMedicine.dto.response.MonthlyTakingMedicineInfoResponse;
 import com.remind.api.takingMedicine.service.TakingMedicineService;
@@ -27,10 +27,10 @@ import java.time.LocalDate;
 public class TakingMedicineController {
     private final TakingMedicineService takingMedicineService;
     @Operation(
-            summary = "memberId, 날짜로 해당 날짜의 약 복용 정보를 조회하는 api",
-            description = "memberId, 날짜로 해당 날짜의 약 복용 정보를 조회하는 api"
+            summary = "memberId(), 날짜로 해당 날짜의 약 복용 정보를 조회하는 api",
+            description = "memberId(), 날짜로 해당 날짜의 약 복용 정보를 조회하는 api\n 나의 정보를 조회하는 경우에는 memberId = 0 을 넣어주세요"
     )
-    @GetMapping("")
+    @GetMapping("/daily")
     public ResponseEntity<ApiSuccessResponse<DailyTakingMedicineInfoResponse>> getDailyTakingMedicineInfo(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam Long memberId,
@@ -40,10 +40,10 @@ public class TakingMedicineController {
     }
 
     @Operation(
-            summary = "memberId, year, month로 해당 약 복용 정보를 조회하는 api",
-            description = "memberId, year, month로 해당 약 복용 정보를 조회하는 api"
+            summary = "memberId, year, month로 월 단위 약 복용 정보를 조회하는 api",
+            description = "memberId, year, month로 월 단위 약 복용 정보를 조회하는 api\n 나의 정보를 조회하는 경우에는 memberId = 0 을 넣어주세요\""
     )
-    @GetMapping("statistic")
+    @GetMapping("/monthly")
     public ResponseEntity<ApiSuccessResponse<MonthlyTakingMedicineInfoResponse>> getMonthlyTakingMedicineInfo(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam Long memberId,
@@ -59,14 +59,11 @@ public class TakingMedicineController {
             description = "특정 날짜의 약 복용 정보를 등록하는 api"
     )
     @PostMapping("")
-    public ResponseEntity<ApiSuccessResponse<CheckTakingMedicineResponse>> checkTakingMedicine(
+    public ResponseEntity<ApiSuccessResponse<CreateTakingMedicineResponse>> createTakingMedicine(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody CheckTakingMedicineRequest req,
-            @RequestParam LocalDate date,
-            @RequestParam MedicinesType medicinesType,
-            @RequestParam Boolean isTaking
+            @RequestBody CreateTakingMedicineRequest req
     ) {
-        return ResponseEntity.ok(new ApiSuccessResponse<>(takingMedicineService.checkTakingMedicine(userDetails, req, date,medicinesType, isTaking)));
+        return ResponseEntity.ok(new ApiSuccessResponse<>(takingMedicineService.createTakingMedicine(userDetails, req)));
     }
 
 }

@@ -80,8 +80,8 @@ public class MemberController {
     }
 
     @Operation(
-            summary = "의사/센터가 관리중인 환자의 목록을 불러오는 api",
-            description = "의사/센터가 관리중인 환자의 목록을 불러오는 api"
+            summary = "의사/센터의 관리중인 또는 추가 요청(환자 추가하기)인 환자의 목록을 불러오는 api",
+            description = "의사/센터가 관리중인 환자 : status=ACCEPT\n의사/센터에 추가 요청이 들어온 환자 : status=PENDING"
     )
     @GetMapping("/patients")
     public ResponseEntity<ApiSuccessResponse<PatientsResponseDto>> getPatientsList(
@@ -91,15 +91,13 @@ public class MemberController {
         return ResponseEntity.ok(new ApiSuccessResponse<>(memberService.getPatientsList(userDetails,status)));
     }
 
-//    @Operation(
-//            summary = "센터에서 주의가 필요한 환자를 불러오는 api",
-//            description = "센터에서 주의가 필요한 환자를 불러오는 api"
-//    )
-//    @GetMapping("/patients")
-//    public ResponseEntity<ApiSuccessResponse<CautionPatientsResponseDto>> getPatientsList(
-//            @AuthenticationPrincipal UserDetailsImpl userDetails,
-//            @RequestParam Boolean caution
-//            ) {
-//        return ResponseEntity.ok(new ApiSuccessResponse<>(memberService.getPatientsList(userDetails,caution)));
-//    }
+    @Operation(
+            summary = "센터에서 주의가 필요한 환자를 불러오는 api",
+            description = "센터에서 주의가 필요한 환자를 불러오는 api"
+    )
+    @GetMapping("/patients/caution")
+    public ResponseEntity<ApiSuccessResponse<CautionPatientsResponseDto>> getPatientsList(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(new ApiSuccessResponse<>(memberService.getCautionPatientsList(userDetails)));
+    }
 }

@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface TakingMedicineRepository extends JpaRepository<TakingMedicine, Long> {
-    List<TakingMedicine> findByPrescriptionIdAndDate(Long prescriptionId, LocalDate date);
+    List<TakingMedicine> findAllByPrescriptionIdAndDate(Long prescriptionId, LocalDate date);
 
     List<TakingMedicine> findAllByPrescriptionId( Long prescriptionId);
 
@@ -42,4 +42,6 @@ public interface TakingMedicineRepository extends JpaRepository<TakingMedicine, 
                                                                   @Param("patientId") Long patientId,
                                                                   @Param("medicinesType") MedicinesType medicinesType);
 
+    //특정 날짜, 처방을 기준으로 isTaking = true인 row의 개수(월 단위 조회에 사용)
+    int countByDateAndPrescriptionIdAndIsTakingIsTrue(LocalDate date, Long prescriptionId);
 }

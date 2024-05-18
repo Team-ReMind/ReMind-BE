@@ -4,5 +4,4 @@ public enum MedicinesType {
     BREAKFAST,
     LUNCH,
     DINNER,
-    ETC,
 }
