@@ -55,21 +55,6 @@ jobs:
             echo "GOOGLE_FCM_SERVICE_PROJECTID=${{ secrets.GOOGLE_FCM_SERVICE_PROJECTID }}" >> ./.env
             
 
-      # - name: create .env file
-      #   run: |
-      #     echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> ./.env
-      #     echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> ./.env
-      #     echo "DB_HOST=${{ secrets.DB_HOST }}" >> ./.env
-      #     echo "DB_PORT=${{ secrets.DB_PORT }}" >> ./.env
-      #     echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> ./.env
-      #     echo "NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT=${{ secrets.NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT }}" >> ./.env
-      #     echo "NCP_CONTAINER_REGISTRY_IMAGE=${{ secrets.NCP_CONTAINER_REGISTRY_IMAGE }}" >> ./.env
-      #     echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> ./.env
-      #     echo "ACCESS_EXPIRATION_SECONDS=${{ secrets.ACCESS_EXPIRATION_SECONDS }}" >> ./.env
-      #     echo "REFRESH_EXPIRATION_SECONDS=${{ secrets.REFRESH_EXPIRATION_SECONDS }}" >> ./.env
-      #     echo "GOOGLE_FCM_SERVICE_SECRET=${{ secrets.GOOGLE_FCM_SERVICE_SECRET }}" >> ./.env
-      #     echo "GOOGLE_FCM_SERVICE_PROJECTID=${{ secrets.GOOGLE_FCM_SERVICE_PROJECTID }}" >> ./.env
-
       - name: 🐧gradle build를 위한 권한을 부여합니다.
         run: chmod +x gradlew
 

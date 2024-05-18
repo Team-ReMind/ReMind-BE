@@ -1,9 +1,9 @@
 # cicd.yml
 # github repository Actions 페이지에 나타낼 이름
-name: Re:mind CI/CD with Gradle
+name: Re:mind CI with Gradle
 
 # event trigger
-# main 브랜치에 PR 생성 했을 때 실행되는 트리거
+# main 브랜치에 PR 했을 때 실행되는 트리거
 on:
   pull_request:
     branches: [ "master" ]
@@ -31,26 +31,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: create .env file
-        run: |
-          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> ./.env
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> ./.env
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> ./.env
-          echo "DB_PORT=${{ secrets.DB_PORT }}" >> ./.env
-          echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> ./.env
-          echo "NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT=${{ secrets.NCP_CONTAINER_REGISTRY_PUBLIC_ENDPOINT }}" >> ./.env
-          echo "NCP_CONTAINER_REGISTRY_IMAGE=${{ secrets.NCP_CONTAINER_REGISTRY_IMAGE }}" >> ./.env
-          echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> ./.env
-          echo "ACCESS_EXPIRATION_SECONDS=${{ secrets.ACCESS_EXPIRATION_SECONDS }}" >> ./.env
-          echo "REFRESH_EXPIRATION_SECONDS=${{ secrets.REFRESH_EXPIRATION_SECONDS }}" >> ./.env
-          echo "GOOGLE_FCM_SERVICE_SECRET=${{ secrets.GOOGLE_FCM_SERVICE_SECRET }}" >> ./.env
-          echo "GOOGLE_FCM_SERVICE_PROJECTID=${{ secrets.GOOGLE_FCM_SERVICE_PROJECTID }}" >> ./.env
 
       - name: 🐧gradle build를 위한 권한을 부여합니다.
         run: chmod +x gradlew
 
       - name: 🐧gradle build 중입니다.
-        run: |
-          ./gradlew test
-          ./gradlew build
+        run: ./gradlew build
         shell: bash # ci는 여기까지
+
