@@ -2,6 +2,7 @@ package com.remind.core.domain.member;
 
 import com.remind.core.domain.member.enums.RolesType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -20,6 +21,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(value = MemberRegisterListener.class)
 @Table(name = "member", indexes = {@Index(name = "idx_authId", columnList = "authId")})
 public class Member {
 
