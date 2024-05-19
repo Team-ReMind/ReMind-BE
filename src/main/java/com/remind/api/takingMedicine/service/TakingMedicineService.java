@@ -1,15 +1,21 @@
 package com.remind.api.takingMedicine.service;
 
+import com.remind.api.member.service.PatientService;
 import com.remind.api.takingMedicine.dto.DailyTakingMedicineDto;
 import com.remind.api.takingMedicine.dto.MonthlyTakingMedicineDto;
 import com.remind.api.takingMedicine.dto.request.CreateTakingMedicineRequest;
 import com.remind.api.takingMedicine.dto.response.CreateTakingMedicineResponse;
 import com.remind.api.takingMedicine.dto.response.DailyTakingMedicineInfoResponse;
 import com.remind.api.takingMedicine.dto.response.MonthlyTakingMedicineInfoResponse;
+import com.remind.api.takingMedicine.dto.response.TakingMedicineRateResponse;
+import com.remind.core.domain.common.enums.MemberErrorCode;
+import com.remind.core.domain.common.exception.MemberException;
 import com.remind.core.domain.common.exception.PrescriptionException;
 import com.remind.core.domain.common.exception.TakingMedicineException;
 import com.remind.core.domain.common.enums.PresciptionErrorCode;
 import com.remind.core.domain.common.enums.TakingMedicineErrorCode;
+import com.remind.core.domain.member.Patient;
+import com.remind.core.domain.member.repository.PatientRepository;
 import com.remind.core.domain.prescription.Prescription;
 import com.remind.core.domain.prescription.repository.PrescriptionRepository;
 import com.remind.core.domain.takingMedicine.TakingMedicine;
@@ -35,6 +41,8 @@ import java.util.stream.Collectors;
 public class TakingMedicineService {
     private final TakingMedicineRepository takingMedicineRepository;
     private final PrescriptionRepository prescriptionRepository;
+    private final PatientService patientService;
+    private final PatientRepository patientRepository;
 
 
     /**
@@ -318,7 +326,7 @@ public class TakingMedicineService {
                 .ifPresent((a) -> {
                     throw new TakingMedicineException(TakingMedicineErrorCode.TAKING_MEDICINE_ALREADY_EXIST);
                 });
-
+        //중요도 0이면 복용 못하게 해야함
 
         takingMedicineRepository.save(
                 TakingMedicine.builder()
@@ -330,10 +338,34 @@ public class TakingMedicineService {
                         .notTakingReason(req.notTakingReason())
                         .build());
 
+        //patient와 에 대해 약 복용률 업데이트
+        //하루한번>??
+        patientService.updateTakingMedicineRate(userDetails.getMemberId(), prescription.getId());
+
         return CreateTakingMedicineResponse.builder()
                 .isTaking(req.isTaking())
                 .notTakingReason(req.notTakingReason())
                 .build();
 
+    }
+
+    //약 복용률을 조회하는 pai
+    @Transactional(readOnly = true)
+    public TakingMedicineRateResponse getTakingMedicineRate(UserDetailsImpl userDetails,
+                                                            Long memberId) {
+        //파라미터가 0이면, 나를 조회하도록 하기.
+        if (memberId == 0) {
+            memberId = userDetails.getMemberId();
+        }
+
+        Patient patient = patientRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        return TakingMedicineRateResponse.builder()
+                .breakfastRate(patient.getBreakfastTakingMedicineRate())
+                .lunchRate(patient.getLunchTakingMedicineRate())
+                .dinnerRate(patient.getDinnerTakingMedicineRate())
+                .totalRate(patient.getTotalTakingMedicineRate())
+                .build();
     }
 }

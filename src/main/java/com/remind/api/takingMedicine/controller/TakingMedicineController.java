@@ -4,6 +4,7 @@ import com.remind.api.takingMedicine.dto.request.CreateTakingMedicineRequest;
 import com.remind.api.takingMedicine.dto.response.CreateTakingMedicineResponse;
 import com.remind.api.takingMedicine.dto.response.DailyTakingMedicineInfoResponse;
 import com.remind.api.takingMedicine.dto.response.MonthlyTakingMedicineInfoResponse;
+import com.remind.api.takingMedicine.dto.response.TakingMedicineRateResponse;
 import com.remind.api.takingMedicine.service.TakingMedicineService;
 import com.remind.core.domain.common.response.ApiSuccessResponse;
 import com.remind.core.domain.takingMedicine.enums.MedicinesType;
@@ -66,4 +67,16 @@ public class TakingMedicineController {
         return ResponseEntity.ok(new ApiSuccessResponse<>(takingMedicineService.createTakingMedicine(userDetails, req)));
     }
 
+
+    @Operation(
+            summary = "특정 멤버의 약 복용률을 반환하는 api",
+            description = "특정 날짜의 약 복용률 조회 api\n 나의 정보를 조회하는 경우에는 memberId = 0 을 넣어주세요\""
+    )
+    @GetMapping("/rate")
+    public ResponseEntity<ApiSuccessResponse<TakingMedicineRateResponse>> getTakingMedicineRate(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam Long memberId
+    ) {
+        return ResponseEntity.ok(new ApiSuccessResponse<>(takingMedicineService.getTakingMedicineRate(userDetails, memberId)));
+    }
 }

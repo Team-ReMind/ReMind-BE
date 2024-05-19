@@ -49,4 +49,7 @@ public interface TakingMedicineRepository extends JpaRepository<TakingMedicine, 
 
     //처방id, 날짜, 타입을 통해 복용 정보를 찾기
     Optional<TakingMedicine> findByPrescriptionIdAndDateAndMedicinesType(Long prescriptionId, LocalDate date, MedicinesType medicinesType);
+
+    // 처방Id, 시간 타입을 통해 약 복용 횟수를 찾는 쿼리
+    int countByPrescriptionIdAndMedicinesType(Long prescriptionId, MedicinesType medicinesType);
 }
