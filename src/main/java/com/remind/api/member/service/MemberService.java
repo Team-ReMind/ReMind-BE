@@ -15,6 +15,7 @@ import com.remind.api.member.kakao.KakaoFeignClient;
 import com.remind.core.domain.common.repository.RedisRepository;
 import com.remind.core.domain.common.enums.MemberErrorCode;
 import com.remind.core.domain.member.Member;
+import com.remind.core.domain.member.Patient;
 import com.remind.core.domain.member.enums.RolesType;
 import com.remind.core.domain.member.repository.MemberRepository;
 import com.remind.core.domain.connection.enums.ConnectionStatus;
@@ -56,8 +57,11 @@ public class MemberService {
 
         //authId로 등록된 유저가 아니면 가입 후 멤버 반환해주기
         if (member == null) {
-            member = register(kakaoMemberInfo);
-            log.info("신규 회원 등록 완료");
+            log.info("등록된 회원이 아닙니다. 회원가입 진행 해 주세요");
+            return KakaoLoginResponse.builder()
+                    .rolesType(RolesType.ROLE_UNREGISTER)
+                    .build();
+//            member = register(kakaoMemberInfo);
         }
         else{
             log.info("기존 회원 로그인 완료");
@@ -99,27 +103,42 @@ public class MemberService {
      * @return
      */
     private Member register(KakaoGetMemberInfoResponse kakaoMemberInfo) {
-        System.out.println("year: " + kakaoMemberInfo.getKakao_account().getBirthyear());
-        int currentYear = LocalDate.now().getYear();
-        int birthYearInt = Integer.parseInt(kakaoMemberInfo.getKakao_account().getBirthyear());
-        int age = currentYear - birthYearInt;
+//        int currentYear = LocalDate.now().getYear();
+//        int birthYearInt = Integer.parseInt(kakaoMemberInfo.getKakao_account().getBirthyear());
+//        int age = currentYear - birthYearInt;
+//        String memberCode = createMemberCode();
+//        Member member = Member.builder()
+//                .authId(kakaoMemberInfo.getAuthId())
+//                .name(kakaoMemberInfo.getKakao_account().getName())
+//                .age(age)
+//                .gender(kakaoMemberInfo.getKakao_account().getGender())
+//                .email(kakaoMemberInfo.getKakao_account().getEmail())
+//                .phoneNumber(kakaoMemberInfo.getKakao_account().getPhone_number())
+//                .profileImageUrl(kakaoMemberInfo.getKakao_account().getProfile().getProfile_image_url())
+//                .memberCode(memberCode)
+//                .rolesType(RolesType.ROLE_UNREGISTER)
+//                .build();
+//        return memberRepository.save(member);
+
+
         String memberCode = createMemberCode();
         Member member = Member.builder()
                 .authId(kakaoMemberInfo.getAuthId())
-                .name(kakaoMemberInfo.getKakao_account().getName())
-                .age(age)
-                .gender(kakaoMemberInfo.getKakao_account().getGender())
-                .email(kakaoMemberInfo.getKakao_account().getEmail())
-                .phoneNumber(kakaoMemberInfo.getKakao_account().getPhone_number())
-                .profileImageUrl(kakaoMemberInfo.getKakao_account().getProfile().getProfile_image_url())
+                .name("예시이름")
+                .age(123)
+                .gender("예시성별")
+                .email("예시이메일")
+                .phoneNumber("예시번호")
+                .profileImageUrl("예시사진링크")
                 .memberCode(memberCode)
                 .rolesType(RolesType.ROLE_UNREGISTER)
-//                .isOnboardingFinished(false)
                 .build();
-        System.out.println("year: " + kakaoMemberInfo.getKakao_account().getBirthyear());
         return memberRepository.save(member);
-
-
+//
+//        Patient patient = Patient.builder()
+//                .protectorPhoneNumber("S")
+//                .build();
+//        return memberRepository.save(patient);
     }
 
     /**
@@ -159,10 +178,15 @@ public class MemberService {
                 .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
 
         //이미 온보딩 된환자 예외처리 로직 추가
-
+        System.out.println("mmeberiD : "+member.getId());
         //환자, 센터, 의사인 경우
         if (req.rolesType() == RolesType.ROLE_PATIENT) {
-            member.updateRolesTypeForUser(RolesType.ROLE_PATIENT, req.protectorPhoneNumber(), req.fcmToken());
+//            member.updateRolesTypeForUser(RolesType.ROLE_PATIENT, req.protectorPhoneNumber(), req.fcmToken());
+            Patient patient = Patient.builder()
+                    .protectorPhoneNumber("plz")
+                    .id(member.getId())
+                    .build();
+            memberRepository.save(patient);
         } else if (req.rolesType() == RolesType.ROLE_CENTER) {
             member.updateRolesTypeForCenter(RolesType.ROLE_CENTER, req.city(), req.district(), req.centerName(),
                     req.fcmToken());
