@@ -3,13 +3,15 @@ package com.remind.core.domain.member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 @Entity
+@Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EntityListeners(value = PatientRegisterListener.class)
 public class Patient {
 
     @Id

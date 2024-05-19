@@ -14,22 +14,20 @@ import com.remind.core.domain.mood.repository.FixActivityRepository;
 import jakarta.persistence.PostPersist;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Component
-public class MemberRegisterListener {
+public class PatientRegisterListener {
 
     private final FixActivityRepository fixActivityRepository;
     private final ActivityRepository activityRepository;
     private final MemberRepository memberRepository;
     private static final Long FIX_SIZE = 10L;
 
-    public MemberRegisterListener(@Lazy ActivityRepository activityRepository,
-                                  @Lazy FixActivityRepository fixActivityRepository,
-                                  @Lazy MemberRepository memberRepository) {
+    public PatientRegisterListener(@Lazy ActivityRepository activityRepository,
+                                   @Lazy FixActivityRepository fixActivityRepository,
+                                   @Lazy MemberRepository memberRepository) {
         this.activityRepository = activityRepository;
         this.fixActivityRepository = fixActivityRepository;
         this.memberRepository = memberRepository;
@@ -38,8 +36,8 @@ public class MemberRegisterListener {
 
     //TODO: fixActivityRepository.findAll(); 을 사용하면 에러가 발생하는데 해당 에러를 해결하고 리팩토링 할 것
     @PostPersist
-    public void persist(Member member) {
-        Member member1 = memberRepository.findById(member.getId())
+    public void persist(Patient patient) {
+        Member member = memberRepository.findById(patient.getId())
                 .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
 
         List<FixActivity> fixActivities = new ArrayList<>();
@@ -50,7 +48,7 @@ public class MemberRegisterListener {
         fixActivities.forEach(activity -> {
             activityRepository.save(
                     Activity.builder()
-                            .member(member1)
+                            .member(member)
                             .activityName(activity.getActivityName())
                             .activityIcon(activity.getActivityIcon())
                             .build()
