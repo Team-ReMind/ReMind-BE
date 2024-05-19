@@ -14,10 +14,16 @@ import com.remind.core.domain.common.exception.MemberException;
 import com.remind.api.member.kakao.KakaoFeignClient;
 import com.remind.core.domain.common.repository.RedisRepository;
 import com.remind.core.domain.common.enums.MemberErrorCode;
+import com.remind.core.domain.member.Center;
+import com.remind.core.domain.member.Doctor;
 import com.remind.core.domain.member.Member;
+import com.remind.core.domain.member.Patient;
 import com.remind.core.domain.member.enums.RolesType;
+import com.remind.core.domain.member.repository.CenterRepository;
+import com.remind.core.domain.member.repository.DoctorRepository;
 import com.remind.core.domain.member.repository.MemberRepository;
 import com.remind.core.domain.connection.enums.ConnectionStatus;
+import com.remind.core.domain.member.repository.PatientRepository;
 import com.remind.core.security.dto.UserDetailsImpl;
 import com.remind.core.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.print.Doc;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -35,6 +42,9 @@ public class MemberService {
 
     private final KakaoFeignClient kakaoFeignClient;
     private final MemberRepository memberRepository;
+    private final PatientRepository patientRepository;
+    private final DoctorRepository doctorRepository;
+    private final CenterRepository centerRepository;
     private final RedisRepository redisRepository;
     private final JwtProvider jwtProvider;
 
@@ -57,7 +67,9 @@ public class MemberService {
         //authId로 등록된 유저가 아니면 가입 후 멤버 반환해주기
         if (member == null) {
             member = register(kakaoMemberInfo);
-            log.info("신규 회원 등록 완료");
+
+            log.info("등록된 회원이 아닙니다. 회원가입 진행 중이요");
+
         }
         else{
             log.info("기존 회원 로그인 완료");
@@ -99,27 +111,42 @@ public class MemberService {
      * @return
      */
     private Member register(KakaoGetMemberInfoResponse kakaoMemberInfo) {
-        System.out.println("year: " + kakaoMemberInfo.getKakao_account().getBirthyear());
-        int currentYear = LocalDate.now().getYear();
-        int birthYearInt = Integer.parseInt(kakaoMemberInfo.getKakao_account().getBirthyear());
-        int age = currentYear - birthYearInt;
+//        int currentYear = LocalDate.now().getYear();
+//        int birthYearInt = Integer.parseInt(kakaoMemberInfo.getKakao_account().getBirthyear());
+//        int age = currentYear - birthYearInt;
+//        String memberCode = createMemberCode();
+//        Member member = Member.builder()
+//                .authId(kakaoMemberInfo.getAuthId())
+//                .name(kakaoMemberInfo.getKakao_account().getName())
+//                .age(age)
+//                .gender(kakaoMemberInfo.getKakao_account().getGender())
+//                .email(kakaoMemberInfo.getKakao_account().getEmail())
+//                .phoneNumber(kakaoMemberInfo.getKakao_account().getPhone_number())
+//                .profileImageUrl(kakaoMemberInfo.getKakao_account().getProfile().getProfile_image_url())
+//                .memberCode(memberCode)
+//                .rolesType(RolesType.ROLE_UNREGISTER)
+//                .build();
+//        return memberRepository.save(member);
+
+
         String memberCode = createMemberCode();
         Member member = Member.builder()
                 .authId(kakaoMemberInfo.getAuthId())
-                .name(kakaoMemberInfo.getKakao_account().getName())
-                .age(age)
-                .gender(kakaoMemberInfo.getKakao_account().getGender())
-                .email(kakaoMemberInfo.getKakao_account().getEmail())
-                .phoneNumber(kakaoMemberInfo.getKakao_account().getPhone_number())
+                .name("예시이름")
+                .age(97979)
+                .gender("예시성별")
+                .email("예시이메일")
+                .phoneNumber("예시번호")
                 .profileImageUrl(kakaoMemberInfo.getKakao_account().getProfile().getProfile_image_url())
                 .memberCode(memberCode)
                 .rolesType(RolesType.ROLE_UNREGISTER)
-//                .isOnboardingFinished(false)
                 .build();
-        System.out.println("year: " + kakaoMemberInfo.getKakao_account().getBirthyear());
         return memberRepository.save(member);
-
-
+//
+//        Patient patient = Patient.builder()
+//                .protectorPhoneNumber("S")
+//                .build();
+//        return memberRepository.save(patient);
     }
 
     /**
@@ -162,12 +189,30 @@ public class MemberService {
 
         //환자, 센터, 의사인 경우
         if (req.rolesType() == RolesType.ROLE_PATIENT) {
-            member.updateRolesTypeForUser(RolesType.ROLE_PATIENT, req.protectorPhoneNumber(), req.fcmToken());
+            member.updateRolesTypeAndFcmToken(RolesType.ROLE_PATIENT, req.fcmToken());
+            Patient patient = Patient.builder()
+                    .protectorPhoneNumber(req.protectorPhoneNumber())
+                    .member(member)
+                    .build();
+            patientRepository.save(patient);
+
         } else if (req.rolesType() == RolesType.ROLE_CENTER) {
-            member.updateRolesTypeForCenter(RolesType.ROLE_CENTER, req.city(), req.district(), req.centerName(),
-                    req.fcmToken());
+            member.updateRolesTypeAndFcmToken(RolesType.ROLE_CENTER, req.fcmToken());
+            Center center = Center.builder()
+                    .centerName(req.centerName())
+                    .city(req.city())
+                    .district(req.district())
+                    .member(member)
+                    .build();
+            centerRepository.save(center);
+
         } else if (req.rolesType() == RolesType.ROLE_DOCTOR) {
-            member.updateRolesTypeForDoctor(RolesType.ROLE_DOCTOR, req.doctorLicenseNumber());
+            member.updateRolesTypeAndFcmToken(RolesType.ROLE_DOCTOR, req.fcmToken());
+            Doctor doctor = Doctor.builder()
+                    .doctorLicenseNumber(req.doctorLicenseNumber())
+                    .member(member)
+                    .build();
+            doctorRepository.save(doctor);
         }
 
         return OnboardingResponseDto.builder()
@@ -260,8 +305,8 @@ public class MemberService {
         }
 
         //dto 리스트. 통계 테이블 추가 후 수정
-        List<CautionPatientDto> cautionPatientDtos = memberRepository.findCautionPatients(member.getId());
-
+//        List<CautionPatientDto> cautionPatientDtos = memberRepository.findCautionPatients(member.getId());
+        List<CautionPatientDto> cautionPatientDtos = new ArrayList<>();
         return CautionPatientsResponseDto.builder()
                 .cautionPatientDtos(cautionPatientDtos)
                 .patientNumber(cautionPatientDtos.size())
