@@ -24,15 +24,17 @@ import com.remind.core.domain.member.repository.DoctorRepository;
 import com.remind.core.domain.member.repository.MemberRepository;
 import com.remind.core.domain.connection.enums.ConnectionStatus;
 import com.remind.core.domain.member.repository.PatientRepository;
+import com.remind.core.domain.mood.Activity;
+import com.remind.core.domain.mood.repository.ActivityRepository;
+import com.remind.core.domain.mood.repository.FixActivityRepository;
 import com.remind.core.security.dto.UserDetailsImpl;
 import com.remind.core.security.jwt.JwtProvider;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.print.Doc;
-import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -47,6 +49,8 @@ public class MemberService {
     private final CenterRepository centerRepository;
     private final RedisRepository redisRepository;
     private final JwtProvider jwtProvider;
+    private final FixActivityRepository fixActivityRepository;
+    private final ActivityRepository activityRepository;
 
     @Transactional
     public KakaoLoginResponse kakaoLogin(KakaoLoginRequest request) {
@@ -195,6 +199,16 @@ public class MemberService {
                     .member(member)
                     .build();
             patientRepository.save(patient);
+
+            fixActivityRepository.findAll().forEach(activity -> {
+                activityRepository.save(
+                        Activity.builder()
+                                .activityName(activity.getActivityName())
+                                .activityIcon(activity.getActivityIcon())
+                                .member(member)
+                                .build()
+                );
+            });
 
         } else if (req.rolesType() == RolesType.ROLE_CENTER) {
             member.updateRolesTypeAndFcmToken(RolesType.ROLE_CENTER, req.fcmToken());

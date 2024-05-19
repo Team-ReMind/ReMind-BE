@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EntityListeners(value = PatientRegisterListener.class)
+//@EntityListeners(value = PatientRegisterListener.class)
 public class Patient {
 
     @Id
