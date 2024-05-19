@@ -36,47 +36,6 @@ public class TakingMedicineService {
     private final TakingMedicineRepository takingMedicineRepository;
     private final PrescriptionRepository prescriptionRepository;
 
-    public void updateTakingMedicine(Long prescriptionId, LocalDate prescriptionDate, int period) {
-        Prescription prescription = prescriptionRepository.findById(prescriptionId)
-                .orElseThrow(() -> new PrescriptionException(PresciptionErrorCode.PRESCRIPTION_NOT_FOUND));
-
-        LocalDate endDate = prescriptionDate.plus(period, ChronoUnit.DAYS);
-
-        //처방 날짜부터 마지막 날
-        List<LocalDate> validDates = prescriptionDate.datesUntil(endDate.plusDays(0)).collect(Collectors.toList());
-        System.out.println("prescriptionDate : " + prescriptionDate + "period : " + period);
-        validDates.forEach(System.out::println);
-        System.out.println("==========");
-
-        // 기존 약 복용 데이터 가져오기
-        List<TakingMedicine> existingTakingMedicineList = takingMedicineRepository.findAllByPrescriptionId(prescriptionId);
-
-        // 유효하지 않은 날짜의 데이터 삭제
-        for (TakingMedicine tm : existingTakingMedicineList) {
-            if (!validDates.contains(tm.getDate())) {
-                takingMedicineRepository.delete(tm);
-            }
-        }
-
-        // 유효한 날짜에 대해 약 복용 데이터 생성 및 저장
-        for (LocalDate date : validDates) {
-            if (existingTakingMedicineList.stream().noneMatch(tm -> tm.getDate().equals(date))) {
-                createAndSaveTakingMedicine(prescription, date, MedicinesType.BREAKFAST);
-                createAndSaveTakingMedicine(prescription, date, MedicinesType.LUNCH);
-                createAndSaveTakingMedicine(prescription, date, MedicinesType.DINNER);
-            }
-        }
-    }
-
-    private void createAndSaveTakingMedicine(Prescription prescription, LocalDate date, MedicinesType medicinesType) {
-        TakingMedicine takingMedicine = TakingMedicine.builder()
-                .prescription(prescription)
-                .date(date)
-                .medicinesType(medicinesType)
-                .isTaking(false)
-                .build();
-        takingMedicineRepository.save(takingMedicine);
-    }
 
     /**
      * 특정 날짜의 특정 유저의 약 복용 정보를 조회하는 서비스 로직
@@ -85,6 +44,9 @@ public class TakingMedicineService {
      */
     @Transactional(readOnly = true)
     public DailyTakingMedicineInfoResponse getDailyTakingMedicineInfo(UserDetailsImpl userDetails, Long memberId, LocalDate date) {
+
+        //dto에 포함될 객체
+        List<DailyTakingMedicineDto> dailyTakingMedicineDtos = new ArrayList<>();
 
         //파라미터가 0이면, 나를 조회하도록 하기.
         if (memberId == 0) {
@@ -100,7 +62,9 @@ public class TakingMedicineService {
 
         //등록된 약이 없음!
         if (optionalPrescription.isEmpty()) {
-            return null;
+            return DailyTakingMedicineInfoResponse.builder()
+                    .dailyTakingMedicineDtos(dailyTakingMedicineDtos)
+                    .build();
         }
 
 
@@ -172,7 +136,7 @@ public class TakingMedicineService {
                         .ofUnchecking(prescription.getId(), MedicinesType.DINNER, prescription.getDinnerImportance()));
 
         //오늘(아침,점심,저녁) 먹어야 할 약 정보 dto - 중요도, 복용여부, 복용시간 등
-        List<DailyTakingMedicineDto> dailyTakingMedicineDtos = new ArrayList<>();
+
         dailyTakingMedicineDtos.add(breakfastDto);
         dailyTakingMedicineDtos.add(lunchDto);
         dailyTakingMedicineDtos.add(dinnerDto);
@@ -345,17 +309,21 @@ public class TakingMedicineService {
     public CreateTakingMedicineResponse createTakingMedicine(UserDetailsImpl userDetails,
                                                             CreateTakingMedicineRequest req) {
 
-        //멤버가 가진 모든 처방 정보 조회
-        List<Prescription> prescriptionList = prescriptionRepository.findAllByPatientId(userDetails.getMemberId());
+        //멤버가 가진 처방 중에서, 오늘 날짜가 포함된 처방을 찾기
+        Prescription prescription = prescriptionRepository.findByPatientIdAndValidDate(userDetails.getMemberId(), LocalDate.now())
+                .orElseThrow(() -> new TakingMedicineException(TakingMedicineErrorCode.TAKING_MEDICINE_NOT_FOUND));
 
-        // 날짜에 맞는 약 처방 조회
-        Prescription prescription = prescriptionList.stream().filter(tmpPrescription -> tmpPrescription.isDateInPrescription(req.date()))
-                .findFirst().orElseThrow(() -> new TakingMedicineException(TakingMedicineErrorCode.TAKING_MEDICINE_NOT_FOUND));
+        //이미 복용정보가 있으면 X
+        takingMedicineRepository.findByPrescriptionIdAndDateAndMedicinesType(prescription.getId(), LocalDate.now(), req.medicinesType())
+                .ifPresent((a) -> {
+                    throw new TakingMedicineException(TakingMedicineErrorCode.TAKING_MEDICINE_ALREADY_EXIST);
+                });
+
 
         takingMedicineRepository.save(
                 TakingMedicine.builder()
                         .prescription(prescription)
-                        .date(req.date())
+                        .date(LocalDate.now())
                         .medicinesType(req.medicinesType())
                         .isTaking(req.isTaking())
                         .takingTime(LocalTime.now())

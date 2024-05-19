@@ -7,7 +7,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum TakingMedicineErrorCode implements BaseErrorCode {
 
-    TAKING_MEDICINE_NOT_FOUND(404, "해당 정보로 복용 정보를 찾을 수 없습니다", HttpStatus.NOT_FOUND);
+    TAKING_MEDICINE_NOT_FOUND(404, "해당 정보로 복용 정보를 찾을 수 없습니다", HttpStatus.NOT_FOUND),
+    TAKING_MEDICINE_ALREADY_EXIST(400, "이미 약 복용 정보를 등록하셨습니다", HttpStatus.BAD_REQUEST);
 
 
 

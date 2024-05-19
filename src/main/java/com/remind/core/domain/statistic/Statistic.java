@@ -14,4 +14,8 @@ public class Statistic {
     Long id;
 
 
+
+
+
+
 }

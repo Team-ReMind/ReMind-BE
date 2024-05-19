@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface TakingMedicineRepository extends JpaRepository<TakingMedicine, Long> {
     List<TakingMedicine> findAllByPrescriptionIdAndDate(Long prescriptionId, LocalDate date);
@@ -44,4 +45,8 @@ public interface TakingMedicineRepository extends JpaRepository<TakingMedicine, 
 
     //특정 날짜, 처방을 기준으로 isTaking = true인 row의 개수(월 단위 조회에 사용)
     int countByDateAndPrescriptionIdAndIsTakingIsTrue(LocalDate date, Long prescriptionId);
+
+
+    //처방id, 날짜, 타입을 통해 복용 정보를 찾기
+    Optional<TakingMedicine> findByPrescriptionIdAndDateAndMedicinesType(Long prescriptionId, LocalDate date, MedicinesType medicinesType);
 }

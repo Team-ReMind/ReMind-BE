@@ -55,11 +55,9 @@ public class Prescription {
      * @return
      */
     public Boolean isDateInPrescription(LocalDate date) {
-        LocalDate startDate = this.getPrescriptionDate().plus(1, ChronoUnit.DAYS);
+        LocalDate startDate = this.getPrescriptionDate().plus(0, ChronoUnit.DAYS);
         LocalDate endDate = this.getPrescriptionDate().plus(this.period, ChronoUnit.DAYS);
 
-//        System.out.println("startDate = " + startDate.toString());
-//        System.out.println("endDate = " + endDate.toString());
 
         return !date.isAfter(endDate) && !date.isBefore(startDate);
     }
