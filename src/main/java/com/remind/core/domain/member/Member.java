@@ -11,16 +11,15 @@ import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
-@SuperBuilder
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "DTYPE")
 @Table(name = "member", indexes = {@Index(name = "idx_authId", columnList = "authId")})
 public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id")
     private Long id;
 
     private Long authId; // 소셜 로그인 고유 회원 식별 값
@@ -45,26 +44,10 @@ public class Member {
 
     private String memberCode;
 
-    //온보딩 후 특정 컬럼 업데이트를 위한 메서드 - 환자용
-    public void updateRolesTypeForUser(RolesType rolesType, String protectorPhoneNumber, String fcmToken) {
+    //온보딩 후 rolesType  업데이트를 위한 메서드
+    public void updateRolesTypeAndFcmToken(RolesType rolesType, String fcmToken) {
         this.rolesType = rolesType;
-//        this.protectorPhoneNumber = protectorPhoneNumber;
         this.fcmToken = fcmToken;
     }
 
-    //온보딩 후 특정 컬럼 업데이트를 위한 메서드 - 센터용
-    public void updateRolesTypeForCenter(RolesType rolesType, String city, String district, String centerName,
-                                         String fcmToken) {
-        this.rolesType = rolesType;
-//        this.city = city;
-//        this.district = district;
-//        this.centerName = centerName;
-        this.fcmToken = fcmToken;
-    }
-
-    //온보딩 후 특정 컬럼 업데이트를 위한 메서드 - 의사용
-    public void updateRolesTypeForDoctor(RolesType rolesType,String doctorLicenseNumber) {
-        this.rolesType = rolesType;
-//        this.doctorLicenseNumber = doctorLicenseNumber;
-    }
 }
