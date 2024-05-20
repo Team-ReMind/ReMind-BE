@@ -29,7 +29,8 @@ public class TakingMedicineController {
     private final TakingMedicineService takingMedicineService;
     @Operation(
             summary = "memberId(), 날짜로 해당 날짜의 약 복용 정보를 조회하는 api",
-            description = "memberId(), 날짜로 해당 날짜의 약 복용 정보를 조회하는 api\n 나의 정보를 조회하는 경우에는 memberId = 0 을 넣어주세요"
+            description = "나의 정보를 조회하는 경우에는 memberId = 0 을 넣어주세요." +
+                    "date는 string으로, YYYY-MM-DD 형식으로 주세요."
     )
     @GetMapping("/daily")
     public ResponseEntity<ApiSuccessResponse<DailyTakingMedicineInfoResponse>> getDailyTakingMedicineInfo(
@@ -57,7 +58,8 @@ public class TakingMedicineController {
 
     @Operation(
             summary = "특정 날짜의 약 복용 정보를 등록하는 api",
-            description = "특정 날짜의 약 복용 정보를 등록하는 api"
+            description = "medicineType : BREAKFAST, LUNCH, DINNER, ETC" +
+                    "약을 복용하지 않은 경우 notTakingReason을 비워두거나 빈 문자열"
     )
     @PostMapping("")
     public ResponseEntity<ApiSuccessResponse<CreateTakingMedicineResponse>> createTakingMedicine(

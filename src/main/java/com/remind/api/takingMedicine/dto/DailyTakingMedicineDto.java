@@ -1,5 +1,6 @@
 package com.remind.api.takingMedicine.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.remind.core.domain.takingMedicine.enums.MedicinesType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -8,6 +9,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 @Schema(description = "특정 날짜의 약 복용 정보를 반환할 dto")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder
 public record DailyTakingMedicineDto(
         @Schema(description = "해당 약 처방 정보의 식별 id")

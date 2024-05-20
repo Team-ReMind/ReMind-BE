@@ -1,10 +1,12 @@
 package com.remind.api.member.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.remind.core.domain.member.enums.RolesType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public record KakaoLoginResponse(@Schema(description = "Remind의 리프레시 토큰")
                                  String refreshToken,
 

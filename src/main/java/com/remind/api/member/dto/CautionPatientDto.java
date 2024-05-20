@@ -1,9 +1,11 @@
 package com.remind.api.member.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public record CautionPatientDto(
         @Schema(description = "환자 아이디")
         Long memberId,
