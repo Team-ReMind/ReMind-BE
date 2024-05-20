@@ -79,8 +79,9 @@ public class Member {
         int currentYear = LocalDate.now().getYear();
         int birthYear = this.birthday.getYear();
         int age = currentYear - birthYear;
-        if (LocalDate.now().getDayOfYear() > this.birthday.getDayOfYear()) {
-            age--;
+
+        if (LocalDate.now().getDayOfYear() < this.birthday.getDayOfYear()) {
+            age--; //훗
         }
         return age;
     }

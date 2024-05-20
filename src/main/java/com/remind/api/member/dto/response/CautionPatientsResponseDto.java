@@ -19,4 +19,5 @@ public record CautionPatientsResponseDto(
         Integer patientNumber
 
 ) {
+
 }

@@ -17,11 +17,11 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
 
     Optional<Member> findByMemberCode(String memberCode);
 
-    @Query("SELECT new com.remind.api.member.dto.PatientDto(p.id, p.name, p.gender, p.age) " +
+    @Query("SELECT p " +
             "FROM Connection c " +
             "JOIN c.patient p " +
             "WHERE c.targetMember.id = :targetMemberId AND c.connectionStatus = :connectionStatus")
-    List<PatientDto> findPatientInfoByTargetMemberIdAndStatus(@Param("targetMemberId") Long targetMemberId,
+    List<Member> findPatientInfoByTargetMemberIdAndStatus(@Param("targetMemberId") Long targetMemberId,
                                                               @Param("connectionStatus") ConnectionStatus connectionStatus);
 
 //
