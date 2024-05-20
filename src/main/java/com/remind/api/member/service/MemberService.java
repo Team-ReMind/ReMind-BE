@@ -1,6 +1,8 @@
 package com.remind.api.member.service;
 
 import com.remind.api.member.dto.CautionPatientDto;
+import com.remind.api.member.dto.CenterDto;
+import com.remind.api.member.dto.DoctorDto;
 import com.remind.api.member.dto.PatientDto;
 import com.remind.api.member.dto.request.KakaoLoginRequest;
 import com.remind.api.member.dto.request.OnboardingRequestDto;
@@ -319,6 +321,28 @@ public class MemberService {
                 .build();
 
     }
+
+    @Transactional(readOnly = true)
+    public MyPageResponseDto getMyPage(UserDetailsImpl userDetails){
+        List<Center> centerList = centerRepository.findAllCenterByPatient(userDetails.getMemberId());
+        List<Doctor> doctorList = doctorRepository.findAllDoctorByPatient(userDetails.getMemberId());
+        Member member = memberRepository.findById(userDetails.getMemberId())
+                .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
+
+        List<CenterDto> centers = centerList.stream().map(center -> CenterDto.of(center, member.getName())).toList();
+        List<DoctorDto> doctors = doctorList.stream().map(doctor -> DoctorDto.of(doctor, member.getName())).toList();
+
+        return MyPageResponseDto.builder()
+                .name(member.getName())
+                .imageUrl(member.getProfileImageUrl())
+                .age(member.calculateAge())
+                .gender(member.getGender())
+                .centers(centers)
+                .doctors(doctors)
+                .build();
+
+    }
+
 
 
 
