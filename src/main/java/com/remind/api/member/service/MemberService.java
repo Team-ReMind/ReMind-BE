@@ -35,6 +35,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -115,9 +117,7 @@ public class MemberService {
      * @return
      */
     private Member register(KakaoGetMemberInfoResponse kakaoMemberInfo) {
-//        int currentYear = LocalDate.now().getYear();
-//        int birthYearInt = Integer.parseInt(kakaoMemberInfo.getKakao_account().getBirthyear());
-//        int age = currentYear - birthYearInt;
+//
 //        String memberCode = createMemberCode();
 //        Member member = Member.builder()
 //                .authId(kakaoMemberInfo.getAuthId())
@@ -136,21 +136,12 @@ public class MemberService {
         String memberCode = createMemberCode();
         Member member = Member.builder()
                 .authId(kakaoMemberInfo.getAuthId())
-                .name("예시이름")
-                .age(97979)
-                .gender("예시성별")
-                .email("예시이메일")
-                .phoneNumber("예시번호")
                 .profileImageUrl(kakaoMemberInfo.getKakao_account().getProfile().getProfile_image_url())
                 .memberCode(memberCode)
                 .rolesType(RolesType.ROLE_UNREGISTER)
                 .build();
         return memberRepository.save(member);
-//
-//        Patient patient = Patient.builder()
-//                .protectorPhoneNumber("S")
-//                .build();
-//        return memberRepository.save(patient);
+
     }
 
     /**
@@ -179,7 +170,7 @@ public class MemberService {
     }
 
     /**
-     * 로그인 후, 온보딩이 완료되었을 때 엔티티의컬럼을 업데이트 하는 로직
+     * 로그인 후, 온보딩이 완료되었을 때 엔티티의 컬럼을 업데이트 하는 로직
      * @param userDetails
      * @param req
      * @return
@@ -189,6 +180,9 @@ public class MemberService {
         Member member = memberRepository.findById(userDetails.getMemberId())
                 .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
 
+
+        LocalDate birthday = req.birthday()
+        member.updateInfo(req.name(),req.gender(),req.phoneNumber(),req.);
         //이미 온보딩 된환자 예외처리 로직 추가
 
         //환자, 센터, 의사인 경우
