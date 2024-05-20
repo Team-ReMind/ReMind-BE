@@ -107,6 +107,7 @@ public class SecuirityConfig {
                 antMatcher(GET, "/prescription"),
                 antMatcher(POST, "/prescription"),
                 antMatcher(GET, "/taking-medicine/daily"),
+                antMatcher(GET, "/taking-medicine/rate"),
                 antMatcher(GET, "/taking-medicine/monthly"),
                 antMatcher(POST, "/taking-medicine"),
                 antMatcher(POST, "/alarm"),

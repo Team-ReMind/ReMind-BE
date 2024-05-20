@@ -8,7 +8,6 @@ import java.time.LocalDate;
 @Builder
 public record CreateTakingMedicineRequest(
         MedicinesType medicinesType,
-        LocalDate date,
         Boolean isTaking,
         String notTakingReason
 

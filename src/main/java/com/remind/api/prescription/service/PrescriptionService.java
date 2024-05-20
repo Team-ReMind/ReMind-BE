@@ -121,13 +121,17 @@ public class PrescriptionService {
 
         //등록된 약이 없음!
         if (optionalPrescription.isEmpty()) {
-            return null;
+            return PrescriptionInfoResponseDto.builder()
+                    .isExist(false)
+
+                    .build();
         }
 
         //오늘 필요한 약 처방 정보
         Prescription prescription = optionalPrescription.get();
 
         return PrescriptionInfoResponseDto.builder()
+                .isExist(true)
                 .name(patient.getName())
                 .prescriptionDate(prescription.getPrescriptionDate())
                 .period(prescription.getPeriod())
