@@ -9,9 +9,12 @@ import com.remind.core.domain.mood.enums.FeelingType;
 import com.remind.core.security.dto.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -69,5 +72,24 @@ public class MoodChartController {
             @Parameter(description = "감정") @RequestParam("feelingType") FeelingType feelingType) {
         return ResponseEntity.ok(
                 new ApiSuccessResponse<>(moodChartService.getActivityPercentChart(userDetails, feelingType)));
+    }
+
+
+    @Operation(
+            summary = "무드 연속 기록 조회 API"
+    )
+    @ApiResponse(
+            responseCode = "200", description = "무드 연속 기록 조회 성공 응답입니다.",
+            content = @Content(
+                    mediaType = "application/json",
+                    examples = {
+                            @ExampleObject(value = "{\"code\":200, \"message:\": \"정상 처리되었습니다.\", \"data\": {\"maxSeriesDays\": 10}}")
+                    }
+            )
+    )
+    @GetMapping("/series")
+    public ResponseEntity<ApiSuccessResponse<?>> getMaxSeries(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(
+                new ApiSuccessResponse<>(Map.of("maxSeriesDays", moodChartService.getMaxSeries(userDetails))));
     }
 }

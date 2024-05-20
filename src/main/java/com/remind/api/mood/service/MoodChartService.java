@@ -6,6 +6,7 @@ import com.remind.api.mood.dto.response.ActivityPercentResponseDto;
 import com.remind.api.mood.dto.response.MoodChartPagingResponseDto;
 import com.remind.api.mood.dto.response.MoodPercentResponseDto;
 import com.remind.api.mood.repository.MoodChartPagingRepository;
+import com.remind.api.mood.repository.MoodConsecutiveRepository;
 import com.remind.core.domain.mood.enums.FeelingType;
 import com.remind.core.security.dto.UserDetailsImpl;
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ public class MoodChartService {
 
     private final MoodChartPagingRepository moodChartPagingRepository;
     private final MoodChartCacheService moodChartCacheService;
+    private final MoodConsecutiveRepository moodConsecutiveRepository;
 
     @Transactional(readOnly = true)
     public MoodChartPagingResponseDto getMoodChart(UserDetailsImpl userDetails, Integer year, Integer month,
@@ -53,6 +55,12 @@ public class MoodChartService {
     public List<ActivityPercentResponseDto> getActivityPercentChart(UserDetailsImpl userDetails,
                                                                     FeelingType feelingType) {
         return moodChartCacheService.getActivityPercentChart(userDetails.getMemberId(), feelingType);
+
+    }
+
+    @Transactional(readOnly = true)
+    public Long getMaxSeries(UserDetailsImpl userDetails) {
+        return moodConsecutiveRepository.getMaxSeries(userDetails.getMemberId());
 
     }
 }
