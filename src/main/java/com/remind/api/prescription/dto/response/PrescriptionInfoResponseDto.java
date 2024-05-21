@@ -1,12 +1,10 @@
 package com.remind.api.prescription.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.remind.core.domain.takingMedicine.enums.MedicinesType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -27,6 +25,9 @@ public record PrescriptionInfoResponseDto(
         int lunchImportance,
         @Schema(description = "저녁 약 중요도")
         int dinnerImportance,
+
+        @Schema(description = "기타 약 중요도")
+        int etcImportance,
 
         @Schema(description = "처방 메모")
         String memo

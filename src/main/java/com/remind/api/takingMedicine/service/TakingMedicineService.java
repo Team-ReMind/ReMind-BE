@@ -218,7 +218,7 @@ public class TakingMedicineService {
 
             monthlyTakingMedicineDtos.add(MonthlyTakingMedicineDto.builder()
                     .needMedicine(true)
-                    .date(date)
+                    .date(date.getDayOfMonth())
                     .takingCount(realTakingMedicineCount)
                     .takingLevel(takingMedicineLevel)
                     .build());

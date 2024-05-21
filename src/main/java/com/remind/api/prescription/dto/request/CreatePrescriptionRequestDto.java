@@ -4,8 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 
-import java.time.LocalDate;
-
 @Schema(description = "약 복용 정보 업데이트 요청 객체, 특정 시간대 약 정보가 없으면 중요도를 0으로 전달 해 주세요")
 
 public record CreatePrescriptionRequestDto(
@@ -32,7 +30,12 @@ public record CreatePrescriptionRequestDto(
         @Schema(description = "저녁 약 중요도(0~3)")
         @Min(0)
         @Max(3)
-        int dinnerImportance
+        int dinnerImportance,
+
+        @Schema(description = "기타 약 중요도(0~3)")
+        @Min(0)
+        @Max(3)
+        int etcImportance
 
 
 ) {

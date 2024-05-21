@@ -4,14 +4,14 @@ import com.remind.api.prescription.dto.request.CreatePrescriptionRequestDto;
 import com.remind.api.prescription.dto.response.CreatePrescriptionResponseDto;
 import com.remind.api.prescription.dto.response.PrescriptionInfoResponseDto;
 import com.remind.api.takingMedicine.service.TakingMedicineService;
+import com.remind.core.domain.common.enums.ConnectionErrorCode;
+import com.remind.core.domain.common.enums.MemberErrorCode;
+import com.remind.core.domain.common.enums.PresciptionErrorCode;
 import com.remind.core.domain.common.exception.ConnectionException;
 import com.remind.core.domain.common.exception.MemberException;
 import com.remind.core.domain.common.exception.PrescriptionException;
 import com.remind.core.domain.connection.Connection;
 import com.remind.core.domain.connection.repository.ConnectionRepository;
-import com.remind.core.domain.common.enums.ConnectionErrorCode;
-import com.remind.core.domain.common.enums.MemberErrorCode;
-import com.remind.core.domain.common.enums.PresciptionErrorCode;
 import com.remind.core.domain.member.Member;
 import com.remind.core.domain.member.enums.RolesType;
 import com.remind.core.domain.member.repository.MemberRepository;
@@ -24,10 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -85,6 +83,7 @@ public class PrescriptionService {
                 .breakfastImportance(req.breakfastImportance())
                 .lunchImportance(req.lunchImportance())
                 .dinnerImportance(req.dinnerImportance())
+                .etcImportance(req.etcImportance())
                 .memo(req.memo())
                 .connection(connection)
                 .build());
@@ -138,6 +137,7 @@ public class PrescriptionService {
                 .breakfastImportance(prescription.getBreakfastImportance())
                 .lunchImportance(prescription.getLunchImportance())
                 .dinnerImportance(prescription.getDinnerImportance())
+                .etcImportance(prescription.getEtcImportance())
                 .memo(prescription.getMemo())
                 .build();
 
