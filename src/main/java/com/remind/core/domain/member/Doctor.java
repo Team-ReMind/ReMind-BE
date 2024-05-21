@@ -21,4 +21,6 @@ public class Doctor {
     private Member member;
 
     private String doctorLicenseNumber;
+
+    private String hospitalName;
 }

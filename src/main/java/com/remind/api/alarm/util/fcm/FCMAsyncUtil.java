@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class FCMAsyncUtil {
+public class  FCMAsyncUtil {
 
     private final FirebaseMessaging firebaseMessaging;
 

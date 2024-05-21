@@ -4,8 +4,6 @@ import com.remind.core.domain.member.enums.RolesType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
-import java.time.LocalDate;
-
 @Schema(description = "로그인이 끝난 후 온보딩에 사용하는 dto")
 public record OnboardingRequestDto(
         @Schema(description = "역할 : ROLE_PATIENT or ROLE_DOCTOR or ROLE_CENTER")
@@ -31,6 +29,10 @@ public record OnboardingRequestDto(
 
         @Schema(description = " ROLE_DOCTOR인 경우, 의사 면허 번호")
         String doctorLicenseNumber,
+
+        @Schema(description = " ROLE_DOCTOR인 경우, 병원 이름")
+        String hospitalName,
+
         @Schema(description = " ROLE_CENTER인 경우, 시/도")
         String city,
         @Schema(description = " ROLE_CENTER인 경우, 군/구")
