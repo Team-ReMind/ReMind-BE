@@ -13,6 +13,9 @@ public record PrescriptionInfoResponseDto(
 
         @Schema(description = "값 존재 여부")
         Boolean isExist,
+
+        @Schema(description = "처방 정보 식별Id")
+        Long prescriptionId,
         @Schema(description = "환자의 이름")
         String name,
         @Schema(description = "처방 날짜")

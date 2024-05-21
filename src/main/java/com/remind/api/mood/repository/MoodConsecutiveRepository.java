@@ -2,11 +2,12 @@ package com.remind.api.mood.repository;
 
 import com.remind.core.domain.mood.enums.FeelingType;
 import com.remind.core.domain.mood.repository.MoodRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 public interface MoodConsecutiveRepository extends MoodRepository {
 
@@ -53,7 +54,7 @@ public interface MoodConsecutiveRepository extends MoodRepository {
                              ORDER BY m.mood_date desc
             ) AS sorted_mood_table, (SELECT @prev_date \\:= DATE_ADD(CURRENT_DATE(), INTERVAL 1 DAY), @count \\:= 0) AS variables
                      ) AS count_table
-                     WHERE count_table.COUNT IS NOT NULL;
+                     WHERE count_table.COUNT IS NOT NULL; 
                  """)
     Optional<Long> getCurrentSeries(@Param("patientId") Long patientId);
 

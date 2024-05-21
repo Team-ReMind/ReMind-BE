@@ -131,6 +131,7 @@ public class PrescriptionService {
 
         return PrescriptionInfoResponseDto.builder()
                 .isExist(true)
+                .prescriptionId(prescription.getId())
                 .name(patient.getName())
                 .prescriptionDate(prescription.getPrescriptionDate())
                 .period(prescription.getPeriod())
