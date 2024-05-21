@@ -88,7 +88,7 @@ public class MoodChartController {
             )
     )
     @GetMapping("/series")
-    public ResponseEntity<ApiSuccessResponse<?>> getMaxSeries(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<ApiSuccessResponse<Map>> getMaxSeries(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(
                 new ApiSuccessResponse<>(Map.of("currentSeriesDays", moodChartService.getCurrentSeries(userDetails))));
     }
