@@ -32,7 +32,7 @@ public class MoodChartService {
 
         List<MoodChartResponseDto> response = new ArrayList<>();
         boolean hasNext = false;
-        // 요청한 정보에 대해 커서 기반 pagination
+        // 요청한 정보에 대해 커서 기반 pagination ( 월의 1일부터 조회하기 위해서는 day = 0 값을 받아야 한다. )
         Slice<MoodChartDto> moodChartDtos = moodChartPagingRepository.getMoodChartPaging2(userDetails.getMemberId(),
                 LocalDate.of(year, month, day + 1), Pageable.ofSize(size));
 
