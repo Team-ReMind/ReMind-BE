@@ -22,14 +22,14 @@ public class MoodChartDto {
     public static class MoodChartResponseDto {
 
         @Schema(description = "날짜")
-        private final LocalDate localDate;
+        private final Integer day;
         @Schema(description = "해당 날짜의 기분")
         private final String feeling;
         @Schema(description = "기분에 대한 점수")
         private final Integer score;
 
         private MoodChartResponseDto(FeelingType feelingType, LocalDate localDate) {
-            this.localDate = localDate;
+            this.day = localDate.getDayOfMonth();
             this.feeling = feelingType.getFeeling();
             this.score = feelingType.getScore();
         }
