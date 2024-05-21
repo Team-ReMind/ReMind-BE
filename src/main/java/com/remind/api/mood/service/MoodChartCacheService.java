@@ -7,6 +7,7 @@ import com.remind.api.mood.repository.MoodPercentRepository;
 import com.remind.core.domain.mood.enums.FeelingType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class MoodChartCacheService {
 
         // FeelingType 별로 그룹화 이후 각 그룹의 갯수 / 전체 갯수를 계산하고 퍼센트 계산
         feelingResponse.stream()
+                .filter(Objects::nonNull)
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
                 .forEach((feelingType, count) -> {
                     response.add(
