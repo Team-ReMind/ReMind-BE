@@ -1,8 +1,6 @@
 package com.remind.core.domain.prescription;
 
 import com.remind.core.domain.connection.Connection;
-import com.remind.core.domain.member.Member;
-import com.remind.core.domain.connection.enums.ConnectionStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,6 +38,9 @@ public class Prescription {
 
     @Column(name = "dinner_importance", nullable = false)
     private int dinnerImportance;
+
+    @Column(name = "etc_importance", nullable = false)
+    private int etcImportance;
 
 
     @ManyToOne

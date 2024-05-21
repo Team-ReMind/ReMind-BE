@@ -2,11 +2,8 @@ package com.remind.api.member.controller;
 
 import com.remind.api.member.dto.request.KakaoLoginRequest;
 import com.remind.api.member.dto.request.OnboardingRequestDto;
-import com.remind.api.member.dto.response.CautionPatientsResponseDto;
-import com.remind.api.member.dto.response.KakaoLoginResponse;
+import com.remind.api.member.dto.response.*;
 import com.remind.api.member.dto.request.RefreshTokenRequestDto;
-import com.remind.api.member.dto.response.PatientsResponseDto;
-import com.remind.api.member.dto.response.TokenResponseDto;
 import com.remind.api.member.service.MemberService;
 import com.remind.core.domain.common.response.ApiSuccessResponse;
 import com.remind.core.domain.connection.enums.ConnectionStatus;
@@ -100,4 +97,17 @@ public class MemberController {
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(new ApiSuccessResponse<>(memberService.getCautionPatientsList(userDetails)));
     }
+
+    //마이페이지
+    @Operation(
+            summary = "마이페이지 api",
+            description = " 마이페이지 api"
+    )
+    @GetMapping("/myPage")
+    public ResponseEntity<ApiSuccessResponse<MyPageResponseDto>> getMyPage(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(new ApiSuccessResponse<>(memberService.getMyPage(userDetails)));
+    }
+
+
 }

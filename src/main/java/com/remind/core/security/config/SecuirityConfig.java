@@ -1,16 +1,11 @@
 package com.remind.core.security.config;
 
 
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
-import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
-
 import com.remind.core.domain.member.enums.RolesType;
 import com.remind.core.security.exception.AccessDeniedHandlerImpl;
 import com.remind.core.security.filter.JwtAuthenticationFilter;
 import com.remind.core.security.filter.JwtAuthenticationHandlerFilter;
 import com.remind.core.security.provider.JwtAuthenticationProvider;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +19,12 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+
+import java.util.List;
+
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 @Configuration
 @EnableWebSecurity(debug = true)
@@ -95,6 +96,7 @@ public class SecuirityConfig {
                 antMatcher(POST, "/member/onboarding"),
                 antMatcher(GET, "/member/patients"),
                 antMatcher(GET, "/member/patients/caution"),
+                antMatcher(GET, "/member/myPage"),
                 antMatcher(POST, "/activity"),
                 antMatcher(GET, "/activity"),
                 antMatcher(POST, "/mood"),

@@ -9,11 +9,9 @@ import com.remind.api.takingMedicine.dto.response.DailyTakingMedicineInfoRespons
 import com.remind.api.takingMedicine.dto.response.MonthlyTakingMedicineInfoResponse;
 import com.remind.api.takingMedicine.dto.response.TakingMedicineRateResponse;
 import com.remind.core.domain.common.enums.MemberErrorCode;
-import com.remind.core.domain.common.exception.MemberException;
-import com.remind.core.domain.common.exception.PrescriptionException;
-import com.remind.core.domain.common.exception.TakingMedicineException;
-import com.remind.core.domain.common.enums.PresciptionErrorCode;
 import com.remind.core.domain.common.enums.TakingMedicineErrorCode;
+import com.remind.core.domain.common.exception.MemberException;
+import com.remind.core.domain.common.exception.TakingMedicineException;
 import com.remind.core.domain.member.Patient;
 import com.remind.core.domain.member.repository.PatientRepository;
 import com.remind.core.domain.prescription.Prescription;
@@ -22,7 +20,6 @@ import com.remind.core.domain.takingMedicine.TakingMedicine;
 import com.remind.core.domain.takingMedicine.enums.MedicinesType;
 import com.remind.core.domain.takingMedicine.repository.TakingMedicineRepository;
 import com.remind.core.security.dto.UserDetailsImpl;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,9 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.YearMonth;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -195,7 +192,7 @@ public class TakingMedicineService {
             if (optionalPrescription.isEmpty()) {
                 monthlyTakingMedicineDtos.add(MonthlyTakingMedicineDto.builder()
                         .needMedicine(false)
-                        .date(date)
+                        .date(date.getDayOfMonth())
                         .build());
                 continue;
             }
@@ -218,7 +215,7 @@ public class TakingMedicineService {
 
             monthlyTakingMedicineDtos.add(MonthlyTakingMedicineDto.builder()
                     .needMedicine(true)
-                    .date(date)
+                    .date(date.getDayOfMonth())
                     .takingCount(realTakingMedicineCount)
                     .takingLevel(takingMedicineLevel)
                     .build());

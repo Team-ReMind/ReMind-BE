@@ -1,19 +1,17 @@
 package com.remind.api.member.service;
 
-import static com.remind.core.domain.common.enums.MemberErrorCode.MEMBER_NOT_FOUND;
-import static com.remind.core.domain.common.enums.MemberErrorCode.REFRESH_TOKEN_NOT_FOUND;
-import static com.remind.core.domain.common.enums.MemberErrorCode.REFRESH_TOKEN_NOT_MATCH;
-
 import com.remind.api.member.dto.CautionPatientDto;
+import com.remind.api.member.dto.CenterDto;
+import com.remind.api.member.dto.DoctorDto;
 import com.remind.api.member.dto.PatientDto;
 import com.remind.api.member.dto.request.KakaoLoginRequest;
 import com.remind.api.member.dto.request.OnboardingRequestDto;
 import com.remind.api.member.dto.response.*;
-
-import com.remind.core.domain.common.exception.MemberException;
 import com.remind.api.member.kakao.KakaoFeignClient;
-import com.remind.core.domain.common.repository.RedisRepository;
 import com.remind.core.domain.common.enums.MemberErrorCode;
+import com.remind.core.domain.common.exception.MemberException;
+import com.remind.core.domain.common.repository.RedisRepository;
+import com.remind.core.domain.connection.enums.ConnectionStatus;
 import com.remind.core.domain.member.Center;
 import com.remind.core.domain.member.Doctor;
 import com.remind.core.domain.member.Member;
@@ -22,20 +20,23 @@ import com.remind.core.domain.member.enums.RolesType;
 import com.remind.core.domain.member.repository.CenterRepository;
 import com.remind.core.domain.member.repository.DoctorRepository;
 import com.remind.core.domain.member.repository.MemberRepository;
-import com.remind.core.domain.connection.enums.ConnectionStatus;
 import com.remind.core.domain.member.repository.PatientRepository;
 import com.remind.core.domain.mood.Activity;
 import com.remind.core.domain.mood.repository.ActivityRepository;
 import com.remind.core.domain.mood.repository.FixActivityRepository;
 import com.remind.core.security.dto.UserDetailsImpl;
 import com.remind.core.security.jwt.JwtProvider;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.*;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import static com.remind.core.domain.common.enums.MemberErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -115,9 +116,7 @@ public class MemberService {
      * @return
      */
     private Member register(KakaoGetMemberInfoResponse kakaoMemberInfo) {
-//        int currentYear = LocalDate.now().getYear();
-//        int birthYearInt = Integer.parseInt(kakaoMemberInfo.getKakao_account().getBirthyear());
-//        int age = currentYear - birthYearInt;
+//
 //        String memberCode = createMemberCode();
 //        Member member = Member.builder()
 //                .authId(kakaoMemberInfo.getAuthId())
@@ -136,21 +135,12 @@ public class MemberService {
         String memberCode = createMemberCode();
         Member member = Member.builder()
                 .authId(kakaoMemberInfo.getAuthId())
-                .name("예시이름")
-                .age(97979)
-                .gender("예시성별")
-                .email("예시이메일")
-                .phoneNumber("예시번호")
                 .profileImageUrl(kakaoMemberInfo.getKakao_account().getProfile().getProfile_image_url())
                 .memberCode(memberCode)
                 .rolesType(RolesType.ROLE_UNREGISTER)
                 .build();
         return memberRepository.save(member);
-//
-//        Patient patient = Patient.builder()
-//                .protectorPhoneNumber("S")
-//                .build();
-//        return memberRepository.save(patient);
+
     }
 
     /**
@@ -179,7 +169,7 @@ public class MemberService {
     }
 
     /**
-     * 로그인 후, 온보딩이 완료되었을 때 엔티티의컬럼을 업데이트 하는 로직
+     * 로그인 후, 온보딩이 완료되었을 때 엔티티의 컬럼을 업데이트 하는 로직
      * @param userDetails
      * @param req
      * @return
@@ -189,6 +179,9 @@ public class MemberService {
         Member member = memberRepository.findById(userDetails.getMemberId())
                 .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
 
+        //온보딩 추가 정보 등록
+        LocalDate birthday = Member.birthConverter(req.birthday());
+        member.updateInfo(req.name(),req.gender(),req.phoneNumber(),birthday);
         //이미 온보딩 된환자 예외처리 로직 추가
 
         //환자, 센터, 의사인 경우
@@ -199,7 +192,6 @@ public class MemberService {
                     .member(member)
                     .build();
             patientRepository.save(patient);
-
             fixActivityRepository.findAll().forEach(activity -> {
                 activityRepository.save(
                         Activity.builder()
@@ -289,8 +281,10 @@ public class MemberService {
         }
 
         //dto 리스트
-        List<PatientDto> patientDtos = memberRepository.findPatientInfoByTargetMemberIdAndStatus(member.getId(),
+        List<Member> memberList = memberRepository.findPatientInfoByTargetMemberIdAndStatus(member.getId(),
                 status);
+
+        List<PatientDto> patientDtos = memberList.stream().map(PatientDto::of).toList();
 
         return PatientsResponseDto.builder()
                 .patientDtos(patientDtos)
@@ -327,6 +321,29 @@ public class MemberService {
                 .build();
 
     }
+
+    @Transactional(readOnly = true)
+    public MyPageResponseDto getMyPage(UserDetailsImpl userDetails){
+        List<Center> centerList = centerRepository.findAllCenterByPatient(userDetails.getMemberId());
+        List<Doctor> doctorList = doctorRepository.findAllDoctorByPatient(userDetails.getMemberId());
+        Member member = memberRepository.findById(userDetails.getMemberId())
+                .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
+
+        List<CenterDto> centers = centerList.stream().map(center -> CenterDto.of(center, member.getName())).toList();
+        List<DoctorDto> doctors = doctorList.stream().map(doctor -> DoctorDto.of(doctor, member.getName())).toList();
+
+        return MyPageResponseDto.builder()
+                .name(member.getName())
+                .imageUrl(member.getProfileImageUrl())
+                .age(member.calculateAge())
+                .gender(member.getGender())
+                .centers(centers)
+                .doctors(doctors)
+                .build();
+
+    }
+
+
 
 
 }

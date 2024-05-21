@@ -1,7 +1,5 @@
 package com.remind.core.domain.prescription.repository;
 
-import com.remind.api.member.dto.PatientDto;
-import com.remind.core.domain.connection.enums.ConnectionStatus;
 import com.remind.core.domain.prescription.Prescription;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
