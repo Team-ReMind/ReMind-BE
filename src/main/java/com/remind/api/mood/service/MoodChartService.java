@@ -59,8 +59,7 @@ public class MoodChartService {
     }
 
     @Transactional(readOnly = true)
-    public Long getMaxSeries(UserDetailsImpl userDetails) {
-        return moodConsecutiveRepository.getMaxSeries(userDetails.getMemberId());
-
+    public Long getCurrentSeries(UserDetailsImpl userDetails) {
+        return moodConsecutiveRepository.getCurrentSeries(userDetails.getMemberId()).orElse(0L);
     }
 }

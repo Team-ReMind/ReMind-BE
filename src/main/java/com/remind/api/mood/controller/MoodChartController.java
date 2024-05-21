@@ -83,13 +83,13 @@ public class MoodChartController {
             content = @Content(
                     mediaType = "application/json",
                     examples = {
-                            @ExampleObject(value = "{\"code\":200, \"message:\": \"정상 처리되었습니다.\", \"data\": {\"maxSeriesDays\": 10}}")
+                            @ExampleObject(value = "{\"code\":200, \"message:\": \"정상 처리되었습니다.\", \"data\": {\"currentSeriesDays\": 10}}")
                     }
             )
     )
     @GetMapping("/series")
     public ResponseEntity<ApiSuccessResponse<?>> getMaxSeries(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(
-                new ApiSuccessResponse<>(Map.of("maxSeriesDays", moodChartService.getMaxSeries(userDetails))));
+                new ApiSuccessResponse<>(Map.of("currentSeriesDays", moodChartService.getCurrentSeries(userDetails))));
     }
 }
