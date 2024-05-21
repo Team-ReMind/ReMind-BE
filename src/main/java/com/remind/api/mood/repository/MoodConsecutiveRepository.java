@@ -1,6 +1,9 @@
 package com.remind.api.mood.repository;
 
+import com.remind.core.domain.mood.enums.FeelingType;
 import com.remind.core.domain.mood.repository.MoodRepository;
+import java.time.LocalDate;
+import java.util.List;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -26,4 +29,14 @@ public interface MoodConsecutiveRepository extends MoodRepository {
                 ) AS count_table;
             """)
     Long getMaxSeries(@Param("patientId") Long patientId);
+
+    /**
+     * 오늘 날짜(nowDate)와 기준 날짜(criterionDate)사이의 무드 점수를 조회한다.
+     */
+    @Query("select mood.feelingType "
+            + "from Mood mood "
+            + "where mood.patient.id = :patientId and (mood.moodDate between :nowDate and :criterionDate)")
+    List<FeelingType> getMoodFeelingTypes(@Param("patientId") Long patientId,
+                                          @Param("nowDate") LocalDate nowDate,
+                                          @Param("criterionDate") LocalDate criterionDate);
 }
