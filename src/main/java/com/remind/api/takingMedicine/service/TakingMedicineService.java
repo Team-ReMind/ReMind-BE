@@ -315,7 +315,7 @@ public class TakingMedicineService {
                                                             CreateTakingMedicineRequest req) {
 
         //멤버가 가진 처방 중에서, 오늘 날짜가 포함된 처방을 찾기
-        Prescription prescription = prescriptionRepository.findByPatientIdAndValidDate(userDetails.getMemberId(), LocalDate.now())
+        Prescription prescription = prescriptionRepository.findByPatientIdAndValidDate(3L, LocalDate.now())
                 .orElseThrow(() -> new TakingMedicineException(TakingMedicineErrorCode.TAKING_MEDICINE_NOT_FOUND));
 
         //이미 복용정보가 있으면 X
@@ -337,7 +337,7 @@ public class TakingMedicineService {
 
         //patient와 에 대해 약 복용률 업데이트
         //하루한번>??
-        patientService.updateTakingMedicineRate(userDetails.getMemberId(), prescription.getId());
+        patientService.updateTakingMedicineRate(3L, prescription.getId());
 
         return CreateTakingMedicineResponse.builder()
                 .isTaking(req.isTaking())
