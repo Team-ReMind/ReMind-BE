@@ -1,6 +1,5 @@
 package com.remind.api.takingMedicine.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.remind.core.domain.takingMedicine.enums.MedicinesType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -30,7 +29,7 @@ public record DailyTakingMedicineDto(
                         .prescriptionId(prescriptionId)
                         .medicinesType(medicinesType)
                         .importance(importance)
-                        .isTaking(null)
+                        .isTaking(false)
                         .build();
         }
 

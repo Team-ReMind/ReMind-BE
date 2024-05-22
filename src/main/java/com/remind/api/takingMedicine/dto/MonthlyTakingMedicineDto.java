@@ -5,7 +5,8 @@ import lombok.Builder;
 
 @Schema(description = "특정 월에서 일 단위의 약 복용 정보를 반환할 dto")
 @Builder
-public record MonthlyTakingMedicineDto(
+public record
+MonthlyTakingMedicineDto(
 
         @Schema(description = "약 복용이 필요한 날인지 여부")
         Boolean needMedicine,
