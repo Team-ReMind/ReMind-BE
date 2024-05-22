@@ -1,4 +1,4 @@
-package com.remind.api.mood.repository;
+package com.remind.core.domain.mood.repository;
 
 import com.remind.api.mood.dto.ActivityListDto;
 import com.remind.core.domain.mood.enums.FeelingType;

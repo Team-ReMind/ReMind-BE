@@ -1,4 +1,4 @@
-package com.remind.core.infra.config;
+package com.remind.infra.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;

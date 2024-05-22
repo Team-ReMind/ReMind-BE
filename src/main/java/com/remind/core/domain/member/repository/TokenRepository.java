@@ -1,4 +1,4 @@
-package com.remind.core.domain.common.repository;
+package com.remind.core.domain.member.repository;
 
 
 import java.time.Duration;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class RedisRepository {
+public class TokenRepository {
 
     @Value("${jwt.refresh-expiration-seconds}")
     private int refreshExpirationSeconds;

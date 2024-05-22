@@ -1,4 +1,4 @@
-package com.remind.core.infra.config;
+package com.remind.infra.config;
 
 import com.remind.RemindApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
