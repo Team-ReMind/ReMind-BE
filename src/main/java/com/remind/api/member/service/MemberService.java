@@ -318,6 +318,8 @@ public class MemberService {
                 .patientDtos(patientDtos)
                 .patientNumber(patientDtos.size())
                 .targetMemberCode(member.getMemberCode())
+                .doctorName(member.getName())
+                .imageUrl(member.getProfileImageUrl())
                 .build();
 
     }

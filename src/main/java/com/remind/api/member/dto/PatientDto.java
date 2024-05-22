@@ -1,9 +1,7 @@
 package com.remind.api.member.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.remind.core.domain.member.Member;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 @Builder
@@ -17,8 +15,8 @@ public record PatientDto(
         @Schema(description = "멤버 성별")
         String gender,
 
-        @Schema(description = "멤버 나이")
-        int age
+        @Schema(description = "멤버 출생 년도")
+        int birthYear
 
 ) {
         public static PatientDto of(Member member) {
@@ -26,7 +24,7 @@ public record PatientDto(
                         .memberId(member.getId())
                         .name(member.getName())
                         .gender(member.getGender())
-                        .age(member.calculateAge())
+                        .birthYear(member.getBirthday().getYear())
                         .build();
         }
 }
