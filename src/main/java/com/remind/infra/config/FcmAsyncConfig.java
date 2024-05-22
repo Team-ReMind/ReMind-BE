@@ -1,4 +1,4 @@
-package com.remind.core.infra.config;
+package com.remind.infra.config;
 
 import java.util.concurrent.Executor;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;

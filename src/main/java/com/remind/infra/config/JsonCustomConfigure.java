@@ -1,4 +1,4 @@
-package com.remind.core.infra.config;
+package com.remind.infra.config;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 

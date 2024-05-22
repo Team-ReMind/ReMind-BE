@@ -1,4 +1,4 @@
-package com.remind.core.infra.config;
+package com.remind.infra.config;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
