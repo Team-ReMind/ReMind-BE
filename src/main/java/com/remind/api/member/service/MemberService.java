@@ -95,7 +95,7 @@ public class MemberService {
         redisRepository.saveToken(userDetail.getMemberId(), newRefreshToken);
 
         return KakaoLoginResponse.builder()
-                .name(kakaoMemberInfo.getKakao_account().getName())
+                .name(member.getName())
                 .accessToken(newAccessToken)
                 .refreshToken(newRefreshToken)
                 .rolesType(member.getRolesType())

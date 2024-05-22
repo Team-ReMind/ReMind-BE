@@ -9,7 +9,6 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public record PatientsResponseDto(
         @Schema(description = "관리중인 환자 목록 리스트")
         List<PatientDto> patientDtos,

@@ -7,12 +7,14 @@ import lombok.Builder;
 import java.time.LocalDate;
 
 @Builder
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "환자 관리 페이지에서 약 처방 정보")
 public record PrescriptionInfoResponseDto(
 
         @Schema(description = "값 존재 여부")
         Boolean isExist,
+
+        @Schema(description = "처방 정보 식별Id")
+        Long prescriptionId,
         @Schema(description = "환자의 이름")
         String name,
         @Schema(description = "처방 날짜")

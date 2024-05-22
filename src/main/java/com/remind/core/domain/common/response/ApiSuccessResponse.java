@@ -7,7 +7,6 @@ import com.remind.core.domain.common.enums.GlobalSuccessCode;
 import lombok.Getter;
 
 @Getter
-@JsonInclude(value = JsonInclude.Include.NON_EMPTY)
 public class ApiSuccessResponse <T> {
 
     private int code;
