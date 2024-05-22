@@ -30,6 +30,7 @@ import com.remind.core.security.dto.UserDetailsImpl;
 import com.remind.core.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +57,17 @@ public class MemberService {
     private final FixActivityRepository fixActivityRepository;
     private final ActivityRepository activityRepository;
     private final MoodConsecutiveRepository moodConsecutiveRepository;
+
+    @Value("${images.patient}")
+    private String defaultPatientImageUrl;
+
+    @Value("${images.doctor}")
+    private String defaultDoctorImageUrl;
+
+    @Value("${images.center}")
+    private String defaultCenterImageUrl;
+
+
 
     @Transactional
     public KakaoLoginResponse kakaoLogin(KakaoLoginRequest request) {
@@ -136,6 +148,7 @@ public class MemberService {
 //        return memberRepository.save(member);
 
 
+
         String memberCode = createMemberCode();
         Member member = Member.builder()
                 .authId(kakaoMemberInfo.getAuthId())
@@ -184,12 +197,16 @@ public class MemberService {
                 .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
 
         //온보딩 추가 정보 등록
+
         LocalDate birthday = Member.birthConverter(req.birthday());
         member.updateInfo(req.name(),req.gender(),req.phoneNumber(),birthday);
         //이미 온보딩 된환자 예외처리 로직 추가
 
         //환자, 센터, 의사인 경우
         if (req.rolesType() == RolesType.ROLE_PATIENT) {
+            if (member.getProfileImageUrl() == null) {
+                member.updateProfileImage(defaultPatientImageUrl);
+            }
             member.updateRolesTypeAndFcmToken(RolesType.ROLE_PATIENT, req.fcmToken());
             Patient patient = Patient.builder()
                     .protectorPhoneNumber(req.protectorPhoneNumber())
@@ -207,6 +224,9 @@ public class MemberService {
             });
 
         } else if (req.rolesType() == RolesType.ROLE_CENTER) {
+            if (member.getProfileImageUrl() == null) {
+                member.updateProfileImage(defaultCenterImageUrl);
+            }
             member.updateRolesTypeAndFcmToken(RolesType.ROLE_CENTER, req.fcmToken());
             Center center = Center.builder()
                     .centerName(req.centerName())
@@ -217,6 +237,9 @@ public class MemberService {
             centerRepository.save(center);
 
         } else if (req.rolesType() == RolesType.ROLE_DOCTOR) {
+            if (member.getProfileImageUrl() == null) {
+                member.updateProfileImage(defaultDoctorImageUrl);
+            }
             member.updateRolesTypeAndFcmToken(RolesType.ROLE_DOCTOR, req.fcmToken());
             Doctor doctor = Doctor.builder()
                     .doctorLicenseNumber(req.doctorLicenseNumber())

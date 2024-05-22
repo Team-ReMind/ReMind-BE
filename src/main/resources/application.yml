@@ -27,6 +27,11 @@ jwt:
   access-expiration-seconds: ${ACCESS_EXPIRATION_SECONDS}
   refresh-expiration-seconds: ${REFRESH_EXPIRATION_SECONDS}
 
+images:
+  patient: ${PATIENT_IMAGE}
+  doctor: ${DOCTOR_IMAGE}
+  center: ${CENTER_IMAGE}
+
 # 쿼리문 파라미터 바인딩 값 확인
 logging:
   level:

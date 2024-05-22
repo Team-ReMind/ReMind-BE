@@ -58,11 +58,15 @@ public class Member {
 
     //온보딩 후 기본 정보 업데이트를 위한 메서드
     public void updateInfo(String name, String gender, String phoneNumber, LocalDate birthday) {
-
         this.name = name;
         this.gender = gender;
         this.phoneNumber = phoneNumber;
         this.birthday = birthday;
+    }
+
+    //온보딩 후 프로필 사진 등럭을 위한 메서드
+    public void updateProfileImage(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 
     //온보딩 후 rolesType  업데이트를 위한 메서드
