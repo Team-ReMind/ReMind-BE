@@ -35,4 +35,16 @@ public class Patient {
         this.dinnerTakingMedicineRate = dinnerTakingMedicineRate;
         this.totalTakingMedicineRate = totalTakingMedicineRate;
     }
+
+    public int getTakingMedicineRateToInt(){
+        if (totalTakingMedicineRate >= 0 && totalTakingMedicineRate < 25) {
+            return 0;
+        } else if (totalTakingMedicineRate >= 25 && totalTakingMedicineRate < 50) {
+            return 1;
+        } else if (totalTakingMedicineRate >= 50 && totalTakingMedicineRate < 75) {
+            return 2;
+        }
+        return 3;
+
+    }
 }

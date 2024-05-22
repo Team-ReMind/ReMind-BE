@@ -13,7 +13,10 @@ public record CautionPatientsResponseDto(
         List<CautionPatientDto> cautionPatientDtos,
 
         @Schema(description = "관리중인 환자 인원수")
-        Integer patientNumber
+        Integer patientNumber,
+
+        @Schema(description = "센터 담당자 이름")
+        String centerManagerName
 
 ) {
 

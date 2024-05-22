@@ -8,6 +8,7 @@ import com.remind.api.member.dto.request.KakaoLoginRequest;
 import com.remind.api.member.dto.request.OnboardingRequestDto;
 import com.remind.api.member.dto.response.*;
 import com.remind.api.member.kakao.KakaoFeignClient;
+import com.remind.api.mood.repository.MoodConsecutiveRepository;
 import com.remind.core.domain.common.enums.MemberErrorCode;
 import com.remind.core.domain.common.exception.MemberException;
 import com.remind.core.domain.common.repository.RedisRepository;
@@ -22,6 +23,7 @@ import com.remind.core.domain.member.repository.DoctorRepository;
 import com.remind.core.domain.member.repository.MemberRepository;
 import com.remind.core.domain.member.repository.PatientRepository;
 import com.remind.core.domain.mood.Activity;
+import com.remind.core.domain.mood.enums.FeelingType;
 import com.remind.core.domain.mood.repository.ActivityRepository;
 import com.remind.core.domain.mood.repository.FixActivityRepository;
 import com.remind.core.security.dto.UserDetailsImpl;
@@ -33,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -52,6 +55,7 @@ public class MemberService {
     private final JwtProvider jwtProvider;
     private final FixActivityRepository fixActivityRepository;
     private final ActivityRepository activityRepository;
+    private final MoodConsecutiveRepository moodConsecutiveRepository;
 
     @Transactional
     public KakaoLoginResponse kakaoLogin(KakaoLoginRequest request) {
@@ -216,6 +220,7 @@ public class MemberService {
             member.updateRolesTypeAndFcmToken(RolesType.ROLE_DOCTOR, req.fcmToken());
             Doctor doctor = Doctor.builder()
                     .doctorLicenseNumber(req.doctorLicenseNumber())
+                    .hospitalName(req.hospitalName())
                     .member(member)
                     .build();
             doctorRepository.save(doctor);
@@ -303,25 +308,66 @@ public class MemberService {
     @Transactional(readOnly = true)
     public CautionPatientsResponseDto getCautionPatientsList(UserDetailsImpl userDetails) {
         //조회하는 사람 정보 조회
-        Member member = memberRepository.findById(userDetails.getMemberId())
+        Member center = memberRepository.findById(userDetails.getMemberId())
                 .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
 
-        //의사 또는 센터가 아니면 조회 불가
-        if (!member.getRolesType().equals(RolesType.ROLE_DOCTOR) &&
-                !member.getRolesType().equals(RolesType.ROLE_CENTER)) {
+        //센터가 아니면 조회 불가
+        if (!center.getRolesType().equals(RolesType.ROLE_CENTER)) {
             throw new MemberException(MemberErrorCode.MEMBER_NOT_DOCTOR_OR_CENTER);
         }
 
-        //dto 리스트. 통계 테이블 추가 후 수정
-//        List<CautionPatientDto> cautionPatientDtos = memberRepository.findCautionPatients(member.getId());
-        List<CautionPatientDto> cautionPatientDtos = new ArrayList<>();
+        //센터가 관리중인 환자 목록
+        List<Member> patientList = memberRepository.findPatientInfoByTargetMemberIdAndStatus(userDetails.getMemberId(), ConnectionStatus.ACCEPT);
+
+        List<CautionPatientDto> cautionPatients = new ArrayList<>();
+
+        patientList.forEach(member -> {
+            //해당 환자의 기분 목록
+            List<FeelingType> patientFeelingTypes = moodConsecutiveRepository.getMoodFeelingTypes(member.getId(), LocalDate.now(), LocalDate.now().minusDays(7));
+            //해당 환자의 무드차트 평균 점수
+            Double moodChartScore = patientFeelingTypes.stream()
+                    .mapToInt(FeelingType::getScore)
+                    .average()
+                    .orElse(100);
+            int moodChartToInt =(int) Math.floor(moodChartScore / 25) ;
+
+            if (moodChartToInt >=3 ) {
+                return;
+            }
+
+            Patient patient = patientRepository.findById(member.getId())
+                    .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
+
+            //해당 환자의 평균 약 복용율
+            Double takingMedicineRate = patient.getTotalTakingMedicineRate();
+
+            cautionPatients.add(CautionPatientDto.builder()
+                    .memberId(member.getId())
+                    .name(member.getName())
+                    .takingMedicineRatio(patient.getTakingMedicineRateToInt())
+                    .moodChartScore(moodChartToInt)
+                    .build());
+        });
+
+        cautionPatients.sort(
+                Comparator.comparingInt(CautionPatientDto::moodChartScore)
+                        .thenComparingInt(CautionPatientDto::takingMedicineRatio)
+        );
+
+
         return CautionPatientsResponseDto.builder()
-                .cautionPatientDtos(cautionPatientDtos)
-                .patientNumber(cautionPatientDtos.size())
+                .cautionPatientDtos(cautionPatients)
+                .patientNumber(cautionPatients.size())
+                .centerManagerName(center.getName())
                 .build();
 
     }
 
+    /**
+     * 마이페이지 조회 로직
+     * @param userDetails
+     * @return
+     */
     @Transactional(readOnly = true)
     public MyPageResponseDto getMyPage(UserDetailsImpl userDetails){
         List<Center> centerList = centerRepository.findAllCenterByPatient(userDetails.getMemberId());
