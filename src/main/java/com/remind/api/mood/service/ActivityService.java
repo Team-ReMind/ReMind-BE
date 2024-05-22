@@ -31,9 +31,9 @@ public class ActivityService {
     @Transactional
     public Long save(UserDetailsImpl userDetails, ActivitySaveRequestDto dto) {
         // 환자만 접근 가능
-        if (!validateUserRole(userDetails)) {
-            throw new MemberException(MEMBER_UNAUTHORIZED);
-        }
+//        if (!validateUserRole(userDetails)) {
+//            throw new MemberException(MEMBER_UNAUTHORIZED);
+//        }
 
         Member member = memberRepository.findById(userDetails.getMemberId())
                 .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
@@ -55,9 +55,9 @@ public class ActivityService {
     @Transactional(readOnly = true)
     public ActivityListResponseDto getActivityList(UserDetailsImpl userDetails) {
         // 환자만 접근 가능
-        if (!validateUserRole(userDetails)) {
-            throw new MemberException(MEMBER_UNAUTHORIZED);
-        }
+//        if (!validateUserRole(userDetails)) {
+//            throw new MemberException(MEMBER_UNAUTHORIZED);
+//        }
 
         List<ActivityListDto> activities = activityRepository.findActivitiesByMemberId(userDetails.getMemberId())
                 .stream()
