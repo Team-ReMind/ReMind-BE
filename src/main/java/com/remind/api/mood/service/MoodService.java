@@ -8,7 +8,7 @@ import static com.remind.core.domain.common.enums.MoodErrorCode.MOOD_NOT_FOUND;
 import com.remind.api.mood.dto.request.MoodSaveRequestDto;
 import com.remind.api.mood.dto.response.ModelActivityResponseDto;
 import com.remind.api.mood.dto.response.MoodResponseDto;
-import com.remind.api.mood.repository.DateMoodActivityRepository;
+import com.remind.core.domain.mood.repository.DateMoodActivityRepository;
 import com.remind.core.domain.common.exception.ActivityException;
 import com.remind.core.domain.common.exception.MemberException;
 import com.remind.core.domain.common.exception.MoodException;

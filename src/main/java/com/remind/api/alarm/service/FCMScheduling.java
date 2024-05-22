@@ -1,7 +1,7 @@
 package com.remind.api.alarm.service;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.remind.api.alarm.repository.AlarmListRepository;
+import com.remind.core.domain.alarm.repository.AlarmListRepository;
 import com.remind.api.alarm.util.fcm.FCMUtil;
 import com.remind.core.domain.alarm.enums.AlarmDayOfWeek;
 import java.time.LocalDate;

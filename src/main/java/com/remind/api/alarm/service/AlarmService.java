@@ -5,7 +5,7 @@ import static com.remind.core.domain.common.enums.PresciptionErrorCode.*;
 
 import com.remind.api.alarm.dto.request.AlarmCreateRequestDto;
 import com.remind.api.alarm.dto.response.AlarmListResponseDto;
-import com.remind.api.alarm.repository.AlarmListRepository;
+import com.remind.core.domain.alarm.repository.AlarmListRepository;
 import com.remind.core.domain.alarm.Alarm;
 import com.remind.core.domain.alarm.AlarmDay;
 import com.remind.core.domain.alarm.enums.AlarmDayOfWeek;

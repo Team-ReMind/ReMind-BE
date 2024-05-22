@@ -8,7 +8,7 @@ import com.remind.api.member.dto.request.KakaoLoginRequest;
 import com.remind.api.member.dto.request.OnboardingRequestDto;
 import com.remind.api.member.dto.response.*;
 import com.remind.api.member.kakao.KakaoFeignClient;
-import com.remind.api.mood.repository.MoodConsecutiveRepository;
+import com.remind.core.domain.mood.repository.MoodConsecutiveRepository;
 import com.remind.core.domain.common.enums.MemberErrorCode;
 import com.remind.core.domain.common.exception.MemberException;
 import com.remind.core.domain.member.repository.TokenRepository;

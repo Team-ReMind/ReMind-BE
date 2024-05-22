@@ -1,4 +1,4 @@
-package com.remind.api.mood.repository;
+package com.remind.core.domain.mood.repository;
 
 import com.remind.api.mood.dto.response.ModelActivityResponseDto;
 import com.remind.core.domain.mood.repository.MoodActivityRepository;
