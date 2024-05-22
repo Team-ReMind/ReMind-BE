@@ -1,10 +1,7 @@
 package com.remind.api.takingMedicine.dto.response;
 
-import com.remind.api.takingMedicine.dto.MonthlyTakingMedicineDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
-
-import java.util.List;
 
 @Builder
 @Schema(description = "특정 멤버의 약 복용률 반환")

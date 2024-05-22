@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 @Builder
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "토큰 응답 model")
 public record TokenResponseDto(
         @Schema(description = "access token 유효 기간: 30분")

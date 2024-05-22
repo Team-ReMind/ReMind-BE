@@ -7,7 +7,6 @@ import lombok.Builder;
 import java.time.LocalDate;
 
 @Builder
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "환자 관리 페이지에서 약 처방 정보")
 public record PrescriptionInfoResponseDto(
 
