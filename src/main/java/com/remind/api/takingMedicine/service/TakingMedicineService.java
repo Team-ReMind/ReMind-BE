@@ -324,6 +324,11 @@ public class TakingMedicineService {
                     throw new TakingMedicineException(TakingMedicineErrorCode.TAKING_MEDICINE_ALREADY_EXIST);
                 });
         //중요도 0이면 복용 못하게 해야함
+        if ((req.medicinesType() == MedicinesType.BREAKFAST && prescription.getBreakfastImportance() == 0) ||
+                (req.medicinesType() == MedicinesType.LUNCH && prescription.getLunchImportance() == 0) ||
+                (req.medicinesType() == MedicinesType.DINNER && prescription.getDinnerImportance() == 0)) {
+            throw new TakingMedicineException(TakingMedicineErrorCode.DONT_NEED_TAKING_MEDICINE);
+        }
 
         takingMedicineRepository.save(
                 TakingMedicine.builder()
