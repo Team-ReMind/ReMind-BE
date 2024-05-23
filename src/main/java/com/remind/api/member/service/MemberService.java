@@ -282,7 +282,7 @@ public class MemberService {
     @Transactional(readOnly = true)
     public PatientsResponseDto getPatientsList(UserDetailsImpl userDetails, ConnectionStatus status) {
         //조회하는 사람 정보 조회
-        Member member = memberRepository.findById(userDetails.getMemberId())
+        Member member = memberRepository.findById(userDetails.getMemberId() )
                 .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
 
         //의사 또는 센터가 아니면 조회 불가
@@ -405,7 +405,7 @@ public class MemberService {
     @Transactional(readOnly = true)
     public MemberInfoResponse getMemberInfo(UserDetailsImpl userDetails,Long memberId){
 
-        //파라미터가 0이면, 나를 조회하도록 하기.
+        //파라미터가 0이면, 나를 조회하도록 하기..
         if (memberId == 0) {
             memberId = userDetails.getMemberId();
         }
