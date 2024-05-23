@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,7 +46,8 @@ public class MoodChartController {
             @Parameter(description = "마지막으로 조회한 일") @RequestParam("day") Integer day,
             @Parameter(description = "한 페이지 속 데이터 갯수") @RequestParam("size") Integer size) {
         return ResponseEntity.ok(
-                new ApiSuccessResponse<>(moodChartService.getMoodChart(userDetails, year, month, day, size)));
+                new ApiSuccessResponse<>(
+                        moodChartService.getMoodChart(userDetails.getMemberId(), year, month, day, size)));
     }
 
     @Operation(
@@ -75,7 +77,8 @@ public class MoodChartController {
     @GetMapping("/percents")
     public ResponseEntity<ApiSuccessResponse<List<MoodPercentResponseDto>>> getMoodChartPercents(
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok(new ApiSuccessResponse<>(moodChartService.getActivityChart(userDetails)));
+        return ResponseEntity.ok(
+                new ApiSuccessResponse<>(moodChartService.getActivityChart(userDetails.getMemberId())));
     }
 
     @Operation(
@@ -104,7 +107,7 @@ public class MoodChartController {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @Parameter(description = "감정") @RequestParam("feelingType") FeelingType feelingType) {
         return ResponseEntity.ok(
-                new ApiSuccessResponse<>(moodChartService.getActivityPercentChart(userDetails, feelingType)));
+                new ApiSuccessResponse<>(moodChartService.getActivityPercentChart(userDetails.getMemberId(), feelingType)));
     }
 
     @Operation(

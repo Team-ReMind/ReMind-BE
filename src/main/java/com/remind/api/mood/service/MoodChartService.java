@@ -27,13 +27,13 @@ public class MoodChartService {
     private final MoodConsecutiveRepository moodConsecutiveRepository;
 
     @Transactional(readOnly = true)
-    public MoodChartPagingResponseDto getMoodChart(UserDetailsImpl userDetails, Integer year, Integer month,
+    public MoodChartPagingResponseDto getMoodChart(Long memberId, Integer year, Integer month,
                                                    Integer day, Integer size) {
 
         List<MoodChartResponseDto> response = new ArrayList<>();
         boolean hasNext = false;
         // 요청한 정보에 대해 커서 기반 pagination ( 월의 1일부터 조회하기 위해서는 day = 0 값을 받아야 한다. )
-        Slice<MoodChartDto> moodChartDtos = moodChartPagingRepository.getMoodChartPaging2(userDetails.getMemberId(),
+        Slice<MoodChartDto> moodChartDtos = moodChartPagingRepository.getMoodChartPaging2(memberId,
                 LocalDate.of(year, month, day + 1), Pageable.ofSize(size));
 
         // 다음 페이지 존재 여부
@@ -47,14 +47,14 @@ public class MoodChartService {
     }
 
     @Transactional(readOnly = true)
-    public List<MoodPercentResponseDto> getActivityChart(UserDetailsImpl userDetails) {
-        return moodChartCacheService.getActivityFeelingTypePercent(userDetails.getMemberId());
+    public List<MoodPercentResponseDto> getActivityChart(Long memberId) {
+        return moodChartCacheService.getActivityFeelingTypePercent(memberId);
     }
 
     @Transactional(readOnly = true)
-    public List<ActivityPercentResponseDto> getActivityPercentChart(UserDetailsImpl userDetails,
+    public List<ActivityPercentResponseDto> getActivityPercentChart(Long memberId,
                                                                     FeelingType feelingType) {
-        return moodChartCacheService.getActivityPercentChart(userDetails.getMemberId(), feelingType);
+        return moodChartCacheService.getActivityPercentChart(memberId, feelingType);
 
     }
 

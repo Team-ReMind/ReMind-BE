@@ -64,7 +64,7 @@ public class MoodController {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable("moodDate") LocalDate localDate) {
         return ResponseEntity.ok(
-                new ApiSuccessResponse<>(SUCCESS, moodService.get(userDetails, localDate)));
+                new ApiSuccessResponse<>(SUCCESS, moodService.get(userDetails.getMemberId(), localDate)));
     }
 
     @Operation(
