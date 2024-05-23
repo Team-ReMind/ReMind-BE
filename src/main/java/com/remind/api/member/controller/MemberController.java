@@ -2,8 +2,8 @@ package com.remind.api.member.controller;
 
 import com.remind.api.member.dto.request.KakaoLoginRequest;
 import com.remind.api.member.dto.request.OnboardingRequestDto;
-import com.remind.api.member.dto.response.*;
 import com.remind.api.member.dto.request.RefreshTokenRequestDto;
+import com.remind.api.member.dto.response.*;
 import com.remind.api.member.service.MemberService;
 import com.remind.core.domain.common.response.ApiSuccessResponse;
 import com.remind.core.domain.connection.enums.ConnectionStatus;
@@ -109,5 +109,16 @@ public class MemberController {
         return ResponseEntity.ok(new ApiSuccessResponse<>(memberService.getMyPage(userDetails)));
     }
 
+    @Operation(
+            summary = "특정 멤버의 이름, 사진, 만나이, 사진을 반환하는 api",
+            description = "특정 멤버 정보 조회 api. \""
+    )
+    @GetMapping("/info")
+    public ResponseEntity<ApiSuccessResponse<MemberInfoResponse>> getTakingMedicineRate(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam Long memberId
+    ) {
+        return ResponseEntity.ok(new ApiSuccessResponse<>(memberService.getMemberInfo(userDetails, memberId)));
+    }
 
 }

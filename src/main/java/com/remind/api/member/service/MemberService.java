@@ -414,6 +414,34 @@ public class MemberService {
 
     }
 
+    /**
+     * 의사가 특정 멤버 정보 조회
+     * @param userDetails
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public MemberInfoResponse getMemberInfo(UserDetailsImpl userDetails,Long memberId){
+        Member doctor = memberRepository.findById(userDetails.getMemberId())
+                .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
+
+        if (!doctor.getRolesType().equals(RolesType.ROLE_DOCTOR)) {
+            throw new MemberException(MemberErrorCode.MEMBER_NOT_DOCTOR_OR_CENTER);
+        }
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
+
+        return MemberInfoResponse.builder()
+                .name(member.getName())
+                .age(member.calculateAge())
+                .imageUrl(member.getProfileImageUrl())
+                .gender(member.getGender())
+                .build();
+
+
+
+    }
+
 
 
 

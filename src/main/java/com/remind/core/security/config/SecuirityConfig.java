@@ -97,6 +97,7 @@ public class SecuirityConfig {
                 antMatcher(GET, "/member/patients"),
                 antMatcher(GET, "/member/patients/caution"),
                 antMatcher(GET, "/member/myPage"),
+                antMatcher(GET, "/member/info"),
                 antMatcher(POST, "/activity"),
                 antMatcher(GET, "/activity"),
                 antMatcher(POST, "/mood"),
