@@ -287,10 +287,10 @@ public class TakingMedicineService {
                 .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         return TakingMedicineRateResponse.builder()
-                .breakfastRate(patient.getBreakfastTakingMedicineRate())
-                .lunchRate(patient.getLunchTakingMedicineRate())
-                .dinnerRate(patient.getDinnerTakingMedicineRate())
-                .totalRate(patient.getTotalTakingMedicineRate())
+                .breakfastRate(patient.getBreakfastTakingMedicineRate()*100)
+                .lunchRate(patient.getLunchTakingMedicineRate()*100)
+                .dinnerRate(patient.getDinnerTakingMedicineRate()*100)
+                .totalRate(patient.getTotalTakingMedicineRate()*100)
                 .build();
     }
 }
