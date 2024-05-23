@@ -145,6 +145,7 @@ public class MemberService {
 
 
 
+
         String memberCode = createMemberCode();
         Member member = Member.builder()
                 .authId(kakaoMemberInfo.getAuthId())
