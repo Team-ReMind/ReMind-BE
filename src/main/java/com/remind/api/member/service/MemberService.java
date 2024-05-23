@@ -8,10 +8,10 @@ import com.remind.api.member.dto.request.KakaoLoginRequest;
 import com.remind.api.member.dto.request.OnboardingRequestDto;
 import com.remind.api.member.dto.response.*;
 import com.remind.api.member.kakao.KakaoFeignClient;
-import com.remind.api.mood.repository.MoodConsecutiveRepository;
+import com.remind.core.domain.mood.repository.MoodConsecutiveRepository;
 import com.remind.core.domain.common.enums.MemberErrorCode;
 import com.remind.core.domain.common.exception.MemberException;
-import com.remind.core.domain.common.repository.RedisRepository;
+import com.remind.core.domain.member.repository.TokenRepository;
 import com.remind.core.domain.connection.enums.ConnectionStatus;
 import com.remind.core.domain.member.Center;
 import com.remind.core.domain.member.Doctor;
@@ -52,7 +52,7 @@ public class MemberService {
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
     private final CenterRepository centerRepository;
-    private final RedisRepository redisRepository;
+    private final TokenRepository tokenRepository;
     private final JwtProvider jwtProvider;
     private final FixActivityRepository fixActivityRepository;
     private final ActivityRepository activityRepository;
@@ -104,7 +104,7 @@ public class MemberService {
         String newRefreshToken = jwtProvider.createRefreshToken(userDetail);
 
         // redis 토큰 정보 저장
-        redisRepository.saveToken(userDetail.getMemberId(), newRefreshToken);
+        tokenRepository.saveToken(userDetail.getMemberId(), newRefreshToken);
 
         return KakaoLoginResponse.builder()
                 .name(member.getName())
@@ -263,11 +263,11 @@ public class MemberService {
                 .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
 
         // redis 갱신된 refresh token 유효성 검증
-        if (!redisRepository.hasKey(member.getId())) {
+        if (!tokenRepository.hasKey(member.getId())) {
             throw new MemberException(REFRESH_TOKEN_NOT_FOUND);
         }
         // redis에 저장된 토큰과 비교
-        if (!redisRepository.getRefreshToken(member.getId()).get(RedisRepository.REFRESH_TOKEN_KEY)
+        if (!tokenRepository.getRefreshToken(member.getId()).get(TokenRepository.REFRESH_TOKEN_KEY)
                 .equals(oldRefreshToken)) {
             throw new MemberException(REFRESH_TOKEN_NOT_MATCH);
         }
@@ -284,7 +284,7 @@ public class MemberService {
                 .build();
 
         // redis 토큰 정보 저장
-        redisRepository.saveToken(userDetail.getMemberId(), newRefreshToken);
+        tokenRepository.saveToken(userDetail.getMemberId(), newRefreshToken);
 
         return tokenResponseDto;
 
@@ -318,6 +318,8 @@ public class MemberService {
                 .patientDtos(patientDtos)
                 .patientNumber(patientDtos.size())
                 .targetMemberCode(member.getMemberCode())
+                .doctorName(member.getName())
+                .imageUrl(member.getProfileImageUrl())
                 .build();
 
     }

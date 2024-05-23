@@ -1,4 +1,4 @@
-package com.remind.core.infra.config;
+package com.remind.infra.config;
 
 import java.time.Duration;
 import org.springframework.beans.factory.annotation.Value;

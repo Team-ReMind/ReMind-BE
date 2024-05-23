@@ -79,7 +79,24 @@ public class MoodChartController {
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(
                 new ApiSuccessResponse<>(moodChartService.getActivityChart(userDetails.getMemberId())));
+
     }
+
+    @Operation(
+            summary = "의사/센터의 특정 환자의 기분 별 활동 차트 안의 기분 percent 조회"
+    )
+    @ApiResponse(
+            responseCode = "200", description = "기분 별 활동 차트 안의 기분 percent 조회 성공 응답입니다.", useReturnTypeSchema = true
+    )
+    @GetMapping("/percents/{memberId}")
+    public ResponseEntity<ApiSuccessResponse<List<MoodPercentResponseDto>>> getMoodChartPercents(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable("memberId") Long memberId) {
+        return ResponseEntity.ok(
+                new ApiSuccessResponse<>(moodChartService.getActivityChart(memberId)));
+
+    }
+
 
     @Operation(
             summary = "의사/센터의 특정 환자의 기분 별 활동 차트 안의 기분 percent 조회"

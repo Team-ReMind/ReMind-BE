@@ -3,7 +3,7 @@ package com.remind.api.mood.service;
 import com.remind.api.mood.dto.ActivityListDto;
 import com.remind.api.mood.dto.response.ActivityPercentResponseDto;
 import com.remind.api.mood.dto.response.MoodPercentResponseDto;
-import com.remind.api.mood.repository.MoodPercentRepository;
+import com.remind.core.domain.mood.repository.MoodPercentRepository;
 import com.remind.core.domain.mood.enums.FeelingType;
 import java.util.ArrayList;
 import java.util.List;

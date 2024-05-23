@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.remind.api.member.dto.request.RefreshTokenRequestDto;
-import com.remind.core.domain.common.repository.RedisRepository;
+import com.remind.core.domain.member.repository.TokenRepository;
 import com.remind.core.domain.member.Member;
 import com.remind.core.domain.member.repository.MemberRepository;
 import com.remind.core.infra.TestContainerConfig;
@@ -34,7 +34,7 @@ import org.springframework.test.web.servlet.MockMvc;
 public class TokenControllerTest extends TestContainerConfig {
 
     @Autowired
-    private RedisRepository redisRepository;
+    private TokenRepository tokenRepository;
     @Autowired
     private JwtProvider jwtProvider;
     @Autowired
@@ -64,11 +64,11 @@ public class TokenControllerTest extends TestContainerConfig {
                 .build();
         String newRefreshToken = jwtProvider.createRefreshToken(userDetails);
 
-        redisRepository.saveToken(TEST_MEMBER_ID, newRefreshToken);
+        tokenRepository.saveToken(TEST_MEMBER_ID, newRefreshToken);
 
         //when
-        String findToken = (String) redisRepository.getRefreshToken(TEST_MEMBER_ID)
-                .get(RedisRepository.REFRESH_TOKEN_KEY);
+        String findToken = (String) tokenRepository.getRefreshToken(TEST_MEMBER_ID)
+                .get(TokenRepository.REFRESH_TOKEN_KEY);
 
         //then
         Assertions.assertThat(findToken).isEqualTo(newRefreshToken);
@@ -88,7 +88,7 @@ public class TokenControllerTest extends TestContainerConfig {
                 .build();
         String newRefreshToken = jwtProvider.createRefreshToken(userDetails);
 
-        redisRepository.saveToken(TEST_MEMBER_ID, newRefreshToken);
+        tokenRepository.saveToken(TEST_MEMBER_ID, newRefreshToken);
         String httpRequestBody = objectMapper.writeValueAsString(new RefreshTokenRequestDto(newRefreshToken));
 
         //when,then

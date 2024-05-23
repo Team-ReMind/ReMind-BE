@@ -1,4 +1,4 @@
-package com.remind.api.alarm.repository;
+package com.remind.core.domain.alarm.repository;
 
 import com.remind.api.alarm.dto.response.AlarmListDto;
 import com.remind.core.domain.alarm.enums.AlarmDayOfWeek;
