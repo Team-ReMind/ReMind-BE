@@ -2,7 +2,7 @@
 ![1](https://github.com/j2noo/29th_Semi_README/assets/77064618/a0ca325d-1feb-4592-9889-998424dfa8f2)
 
 
-## **서비스 한 줄 소개**
+## **서비스 한 줄 소개.**
 
 ---
 
