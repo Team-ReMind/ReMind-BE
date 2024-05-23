@@ -13,14 +13,6 @@ import java.util.Optional;
 @Repository
 public interface PrescriptionRepository extends JpaRepository<Prescription, Long> {
 
-      //커넥션Id로, 특정 환자와의 처방전 정보 모두 조회
-      List<Prescription> findByConnectionId(Long connectionId);
-
-//      @Query("SELECT new Prescription" +
-//              "FROM Connection c " +
-//              "JOIN c.patient p " +
-//              "WHERE c.targetMember.id = :targetMemberId AND c.connectionStatus = :connectionStatus")
-//      Optional<Prescription> findByMemberId(@Param("memberId") Long memberId);
 
       //memberId로 처방 정보를 조회
       @Query("SELECT p FROM Prescription p JOIN p.connection c JOIN c.patient m WHERE m.id = :patientId")

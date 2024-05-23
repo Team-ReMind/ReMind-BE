@@ -17,7 +17,7 @@ import java.util.List;
 @SecurityRequirements(value = {})
 
 public class HealthTestController {
-    @Operation(summary = "Health Check API", description = "Health Check Api입니다.")
+    @Operation(summary = "Health Check API", description = "Health Check Api입니다. 빈 리스트 반환!")
     @GetMapping("")
     public ResponseEntity<ApiSuccessResponse<List<String>>> apiHealthTest() {
         return ResponseEntity.ok(new ApiSuccessResponse<>(new ArrayList<>()));

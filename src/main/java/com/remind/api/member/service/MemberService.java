@@ -132,27 +132,16 @@ public class MemberService {
      * @return
      */
     private Member register(KakaoGetMemberInfoResponse kakaoMemberInfo) {
-//
-//        String memberCode = createMemberCode();
-//        Member member = Member.builder()
-//                .authId(kakaoMemberInfo.getAuthId())
-//                .name(kakaoMemberInfo.getKakao_account().getName())
-//                .age(age)
-//                .gender(kakaoMemberInfo.getKakao_account().getGender())
-//                .email(kakaoMemberInfo.getKakao_account().getEmail())
-//                .phoneNumber(kakaoMemberInfo.getKakao_account().getPhone_number())
-//                .profileImageUrl(kakaoMemberInfo.getKakao_account().getProfile().getProfile_image_url())
-//                .memberCode(memberCode)
-//                .rolesType(RolesType.ROLE_UNREGISTER)
-//                .build();
-//        return memberRepository.save(member);
 
-
+        String imageUrl =null;
+        if(! kakaoMemberInfo.getKakao_account().getProfile().getProfile_image_url().isEmpty()){
+            imageUrl = kakaoMemberInfo.getKakao_account().getProfile().getProfile_image_url();
+        }
 
         String memberCode = createMemberCode();
         Member member = Member.builder()
                 .authId(kakaoMemberInfo.getAuthId())
-                .profileImageUrl(kakaoMemberInfo.getKakao_account().getProfile().getProfile_image_url())
+                .profileImageUrl(imageUrl)
                 .memberCode(memberCode)
                 .rolesType(RolesType.ROLE_UNREGISTER)
                 .build();
