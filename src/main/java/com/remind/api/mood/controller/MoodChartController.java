@@ -116,7 +116,7 @@ public class MoodChartController {
     @ApiResponse(
             responseCode = "200", description = "특정 기분에 대한 활동 퍼센트 조회 성공 응답입니다.", useReturnTypeSchema = true
     )
-    @GetMapping("/percent/activity")
+    @GetMapping("/connection/percent/activity")
     public ResponseEntity<ApiSuccessResponse<List<ActivityPercentResponseDto>>> getActivityPercentChart(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @Parameter(description = "감정") @RequestParam("feelingType") FeelingType feelingType,
