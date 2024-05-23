@@ -16,7 +16,10 @@ public record PatientDto(
         String gender,
 
         @Schema(description = "멤버 출생 년도")
-        int birthYear
+        int birthYear,
+
+        @Schema(description = "멤버 만나이")
+        int age
 
 ) {
         public static PatientDto of(Member member) {
@@ -25,6 +28,7 @@ public record PatientDto(
                         .name(member.getName())
                         .gender(member.getGender())
                         .birthYear(member.getBirthday().getYear())
+                        .age(member.calculateAge())
                         .build();
         }
 }

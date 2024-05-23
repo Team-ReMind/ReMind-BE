@@ -97,7 +97,6 @@ public class MemberService {
         }
 
         //해당 멤버의 authId로 jwt토큰 발급하기
-
         UserDetailsImpl userDetail = UserDetailsImpl.fromMember(member);
 
         String newAccessToken = jwtProvider.createAccessToken(userDetail);
@@ -132,22 +131,6 @@ public class MemberService {
      * @return
      */
     private Member register(KakaoGetMemberInfoResponse kakaoMemberInfo) {
-//
-//        String memberCode = createMemberCode();
-//        Member member = Member.builder()
-//                .authId(kakaoMemberInfo.getAuthId())
-//                .name(kakaoMemberInfo.getKakao_account().getName())
-//                .age(age)
-//                .gender(kakaoMemberInfo.getKakao_account().getGender())
-//                .email(kakaoMemberInfo.getKakao_account().getEmail())
-//                .phoneNumber(kakaoMemberInfo.getKakao_account().getPhone_number())
-//                .profileImageUrl(kakaoMemberInfo.getKakao_account().getProfile().getProfile_image_url())
-//                .memberCode(memberCode)
-//                .rolesType(RolesType.ROLE_UNREGISTER)
-//                .build();
-//        return memberRepository.save(member);
-
-
 
         String memberCode = createMemberCode();
         Member member = Member.builder()
@@ -299,7 +282,7 @@ public class MemberService {
     @Transactional(readOnly = true)
     public PatientsResponseDto getPatientsList(UserDetailsImpl userDetails, ConnectionStatus status) {
         //조회하는 사람 정보 조회
-        Member member = memberRepository.findById(userDetails.getMemberId())
+        Member member = memberRepository.findById(userDetails.getMemberId() )
                 .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
 
         //의사 또는 센터가 아니면 조회 불가
@@ -411,6 +394,33 @@ public class MemberService {
                 .centers(centers)
                 .doctors(doctors)
                 .build();
+
+    }
+
+    /**
+     * 특정 멤버 정보 조회
+     * @param userDetails
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public MemberInfoResponse getMemberInfo(UserDetailsImpl userDetails,Long memberId){
+
+        //파라미터가 0이면, 나를 조회하도록 하기..
+        if (memberId == 0) {
+            memberId = userDetails.getMemberId();
+        }
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
+
+        return MemberInfoResponse.builder()
+                .name(member.getName())
+                .age(member.calculateAge())
+                .imageUrl(member.getProfileImageUrl())
+                .gender(member.getGender())
+                .build();
+
+
 
     }
 
