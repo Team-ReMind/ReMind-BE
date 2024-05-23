@@ -66,4 +66,19 @@ public class MoodController {
         return ResponseEntity.ok(
                 new ApiSuccessResponse<>(SUCCESS, moodService.get(userDetails, localDate)));
     }
+
+    @Operation(
+            summary = "의사/센터가 환자의 특정 날짜의 오늘의 기분 정보 조회"
+    )
+    @ApiResponse(
+            responseCode = "200", description = "오늘의 기분 조회 성공 응답입니다.", useReturnTypeSchema = true
+    )
+    @GetMapping("/{memberId}/{moodDate}")
+    public ResponseEntity<ApiSuccessResponse<MoodResponseDto>> get(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable("memberId") Long memberId,
+            @PathVariable("moodDate") LocalDate localDate) {
+        return ResponseEntity.ok(
+                new ApiSuccessResponse<>(SUCCESS, moodService.get(memberId, localDate)));
+    }
 }
