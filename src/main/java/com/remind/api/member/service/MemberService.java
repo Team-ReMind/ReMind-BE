@@ -132,10 +132,18 @@ public class MemberService {
      */
     private Member register(KakaoGetMemberInfoResponse kakaoMemberInfo) {
 
-        String imageUrl =null;
-        if(! kakaoMemberInfo.getKakao_account().getProfile().getProfile_image_url().isEmpty()){
+        String imageUrl = null;
+        //동의
+        if (kakaoMemberInfo.getKakao_account().getProfile_image_needs_agreement()) {
             imageUrl = kakaoMemberInfo.getKakao_account().getProfile().getProfile_image_url();
+            log.info("프로필사진 동의");
         }
+        else{
+            log.info("프로필사진 미동의");
+
+        }
+
+
 
 
         String memberCode = createMemberCode();

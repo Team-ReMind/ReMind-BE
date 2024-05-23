@@ -24,6 +24,7 @@ public class KakaoGetMemberInfoResponse {
         private String phone_number;
 
         // 추가되는 필드
+        private Boolean profile_image_needs_agreement;
     }
 
     @Getter
