@@ -8,24 +8,19 @@ import com.remind.api.member.dto.request.KakaoLoginRequest;
 import com.remind.api.member.dto.request.OnboardingRequestDto;
 import com.remind.api.member.dto.response.*;
 import com.remind.api.member.kakao.KakaoFeignClient;
-import com.remind.core.domain.mood.repository.MoodConsecutiveRepository;
-import com.remind.core.domain.common.enums.MemberErrorCode;
 import com.remind.core.domain.common.exception.MemberException;
-import com.remind.core.domain.member.repository.TokenRepository;
 import com.remind.core.domain.connection.enums.ConnectionStatus;
 import com.remind.core.domain.member.Center;
 import com.remind.core.domain.member.Doctor;
 import com.remind.core.domain.member.Member;
 import com.remind.core.domain.member.Patient;
 import com.remind.core.domain.member.enums.RolesType;
-import com.remind.core.domain.member.repository.CenterRepository;
-import com.remind.core.domain.member.repository.DoctorRepository;
-import com.remind.core.domain.member.repository.MemberRepository;
-import com.remind.core.domain.member.repository.PatientRepository;
+import com.remind.core.domain.member.repository.*;
 import com.remind.core.domain.mood.Activity;
 import com.remind.core.domain.mood.enums.FeelingType;
 import com.remind.core.domain.mood.repository.ActivityRepository;
 import com.remind.core.domain.mood.repository.FixActivityRepository;
+import com.remind.core.domain.mood.repository.MoodConsecutiveRepository;
 import com.remind.core.security.dto.UserDetailsImpl;
 import com.remind.core.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
@@ -299,11 +294,7 @@ public class MemberService {
         Member member = memberRepository.findById(userDetails.getMemberId() )
                 .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
 
-        //의사 또는 센터가 아니면 조회 불가
-        if (!member.getRolesType().equals(RolesType.ROLE_DOCTOR) &&
-                !member.getRolesType().equals(RolesType.ROLE_CENTER)) {
-            throw new MemberException(MemberErrorCode.MEMBER_NOT_DOCTOR_OR_CENTER);
-        }
+
 
         //dto 리스트
         List<Member> memberList = memberRepository.findPatientInfoByTargetMemberIdAndStatus(member.getId(),
@@ -333,10 +324,7 @@ public class MemberService {
         Member center = memberRepository.findById(userDetails.getMemberId())
                 .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
 
-        //센터가 아니면 조회 불가
-        if (!center.getRolesType().equals(RolesType.ROLE_CENTER)) {
-            throw new MemberException(MemberErrorCode.MEMBER_NOT_DOCTOR_OR_CENTER);
-        }
+
 
         //센터가 관리중인 환자 목록
         List<Member> patientList = memberRepository.findPatientInfoByTargetMemberIdAndStatus(userDetails.getMemberId(), ConnectionStatus.ACCEPT);
