@@ -132,10 +132,16 @@ public class MemberService {
      */
     private Member register(KakaoGetMemberInfoResponse kakaoMemberInfo) {
 
+        String imageUrl =null;
+        if(! kakaoMemberInfo.getKakao_account().getProfile().getProfile_image_url().isEmpty()){
+            imageUrl = kakaoMemberInfo.getKakao_account().getProfile().getProfile_image_url();
+        }
+
+
         String memberCode = createMemberCode();
         Member member = Member.builder()
                 .authId(kakaoMemberInfo.getAuthId())
-                .profileImageUrl(kakaoMemberInfo.getKakao_account().getProfile().getProfile_image_url())
+                .profileImageUrl(imageUrl)
                 .memberCode(memberCode)
                 .rolesType(RolesType.ROLE_UNREGISTER)
                 .build();

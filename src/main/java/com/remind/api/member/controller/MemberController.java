@@ -114,7 +114,7 @@ public class MemberController {
             description = "특정 멤버 정보 조회 api. \""
     )
     @GetMapping("/info")
-    public ResponseEntity<ApiSuccessResponse<MemberInfoResponse>> getTakingMedicineRate(
+    public ResponseEntity<ApiSuccessResponse<MemberInfoResponse>> getMemberInfo(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam Long memberId
     ) {

@@ -1,9 +1,7 @@
 package com.remind.api.mood.service;
 
-import static com.remind.core.domain.common.enums.MemberErrorCode.*;
-
-import com.remind.api.mood.dto.request.ActivitySaveRequestDto;
 import com.remind.api.mood.dto.ActivityListDto;
+import com.remind.api.mood.dto.request.ActivitySaveRequestDto;
 import com.remind.api.mood.dto.response.ActivityListResponseDto;
 import com.remind.core.domain.common.exception.MemberException;
 import com.remind.core.domain.member.Member;
@@ -12,11 +10,14 @@ import com.remind.core.domain.member.repository.MemberRepository;
 import com.remind.core.domain.mood.Activity;
 import com.remind.core.domain.mood.repository.ActivityRepository;
 import com.remind.core.security.dto.UserDetailsImpl;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.remind.core.domain.common.enums.MemberErrorCode.MEMBER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -30,10 +31,7 @@ public class ActivityService {
      */
     @Transactional
     public Long save(UserDetailsImpl userDetails, ActivitySaveRequestDto dto) {
-        // 환자만 접근 가능
-//        if (!validateUserRole(userDetails)) {
-//            throw new MemberException(MEMBER_UNAUTHORIZED);
-//        }
+
 
         Member member = memberRepository.findById(userDetails.getMemberId())
                 .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));

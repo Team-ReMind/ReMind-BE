@@ -24,12 +24,4 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
 
 
 
-//
-//    //위험도가 높은 환자 찾는 쿼리
-//    @Query("SELECT new com.remind.api.member.dto.CautionPatientDto(p.id, p.name, 1, 2, p.protectorPhoneNumber, p.phoneNumber) " +
-//            "FROM Connection c " +
-//            "JOIN c.patient p " +
-//            "WHERE c.targetMember.id = :targetMemberId AND c.connectionStatus = 'ACCEPT'")
-//    List<CautionPatientDto> findCautionPatients(@Param("targetMemberId") Long targetMemberId);
-
 }
