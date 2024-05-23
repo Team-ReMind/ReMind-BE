@@ -39,13 +39,13 @@ public class PatientService {
         // 아침, 점심, 저녁 약 실제 복용 횟수
         int realBreakfastCount = takingMedicineRepository.countByPrescriptionIdAndMedicinesType(prescriptionId, MedicinesType.BREAKFAST);
         int realLunchCount = takingMedicineRepository.countByPrescriptionIdAndMedicinesType(prescriptionId, MedicinesType.LUNCH);
-        int realDinnerCount = takingMedicineRepository.countByPrescriptionIdAndMedicinesType(prescriptionId, MedicinesType.DINNER);
+        int realDinnerCount = takingMedicineRepository.countByPrescriptionIdAndMedicinesType(prescriptionId, MedicinesType.ETC);
         int realCount = realBreakfastCount + realLunchCount + realDinnerCount;
 
         // 아침, 점심, 저녁에 먹어야하는 복용 횟수
         int totalBreakfastCount = prescription.getBreakfastImportance() == 0 ? 0 : (prescription.getPeriod() + 1);
         int totalLunchCount = prescription.getLunchImportance() == 0 ? 0 : (prescription.getPeriod() + 1);
-        int totalDinnerCount = prescription.getDinnerImportance() >= 0 ? 0 : (prescription.getPeriod() + 1);
+        int totalDinnerCount = prescription.getDinnerImportance() == 0 ? 0 : (prescription.getPeriod() + 1);
         int totalCount = totalBreakfastCount + totalLunchCount + totalDinnerCount;
 
 
