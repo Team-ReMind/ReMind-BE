@@ -97,7 +97,6 @@ public class MemberService {
         }
 
         //해당 멤버의 authId로 jwt토큰 발급하기
-
         UserDetailsImpl userDetail = UserDetailsImpl.fromMember(member);
 
         String newAccessToken = jwtProvider.createAccessToken(userDetail);
@@ -133,10 +132,18 @@ public class MemberService {
      */
     private Member register(KakaoGetMemberInfoResponse kakaoMemberInfo) {
 
-        String imageUrl =null;
-        if(! kakaoMemberInfo.getKakao_account().getProfile().getProfile_image_url().isEmpty()){
+        String imageUrl = null;
+        //동의
+        if (kakaoMemberInfo.getKakao_account().getProfile_image_needs_agreement()) {
             imageUrl = kakaoMemberInfo.getKakao_account().getProfile().getProfile_image_url();
+            log.info("프로필사진 동의");
         }
+        else{
+            log.info("프로필사진 미동의");
+
+        }
+
+
 
         String memberCode = createMemberCode();
         Member member = Member.builder()
@@ -288,7 +295,7 @@ public class MemberService {
     @Transactional(readOnly = true)
     public PatientsResponseDto getPatientsList(UserDetailsImpl userDetails, ConnectionStatus status) {
         //조회하는 사람 정보 조회
-        Member member = memberRepository.findById(1L)
+        Member member = memberRepository.findById(userDetails.getMemberId() )
                 .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
 
         //의사 또는 센터가 아니면 조회 불가
@@ -411,7 +418,7 @@ public class MemberService {
     @Transactional(readOnly = true)
     public MemberInfoResponse getMemberInfo(UserDetailsImpl userDetails,Long memberId){
 
-        //파라미터가 0이면, 나를 조회하도록 하기.
+        //파라미터가 0이면, 나를 조회하도록 하기..
         if (memberId == 0) {
             memberId = userDetails.getMemberId();
         }

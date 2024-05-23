@@ -90,9 +90,9 @@ public class MoodService {
      * 특정 날짜의 오늘의 기분 정보 조회
      */
     @Transactional(readOnly = true)
-    public MoodResponseDto get(UserDetailsImpl userDetails, LocalDate localDate) {
+    public MoodResponseDto get(Long memberId, LocalDate localDate) {
 
-        Mood mood = moodRepository.findMoodByPatientAndMoodDate(userDetails.getMemberId(), localDate)
+        Mood mood = moodRepository.findMoodByPatientAndMoodDate(memberId, localDate)
                 .orElseThrow(() -> new MoodException(MOOD_NOT_FOUND));
 
         List<ModelActivityResponseDto> modelActivities = dateMoodActivityRepository.getModelActivities(mood.getId());
