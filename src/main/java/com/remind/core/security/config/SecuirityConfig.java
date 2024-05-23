@@ -104,6 +104,7 @@ public class SecuirityConfig {
                 antMatcher(GET, "/mood/{moodDate}"),
                 antMatcher(GET, "/mood/{memberId}/{moodDate}"),
                 antMatcher(GET, "/mood/chart"),
+                antMatcher(GET, "/mood/chart/connection"),
                 antMatcher(GET, "/mood/chart/percents"),
                 antMatcher(GET, "/mood/chart/percents/{memberId}"),
                 antMatcher(GET, "/mood/chart/percent/activity"),
