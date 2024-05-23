@@ -1,6 +1,5 @@
 package com.remind.api.member.service;
 
-import com.remind.api.takingMedicine.service.TakingMedicineService;
 import com.remind.core.domain.common.enums.MemberErrorCode;
 import com.remind.core.domain.common.enums.PresciptionErrorCode;
 import com.remind.core.domain.common.exception.MemberException;
@@ -46,7 +45,7 @@ public class PatientService {
         // 아침, 점심, 저녁에 먹어야하는 복용 횟수
         int totalBreakfastCount = prescription.getBreakfastImportance() == 0 ? 0 : (prescription.getPeriod() + 1);
         int totalLunchCount = prescription.getLunchImportance() == 0 ? 0 : (prescription.getPeriod() + 1);
-        int totalDinnerCount = prescription.getDinnerImportance() == 0 ? 0 : (prescription.getPeriod() + 1);
+        int totalDinnerCount = prescription.getDinnerImportance() >= 0 ? 0 : (prescription.getPeriod() + 1);
         int totalCount = totalBreakfastCount + totalLunchCount + totalDinnerCount;
 
 
